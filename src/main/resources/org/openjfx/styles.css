@@ -1,0 +1,12 @@
+.button {
+    -fx-font: normal bold 12 Langdon;
+    -fx-text-fill: green;
+}
+.tooltip {
+    -fx-font: normal bold 12 Langdon;
+    -fx-text-fill: red;
+    -fx-base: #AE3522;
+}
+.mainStyle > * {
+    -fx-font: normal bold 12 Langdon;
+}

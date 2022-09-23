@@ -1,0 +1,48 @@
+﻿SECTION_DISPLAY_ORDER;SECTION_NAME;COMMAND_ORDER;BUTTON_NAME;COMMAND;DESCRIPTION
+1;Managing of environment;1;Start;./service.sh start env;Run the local environment
+1;Managing of environment;2;Stop;./service.sh stop env;Shut down the environment
+1;Managing of environment;3;Restart;./service.sh restart env;Restart your local environment
+1;Managing of environment;4;Reset;./service.sh reset env;Reset your local environment (remove the environment with volumes) and start enviroment with rebuilding
+1;Managing of environment;5;Remove;./service.sh deep-clean;Removing the environment (and volumes)
+2;Controlling your weblogic managed servers;1;Start backend;./service.sh start server backend;Start backend server
+2;Controlling your weblogic managed servers;2;Start frontend;./service.sh start server frontend;Start frontend server
+2;Controlling your weblogic managed servers;3;Start all;./service.sh start server all;Start all servers
+2;Controlling your weblogic managed servers;4;Stop backend;./service.sh stop server backend;Stop backend server
+2;Controlling your weblogic managed servers;5;Stop frontend;./service.sh stop server frontend;Stop frontend server
+2;Controlling your weblogic managed servers;6;Stop all;./service.sh stop server all;Stop all servers
+2;Controlling your weblogic managed servers;7;Restart backend;./service.sh restart server backend;Restart backend server
+2;Controlling your weblogic managed servers;8;Restart frontend;./service.sh restart server frontend;Restart frontend server
+2;Controlling your weblogic managed servers;9;Restart all;./service.sh restart server all;Restart all servers
+3;Deploying to your dias local environment;1;Apps all;./service.sh deploy hotfix all;Deploy hotfix all (copy your current builded images from your local DIAS - backend and frontend - and deploy it)
+3;Deploying to your dias local environment;2;Apps backend;./service.sh deploy hotfix backend;Deploy hotfix backend (copy your current builded images from your local DIAS - only backend - and deploy it)
+3;Deploying to your dias local environment;3;Apps frontend;./service.sh deploy hotfix frontend;Deploy hotfix frontend (copy your current builded images from your local DIAS - only frontend - and deploy it)
+3;Deploying to your dias local environment;4;Local;./service.sh deploy local;Deploy hotfix (copy your current builded images from your local DIAS and deploy it) and after that deploy your local forms
+3;Deploying to your dias local environment;5;Content;./service.sh deploy content;Deploy skatContent
+3;Deploying to your dias local environment;6;Helpers;./service.sh deploy helpers;Deploy standard default libraries
+3;Deploying to your dias local environment;7;Mocks;./service.sh deploy mocks;Deploy mocks
+3;Deploying to your dias local environment;8;Forms;./service.sh deploy forms hotfix;Deploy forms from your local environment
+3;Deploying to your dias local environment;9;App from Nexus;./service.sh deploy snapshots;Deploy latest snapshots from Nexus
+3;Deploying to your dias local environment;10;Forms from Nexus;./service.sh deploy forms snapshots;Deploy latest forms from Nexus
+4;Reset database and deploy forms;1;Forms from local;./service.sh reset db hotfix;After reset deploy forms from your local environmen
+4;Reset database and deploy forms;2;Forms from snapshots;./service.sh reset db snapshots;After reset deploy forms from nexus
+4;Reset database and deploy forms;3;Without forms;./service.sh reset db clean;Clean reset
+5;Open containers;1;Weblogic;./service.sh open dias-weblogic;Open container (go inside it)
+5;Open containers;2;Oracle;./service.sh open dias-oracle;Open container (go inside it)
+5;Open containers;3;Mocks;./service.sh open dias-mocks;Open container (go inside it)
+5;Open containers;4;Flyway;./service.sh open dias-flyway;Open container (go inside it)
+6;Showing logs;3;All;./service.sh logs all;Show logs regarding the dias-weblogic container
+6;Showing logs;4;Weblogic;./service.sh logs dias-weblogic;Show logs regarding the dias-weblogic container
+6;Showing logs;5;Oracle;./service.sh logs dias-oracle;Show logs regarding the dias-oracle container
+6;Showing logs;6;Mocks;./service.sh logs dias-mocks;Show logs regarding the dias-mocks container
+6;Showing logs;7;Flyway;./service.sh logs dias-flyway;Show logs regarding the dias-mocks container
+6;Showing logs;1;Apps frontend;./service.sh logs frontend;Show logs regarding frontend managed server
+6;Showing logs;2;Apps backend;./service.sh logs backend;Show logs regarding backend managed server
+7;Following logs;3;All;./service.sh tailf all;Showing your logs (last 150 lines) and follow on current logs from dias-weblogic
+7;Following logs;4;Weblogic;./service.sh tailf dias-weblogic;Showing your logs (last 150 lines) and follow on current logs from dias-weblogic
+7;Following logs;5;Oracle;./service.sh tailf dias-oracle;Showing your logs (last 150 lines) and follow on current logs from dias-oracle
+7;Following logs;6;Mocks;./service.sh tailf dias-mocks;Showing your logs (last 150 lines) and follow on current logs from dias-mocks
+7;Following logs;7;Flyway;./service.sh tailf dias-flyway;Showing your logs (last 150 lines) and follow on current logs from dias-mocks
+7;Following logs;1;Apps frontend;./service.sh tailf frontend;Showing your logs (last 10 lines) and follow on current logs from frontend
+7;Following logs;2;Apps backend;./service.sh tailf backend;Showing your logs (last 10 lines) and follow on current logs from backend
+8;Login/logout to/from artifactory artifactory;1;Login;./service.sh login;Login to artifactory. Only if you are not logged in.
+8;Login/logout to/from artifactory artifactory;2;Logout;./service.sh logout;Logout from artifactory.
