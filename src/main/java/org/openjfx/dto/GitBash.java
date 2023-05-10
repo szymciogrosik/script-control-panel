@@ -6,25 +6,24 @@ import java.io.*;
 
 public class GitBash implements Runnable {
 
-    private static final String BASH_PATH = SettingsService.getVariable(Setting.BASH_PATH);
-    private static final String DIAS_DOCKER_PATH = SettingsService.getVariable(Setting.DIAS_DOCKER_PATH);
-
     private static final String SEPARATOR = " ; ";
 
+    private final ScriptType scriptType;
     private final String command;
 
-    public GitBash(String command) {
+    public GitBash(ScriptType scriptType, String command) {
+        this.scriptType = scriptType;
         this.command = command;
     }
 
     public void run() {
-        runCommand(command);
+        runCommand(scriptType, command);
     }
 
-    private static void runCommand(String command) {
+    private static void runCommand(ScriptType scriptType, String command) {
         try {
             ProcessBuilder processBuilder = new ProcessBuilder();
-            processBuilder.command(BASH_PATH, "-c", getOpenDirectoryCommand() + SEPARATOR + command + SEPARATOR + getWaitingForButtonCommand());
+            processBuilder.command(Setting.BASH_PATH.getValue(), "-c", getOpenDirectoryCommand(scriptType) + SEPARATOR + command + SEPARATOR + getWaitingForButtonCommand());
             processBuilder.start();
         } catch (IOException e) {
             System.out.println(" --- Interruption in RunCommand: " + e);
@@ -32,8 +31,8 @@ public class GitBash implements Runnable {
         }
     }
 
-    private static String getOpenDirectoryCommand() {
-        return "cd " + DIAS_DOCKER_PATH;
+    private static String getOpenDirectoryCommand(ScriptType scriptType) {
+        return "cd " + scriptType.getPath();
     }
 
     private static String getWaitingForButtonCommand() {

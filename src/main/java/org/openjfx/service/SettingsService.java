@@ -1,5 +1,6 @@
 package org.openjfx.service;
 
+import org.openjfx.dto.ElementType;
 import org.openjfx.dto.Setting;
 import java.io.BufferedReader;
 import java.io.FileReader;
@@ -7,11 +8,10 @@ import java.io.IOException;
 
 public class SettingsService {
 
-    private static final String SETTINGS_FILE_NAME = "settings.csv";
     private static final String DELIMITER = ";";
 
     public static String getVariable(Setting setting) {
-        try (BufferedReader br = new BufferedReader(new FileReader(SETTINGS_FILE_NAME))) {
+        try (BufferedReader br = new BufferedReader(new FileReader(ElementType.SETTING.getFileName()))) {
             String line;
             // skip first line
             br.readLine();

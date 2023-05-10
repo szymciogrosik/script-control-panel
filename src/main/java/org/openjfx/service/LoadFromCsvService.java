@@ -23,7 +23,9 @@ public class LoadFromCsvService {
             br.readLine();
             while ((line = br.readLine()) != null) {
                 String[] values = line.split(DELIMITER);
-                commands.add(new LoadedElement(Integer.parseInt(values[0]), values[1], Integer.parseInt(values[2]), values[3], values[4], values[5]));
+                commands.add(new LoadedElement(
+                        Integer.parseInt(values[0]), values[1], Integer.parseInt(values[2]), values[3], values[4],
+                        Boolean.parseBoolean(values[5]), values[6], values[7]));
             }
         }
         return commands;

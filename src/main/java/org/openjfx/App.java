@@ -4,6 +4,7 @@ import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
 import javafx.scene.Scene;
+import javafx.scene.image.Image;
 import javafx.stage.Stage;
 
 import java.io.IOException;
@@ -15,6 +16,8 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
+        stage.setTitle("Buenos DIAS");
+        stage.getIcons().add(new Image("penguin.png"));
         scene = new Scene(loadFXML("primary"));
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
         stage.setScene(scene);

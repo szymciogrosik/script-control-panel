@@ -1,7 +1,7 @@
-SECTION_DISPLAY_ORDER;SECTION_NAME;LINK_ORDER;BUTTON_NAME;LINK;DESCRIPTION
-1;Application;1;Auth console;http://localhost:7020/skat-authentication-console/;Open authentication console. password:!234Test
-1;Application;2;App;http://localhost:7020/diasportlet/uc/welcome;Open app
-1;Application;3;App in admin view;http://localhost:7020/diasportlet/uc/welcome?admin;Open app in admin view
-1;Application;4;DIAS support app;http://localhost:7013/dias-support/;Open app where you can see all incoming andoutgoing requests
-2;Weblogic;1;Backend;http://localhost:7101/console;Open weblogic console for backend. Login:weblogic password:weblogic1
-2;Weblogic;1;Frontend;http://localhost:7201/console;Open weblogic console for frontend. Login:weblogic password:weblogic1
+SECTION_DISPLAY_ORDER;SECTION_NAME;LINK_ORDER;BUTTON_NAME;LINK;POPUP_INPUT_DISPLAY;POPUP_INPUT_MESSAGE;DESCRIPTION
+1;Application;1;Auth console;http://localhost:7020/skat-authentication-console/;FALSE;;Open authentication console. password:!234Test
+1;Application;2;App;http://localhost:7020/diasportlet/uc/welcome;FALSE;;Open app
+1;Application;3;App in admin view;http://localhost:7020/diasportlet/uc/welcome?view=admin;FALSE;;Open app in admin view
+1;Application;4;DIAS support app;http://localhost:7013/dias-support/;FALSE;;Open app where you can see all incoming and outgoing requests
+2;Weblogic;1;Backend;http://localhost:7101/console;FALSE;;Open weblogic console for backend. Login:weblogic password:weblogic1
+2;Weblogic;1;Frontend;http://localhost:7201/console;FALSE;;Open weblogic console for frontend. Login:weblogic password:weblogic1

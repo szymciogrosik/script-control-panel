@@ -3,26 +3,24 @@ package org.openjfx.controller;
 import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
-import java.util.AbstractMap;
-import java.util.ArrayList;
-import java.util.Arrays;
-import java.util.Collections;
-import java.util.Comparator;
-import java.util.List;
-import java.util.Map;
-import java.util.ResourceBundle;
-import java.util.Set;
+import java.util.*;
 import java.util.stream.Collectors;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.control.*;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import javafx.util.Duration;
 import org.openjfx.dto.ElementType;
 import org.openjfx.dto.LoadedElement;
+import org.openjfx.dto.ScriptType;
 import org.openjfx.service.LoadFromCsvService;
 import org.openjfx.service.GitBashService;
 
@@ -37,8 +35,11 @@ public class PrimaryController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         addSectionHeader("Commands to invoke on environment");
         addElementsToScene(ElementType.SERVICE_COMMAND);
+        addSectionHeader("Commands to invoke for replacing DapKeys for local tests");
+        addElementsToScene(ElementType.UPDATE_DAP_FOR_TESTS_COMMAND);
         addSectionHeader("Links");
         addElementsToScene(ElementType.LINK);
+        addAuthorNote("Made with love by Szymon Gross");
     }
 
     private void addSectionHeader(String headerName) {
@@ -50,6 +51,19 @@ public class PrimaryController implements Initializable {
         primaryPage.getChildren().add(section);
     }
 
+    private void addAuthorNote(String authorName) {
+        VBox section = new VBox();
+        section.setAlignment(Pos.CENTER);
+        Image image = new Image("shiba2.png");
+        ImageView imageView = new ImageView(image);
+        imageView.setFitHeight(35);
+        imageView.setFitWidth(35);
+        Tooltip.install(imageView, createTooltip(authorName));
+        Group root = new Group(imageView);
+        section.getChildren().add(root);
+        primaryPage.getChildren().add(section);
+    }
+
     private void addElementsToScene(ElementType type) {
         List<LoadedElement> loadedElements = loadElementsFromCsvFile(type);
         addElementsToScene(loadedElements, type);
@@ -57,10 +71,10 @@ public class PrimaryController implements Initializable {
 
     private void addElementsToScene(List<LoadedElement> loadedElements, ElementType type) {
         Set<AbstractMap.SimpleEntry<Integer, String>> uniqueSectionsSet = loadedElements.stream()
-                 .map(elem -> new AbstractMap.SimpleEntry <>(
-                         elem.getSectionDisplayOrder(), elem.getSectionName()
-                 ))
-                 .collect(Collectors.toSet());
+                                                                                        .map(elem -> new AbstractMap.SimpleEntry <>(
+                                                                                                elem.getSectionDisplayOrder(), elem.getSectionName()
+                                                                                        ))
+                                                                                        .collect(Collectors.toSet());
 
         List<AbstractMap.SimpleEntry<Integer, String>> uniqueSections = new ArrayList<>(uniqueSectionsSet);
         uniqueSections.sort(Map.Entry.comparingByKey());
@@ -73,11 +87,13 @@ public class PrimaryController implements Initializable {
             rows.setSpacing(SPACING_BETWEEN_BUTTONS);
 
             List<LoadedElement> sectionElements = loadedElements.stream()
-                                                                  .filter(elem -> elem.getSectionName().equals(section.getValue()))
-                                                                  .sorted(Comparator.comparing(LoadedElement::getCommandOrder))
-                                                                  .collect(Collectors.toList());
+                                                                .filter(elem -> elem.getSectionName().equals(section.getValue()))
+                                                                .sorted(Comparator.comparing(LoadedElement::getCommandOrder))
+                                                                .collect(Collectors.toList());
             for (LoadedElement loadedElement : sectionElements) {
-                rows.getChildren().add(createButton(loadedElement.getButtonName(), loadedElement.getCommand(), loadedElement.getDescription(), type));
+                rows.getChildren().add(createButton(
+                        loadedElement.getButtonName(), loadedElement.getCommand(), loadedElement.isPopupInputDisplayed(),
+                        loadedElement.getPopupInputMessage(), loadedElement.getDescription(), type));
             }
             primaryPage.getChildren().add(rows);
         }
@@ -92,15 +108,42 @@ public class PrimaryController implements Initializable {
         return section;
     }
 
-    private Button createButton(String buttonName, String command, String description, ElementType type) {
+    private Button createButton(String buttonName, String command, boolean popupInputDisplayed,
+            String popupInputMessage, String description, ElementType type) {
         Button button = new Button(buttonName);
         if (ElementType.SERVICE_COMMAND.equals(type)) {
-            button.setOnMouseClicked(event -> GitBashService.runCommand(command));
+            addButtonListenerForServiceCommands(button, popupInputDisplayed, popupInputMessage, command, ScriptType.SERVICE_SCRIPT);
+        } else if (ElementType.UPDATE_DAP_FOR_TESTS_COMMAND.equals(type)) {
+            addButtonListenerForServiceCommands(button, popupInputDisplayed, popupInputMessage, command, ScriptType.UPDATE_DAP_FOR_TESTS);
         } else if (ElementType.LINK.equals(type)) {
             button.setOnMouseClicked(event -> openPageInBrowser(command));
         }
         button.setTooltip(createTooltip(description));
         return button;
+    }
+
+    private void addButtonListenerForServiceCommands(Button button, boolean popupInputDisplayed, String popupInputMessage, String command, ScriptType scriptType) {
+        button.setOnMouseClicked(event -> {
+            if (popupInputDisplayed) {
+                Optional<String> result = createTextInputDialog(popupInputMessage);
+                result.ifPresent(name -> {
+                    GitBashService.runCommand(scriptType, command + " " + name);
+                });
+            } else {
+                GitBashService.runCommand(scriptType, command);
+            }
+        });
+    }
+
+    private Optional<String> createTextInputDialog(String popupInputMessage) {
+        TextInputDialog dialog = new TextInputDialog("default_value");
+
+        dialog.setTitle("Information required");
+        dialog.setHeaderText(null);
+        dialog.setGraphic(null);
+        dialog.setContentText(popupInputMessage);
+
+        return dialog.showAndWait();
     }
 
     private void openPageInBrowser(String url) {
@@ -114,6 +157,8 @@ public class PrimaryController implements Initializable {
 
     private Tooltip createTooltip(String tooltipText) {
         Tooltip tt = new Tooltip();
+        tt.setShowDelay(Duration.ONE);
+        tt.setShowDuration(Duration.INDEFINITE);
         tt.setText(tooltipText);
         return tt;
     }

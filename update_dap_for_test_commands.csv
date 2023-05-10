@@ -1,0 +1,3 @@
+﻿SECTION_DISPLAY_ORDER;SECTION_NAME;COMMAND_ORDER;BUTTON_NAME;COMMAND;POPUP_INPUT_DISPLAY;POPUP_INPUT_MESSAGE;DESCRIPTION
+1;Updating DapKeys for local automated tests;1;Update;./update_dap.sh;FALSE;;Packing dias-content to zip and repleacing it in correct directories in DIAS repository.
+1;Updating DapKeys for local automated tests;2;Build only;./update_dap.sh build;FALSE;;Building dias-content to zip. "dias-content-master.zip" file will be located inside your dias-content.

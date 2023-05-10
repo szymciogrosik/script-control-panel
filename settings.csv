@@ -1,3 +1,4 @@
 VARIABLE_NAME;VARIABLE_VALUE
 BASH_PATH;C:/Program Files/Git/git-bash.exe
-DIAS_DOCKER_PATH;C:/_dev/code/dias-developer-tools/dias-docker
+SERVICE_SCRIPT_PATH;../../dias-docker
+UPDATE_TEST_DAP_SCRIPT_PATH;../update-content-in-dias-tests

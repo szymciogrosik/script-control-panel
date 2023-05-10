@@ -7,14 +7,20 @@ public class LoadedElement {
     private final int commandOrder;
     private final String buttonName;
     private final String command;
+    private final boolean popupInputDisplayed;
+    private final String popupInputMessage;
     private final String description;
 
-    public LoadedElement(int sectionDisplayOrder, String sectionName, int commandOrder, String buttonName, String command, String description) {
+    public LoadedElement(
+            int sectionDisplayOrder, String sectionName, int commandOrder, String buttonName, String command,
+            boolean popupInputDisplayed, String popupInputMessage, String description) {
         this.sectionDisplayOrder = sectionDisplayOrder;
         this.sectionName = sectionName;
         this.commandOrder = commandOrder;
         this.buttonName = buttonName;
         this.command = command;
+        this.popupInputDisplayed = popupInputDisplayed;
+        this.popupInputMessage = popupInputMessage;
         this.description = description;
     }
 
@@ -36,6 +42,14 @@ public class LoadedElement {
 
     public String getCommand() {
         return command;
+    }
+
+    public boolean isPopupInputDisplayed() {
+        return popupInputDisplayed;
+    }
+
+    public String getPopupInputMessage() {
+        return popupInputMessage;
     }
 
     public String getDescription() {
