@@ -27,3 +27,13 @@ Commands from this file will be invoked in update-content-in-dias-tests director
 File which contains links with description and order base on which buttons will be visible in UI.
 Links will be open in default browser.
 ```
+
+### How to build app to JAR file?
+```text
+If you want to build app to JAR you need:
+1. Choose maven on the right side of Intellij
+2. Choose Plugins directory
+3. Choose jar directory
+4. Double click on jar:jar
+5. Your jar app will be visible in directory /target
+```
