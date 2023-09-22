@@ -39,6 +39,8 @@ public class PrimaryController implements Initializable {
         addElementsToScene(ElementType.UPDATE_DAP_FOR_TESTS_COMMAND);
         addSectionHeader("Links");
         addElementsToScene(ElementType.LINK);
+        addSectionHeader("Remote apps");
+        addElementsToScene(ElementType.REMOTE_APP);
         addAuthorNote("Made with love by Szymon Gross");
     }
 
@@ -113,10 +115,14 @@ public class PrimaryController implements Initializable {
         Button button = new Button(buttonName);
         if (ElementType.SERVICE_COMMAND.equals(type)) {
             addButtonListenerForServiceCommands(button, popupInputDisplayed, popupInputMessage, command, ScriptType.SERVICE_SCRIPT);
+        } else if (ElementType.REMOTE_APP.equals(type)) {
+            addButtonListenerForServiceCommands(button, popupInputDisplayed, popupInputMessage, command, ScriptType.OPEN_REMOTE_APP_SCRIPT);
         } else if (ElementType.UPDATE_DAP_FOR_TESTS_COMMAND.equals(type)) {
             addButtonListenerForServiceCommands(button, popupInputDisplayed, popupInputMessage, command, ScriptType.UPDATE_DAP_FOR_TESTS);
         } else if (ElementType.LINK.equals(type)) {
             button.setOnMouseClicked(event -> openPageInBrowser(command));
+        } else {
+            throw new RuntimeException("Unrecognised element type provided: " + type);
         }
         button.setTooltip(createTooltip(description));
         return button;
