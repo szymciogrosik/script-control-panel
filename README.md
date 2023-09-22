@@ -28,12 +28,25 @@ File which contains links with description and order base on which buttons will 
 Links will be open in default browser.
 ```
 
+### open_remote_apps.csv
+```text
+File which contains commands how open remote apps should be invoked.
+Commands from this file will be invoked in open-remote-apps directory.
+```
+
 ### How to build app to JAR file?
 ```text
 If you want to build app to JAR you need:
 1. Choose maven on the right side of Intellij
-2. Choose Plugins directory
-3. Choose jar directory
-4. Double click on jar:jar
-5. Your jar app will be visible in directory /target
+2. Choose Lifecycle directory
+3. Double click clean
+4. Double click compile
+5. Double click install
+6. Your jar app will be visible in directory /target
+```
+
+### How to run from bash console
+```text
+If you want to run from bash console (to f.e. see logs) you need:
+java -jar dias_service_runner-1.0.jar
 ```

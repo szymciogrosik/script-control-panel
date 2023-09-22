@@ -1,7 +1,5 @@
 package org.openjfx.dto;
 
-import org.openjfx.service.SettingsService;
-
 import java.io.*;
 
 public class GitBash implements Runnable {
@@ -23,7 +21,11 @@ public class GitBash implements Runnable {
     private static void runCommand(ScriptType scriptType, String command) {
         try {
             ProcessBuilder processBuilder = new ProcessBuilder();
-            processBuilder.command(Setting.BASH_PATH.getValue(), "-c", getOpenDirectoryCommand(scriptType) + SEPARATOR + command + SEPARATOR + getWaitingForButtonCommand());
+            String finalCommand = getOpenDirectoryCommand(scriptType) + SEPARATOR + command;
+            if (!ScriptType.OPEN_REMOTE_APP_SCRIPT.equals(scriptType)) {
+                finalCommand += (SEPARATOR + getWaitingForButtonCommand());
+            }
+            processBuilder.command(Setting.BASH_PATH.getValue(), "-c", finalCommand);
             processBuilder.start();
         } catch (IOException e) {
             System.out.println(" --- Interruption in RunCommand: " + e);
