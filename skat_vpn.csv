@@ -1,0 +1,3 @@
+﻿SECTION_DISPLAY_ORDER;SECTION_NAME;COMMAND_ORDER;BUTTON_NAME;COMMAND;POPUP_INPUT_DISPLAY;POPUP_INPUT_MESSAGE;DESCRIPTION
+1;Connect with SKAT VPN;1;Connect;.\startVPN.bat;FALSE;;Connect with SKAT VPN, SMS code will be required
+1;Connect with SKAT VPN;2;Disconnect;.\stopVPN.bat;FALSE;;Disconnect with SKAT VPN

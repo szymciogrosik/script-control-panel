@@ -1,25 +1,26 @@
 package org.openjfx.dto;
 
 public enum ElementType {
-    SETTING("settings.csv", "my_own_settings.csv"),
-    SERVICE_COMMAND("service_commands.csv", "my_own_service_commands.csv"),
-    UPDATE_DAP_FOR_TESTS_COMMAND("update_dap_for_test_commands.csv", "my_own_update_dap_for_test_commands.csv"),
-    LINK("links.csv", "my_own_links.csv"),
-    REMOTE_APP("open_remote_apps.csv", "my_own_open_remote_apps.csv");
 
-    private final String defaultName;
-    private final String personalizedConfigName;
+    /*
+    * Those names are also config file names, so please be careful when you editing it
+    * */
+    SETTINGS,
+    SERVICE_COMMANDS,
+    UPDATE_DAP_FOR_TEST_COMMANDS,
+    LINKS,
+    OPEN_REMOTE_APPS,
+    SKAT_VPN;
 
-    ElementType(String defaultName, String personalizedConfigName) {
-        this.defaultName = defaultName;
-        this.personalizedConfigName = personalizedConfigName;
-    }
+    private static final String MY_OWN_PREFIX = "my_own_";
+    private static final String CONFIG_FILE_EXTENSION = ".csv";
 
     public String getDefaultFileName() {
-        return defaultName;
+        return name().toLowerCase() + CONFIG_FILE_EXTENSION;
     }
 
     public String getPersonalizedConfigName() {
-        return personalizedConfigName;
+        return MY_OWN_PREFIX + getDefaultFileName();
     }
+
 }

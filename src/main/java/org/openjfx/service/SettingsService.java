@@ -12,8 +12,8 @@ public class SettingsService {
     private static final String DELIMITER = ";";
 
     public static String getVariable(Setting setting) {
-        Optional<String> value = getVariableBase(setting, ElementType.SETTING.getPersonalizedConfigName());
-        return value.orElseGet(() -> getVariableBase(setting, ElementType.SETTING.getDefaultFileName()).get());
+        Optional<String> value = getVariableBase(setting, ElementType.SETTINGS.getPersonalizedConfigName());
+        return value.orElseGet(() -> getVariableBase(setting, ElementType.SETTINGS.getDefaultFileName()).get());
     }
 
     public static Optional<String> getVariableBase(Setting setting, String settingCsvPath) {

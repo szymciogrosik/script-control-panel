@@ -1,15 +1,15 @@
 package org.openjfx.dto;
 
-import java.io.*;
+import java.io.IOException;
 
-public class GitBash implements Runnable {
+public class PowerShell implements Runnable {
 
     private static final String SEPARATOR = " ; ";
 
     private final ScriptType scriptType;
     private final String command;
 
-    public GitBash(ScriptType scriptType, String command) {
+    public PowerShell(ScriptType scriptType, String command) {
         this.scriptType = scriptType;
         this.command = command;
     }
@@ -21,12 +21,14 @@ public class GitBash implements Runnable {
     private static void runCommand(ScriptType scriptType, String command) {
         try {
             String finalCommand = getOpenDirectoryCommand(scriptType) + SEPARATOR + command;
-            if (scriptType.isNotAutoCloseConsole()) {
-                finalCommand += (SEPARATOR + getWaitingForButtonCommand());
-            }
 
             ProcessBuilder processBuilder = new ProcessBuilder();
-            processBuilder.command(Setting.BASH_PATH.getValue(), "-c", finalCommand);
+            processBuilder.command(
+                    "powershell.exe",
+                    "Start-Process powershell.exe '" +
+                            (scriptType.isNotAutoCloseConsole() ? "-NoExit" : "")
+                            + " \"[Console]::Title = ''Buenos Dias PowerShell run''; " + finalCommand + "\"'"
+            );
             processBuilder.start();
         } catch (IOException e) {
             System.out.println(" --- Interruption in RunCommand: " + e);
@@ -35,11 +37,7 @@ public class GitBash implements Runnable {
     }
 
     private static String getOpenDirectoryCommand(ScriptType scriptType) {
-        return "cd " + scriptType.getPath();
-    }
-
-    private static String getWaitingForButtonCommand() {
-        return "echo '\n\nPress any button to exit...'" + SEPARATOR + "read";
+        return "cd \"" + scriptType.getPath() + "\"";
     }
 
 }

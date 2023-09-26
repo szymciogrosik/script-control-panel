@@ -23,6 +23,7 @@ import org.openjfx.dto.LoadedElement;
 import org.openjfx.dto.ScriptType;
 import org.openjfx.service.LoadFromCsvService;
 import org.openjfx.service.GitBashService;
+import org.openjfx.service.PowerShellService;
 
 public class PrimaryController implements Initializable {
 
@@ -34,13 +35,15 @@ public class PrimaryController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         addSectionHeader("Commands to invoke on environment");
-        addElementsToScene(ElementType.SERVICE_COMMAND);
+        addElementsToScene(ElementType.SERVICE_COMMANDS);
         addSectionHeader("Commands to invoke for replacing DapKeys for local tests");
-        addElementsToScene(ElementType.UPDATE_DAP_FOR_TESTS_COMMAND);
+        addElementsToScene(ElementType.UPDATE_DAP_FOR_TEST_COMMANDS);
         addSectionHeader("Links");
-        addElementsToScene(ElementType.LINK);
+        addElementsToScene(ElementType.LINKS);
         addSectionHeader("Remote apps");
-        addElementsToScene(ElementType.REMOTE_APP);
+        addElementsToScene(ElementType.OPEN_REMOTE_APPS);
+        addSectionHeader("SKAT VPN");
+        addElementsToScene(ElementType.SKAT_VPN);
         addAuthorNote("Made with love by Szymon Gross");
     }
 
@@ -56,7 +59,7 @@ public class PrimaryController implements Initializable {
     private void addAuthorNote(String authorName) {
         VBox section = new VBox();
         section.setAlignment(Pos.CENTER);
-        Image image = new Image("shiba2.png");
+        Image image = new Image("shiba.png");
         ImageView imageView = new ImageView(image);
         imageView.setFitHeight(35);
         imageView.setFitWidth(35);
@@ -113,14 +116,16 @@ public class PrimaryController implements Initializable {
     private Button createButton(String buttonName, String command, boolean popupInputDisplayed,
             String popupInputMessage, String description, ElementType type) {
         Button button = new Button(buttonName);
-        if (ElementType.SERVICE_COMMAND.equals(type)) {
+        if (ElementType.SERVICE_COMMANDS.equals(type)) {
             addButtonListenerForServiceCommands(button, popupInputDisplayed, popupInputMessage, command, ScriptType.SERVICE_SCRIPT);
-        } else if (ElementType.REMOTE_APP.equals(type)) {
-            addButtonListenerForServiceCommands(button, popupInputDisplayed, popupInputMessage, command, ScriptType.OPEN_REMOTE_APP_SCRIPT);
-        } else if (ElementType.UPDATE_DAP_FOR_TESTS_COMMAND.equals(type)) {
-            addButtonListenerForServiceCommands(button, popupInputDisplayed, popupInputMessage, command, ScriptType.UPDATE_DAP_FOR_TESTS);
-        } else if (ElementType.LINK.equals(type)) {
+        } else if (ElementType.UPDATE_DAP_FOR_TEST_COMMANDS.equals(type)) {
+            addButtonListenerForServiceCommands(button, popupInputDisplayed, popupInputMessage, command, ScriptType.UPDATE_DAP_FOR_TESTS_SCRIPT);
+        } else if (ElementType.LINKS.equals(type)) {
             button.setOnMouseClicked(event -> openPageInBrowser(command));
+        } else if (ElementType.OPEN_REMOTE_APPS.equals(type)) {
+            addButtonListenerForServiceCommands(button, popupInputDisplayed, popupInputMessage, command, ScriptType.OPEN_REMOTE_APP_SCRIPT);
+        } else if (ElementType.SKAT_VPN.equals(type)) {
+            addButtonListenerForServiceCommands(button, popupInputDisplayed, popupInputMessage, command, ScriptType.SKAT_VPN_SCRIPT);
         } else {
             throw new RuntimeException("Unrecognised element type provided: " + type);
         }
@@ -129,6 +134,19 @@ public class PrimaryController implements Initializable {
     }
 
     private void addButtonListenerForServiceCommands(Button button, boolean popupInputDisplayed, String popupInputMessage, String command, ScriptType scriptType) {
+        switch (scriptType.getConsole()) {
+            case BASH:
+                addButtonListenerForBashCommand(button, popupInputDisplayed, popupInputMessage, command, scriptType);
+                break;
+            case POWERSHELL:
+                addButtonListenerForPowerShellCommand(button, popupInputDisplayed, popupInputMessage, command, scriptType);
+                break;
+            default:
+                throw new RuntimeException("Not recognised console: " + scriptType.getConsole());
+        }
+    }
+
+    private void addButtonListenerForBashCommand(Button button, boolean popupInputDisplayed, String popupInputMessage, String command, ScriptType scriptType) {
         button.setOnMouseClicked(event -> {
             if (popupInputDisplayed) {
                 Optional<String> result = createTextInputDialog(popupInputMessage);
@@ -137,6 +155,19 @@ public class PrimaryController implements Initializable {
                 });
             } else {
                 GitBashService.runCommand(scriptType, command);
+            }
+        });
+    }
+
+    private void addButtonListenerForPowerShellCommand(Button button, boolean popupInputDisplayed, String popupInputMessage, String command, ScriptType scriptType) {
+        button.setOnMouseClicked(event -> {
+            if (popupInputDisplayed) {
+                Optional<String> result = createTextInputDialog(popupInputMessage);
+                result.ifPresent(name -> {
+                    PowerShellService.runCommand(scriptType, command + " " + name);
+                });
+            } else {
+                PowerShellService.runCommand(scriptType, command);
             }
         });
     }
@@ -173,8 +204,7 @@ public class PrimaryController implements Initializable {
         try {
             return LoadFromCsvService.load(type);
         } catch (IOException e) {
-            e.printStackTrace();
-            return Collections.emptyList();
+            throw new RuntimeException("Cannot load files from configuration file", e);
         }
     }
 
