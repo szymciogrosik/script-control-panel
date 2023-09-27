@@ -21,6 +21,7 @@ import javafx.util.Duration;
 import org.openjfx.dto.ElementType;
 import org.openjfx.dto.LoadedElement;
 import org.openjfx.dto.ScriptType;
+import org.openjfx.service.ImageProvider;
 import org.openjfx.service.LoadFromCsvService;
 import org.openjfx.service.GitBashService;
 import org.openjfx.service.PowerShellService;
@@ -28,6 +29,8 @@ import org.openjfx.service.PowerShellService;
 public class PrimaryController implements Initializable {
 
     private static final int SPACING_BETWEEN_BUTTONS = 5;
+
+    private static int numberOfAuthorClicks = 0;
 
     @FXML
     public VBox primaryPage;
@@ -59,11 +62,15 @@ public class PrimaryController implements Initializable {
     private void addAuthorNote(String authorName) {
         VBox section = new VBox();
         section.setAlignment(Pos.CENTER);
-        Image image = new Image("shiba.png");
+        Image image = ImageProvider.get("/shiba.png");
         ImageView imageView = new ImageView(image);
-        imageView.setFitHeight(35);
-        imageView.setFitWidth(35);
+        imageView.setFitHeight(40);
+        imageView.setFitWidth(40);
         Tooltip.install(imageView, createTooltip(authorName));
+        imageView.setOnMouseClicked(event -> {
+            imageView.setImage(ImageProvider.getRandomAnimal());
+            numberOfAuthorClicks++;
+        });
         Group root = new Group(imageView);
         section.getChildren().add(root);
         primaryPage.getChildren().add(section);
@@ -188,7 +195,7 @@ public class PrimaryController implements Initializable {
             URI u = new URI(url);
             java.awt.Desktop.getDesktop().browse(u);
         } catch (Exception e) {
-            System.out.println(Arrays.toString(e.getStackTrace()));
+            throw new RuntimeException("Cannot open page in browser", e);
         }
     }
 

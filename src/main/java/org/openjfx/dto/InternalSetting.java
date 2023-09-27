@@ -2,12 +2,9 @@ package org.openjfx.dto;
 
 import org.openjfx.service.SettingsService;
 
-public enum Setting implements BaseSetting{
-    BASH_PATH,
-    SERVICE_SCRIPT_PATH,
-    UPDATE_TEST_DAP_SCRIPT_PATH,
-    OPEN_REMOTE_APP_SCRIPT_PATH,
-    SKAT_VPN_PATH;
+public enum InternalSetting implements BaseSetting {
+
+    IMAGE_NAME;
 
     @Override
     public String getName() {
@@ -21,7 +18,7 @@ public enum Setting implements BaseSetting{
 
     @Override
     public ElementType getElementType() {
-        return ElementType.SETTINGS;
+        return ElementType.INTERNAL_SETTINGS;
     }
 
 }

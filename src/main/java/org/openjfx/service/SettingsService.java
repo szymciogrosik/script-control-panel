@@ -1,7 +1,6 @@
 package org.openjfx.service;
 
-import org.openjfx.dto.ElementType;
-import org.openjfx.dto.Setting;
+import org.openjfx.dto.BaseSetting;
 import java.io.BufferedReader;
 import java.io.FileReader;
 import java.io.IOException;
@@ -11,19 +10,19 @@ public class SettingsService {
 
     private static final String DELIMITER = ";";
 
-    public static String getVariable(Setting setting) {
-        Optional<String> value = getVariableBase(setting, ElementType.SETTINGS.getPersonalizedConfigName());
-        return value.orElseGet(() -> getVariableBase(setting, ElementType.SETTINGS.getDefaultFileName()).get());
+    public static String getVariable(BaseSetting setting) {
+        Optional<String> value = getVariableBase(setting, setting.getElementType().getPersonalizedConfigName());
+        return value.orElseGet(() -> getVariableBase(setting, setting.getElementType().getDefaultFileName()).get());
     }
 
-    public static Optional<String> getVariableBase(Setting setting, String settingCsvPath) {
+    public static Optional<String> getVariableBase(BaseSetting setting, String settingCsvPath) {
         try (BufferedReader br = new BufferedReader(new FileReader(settingCsvPath))) {
             String line;
             // skip first line
             br.readLine();
             while ((line = br.readLine()) != null) {
                 String[] values = line.split(DELIMITER);
-                if (setting.name().equals(values[0])) {
+                if (setting.getName().equals(values[0])) {
                     return Optional.of(values[1]);
                 }
             }

@@ -6,6 +6,7 @@ public enum ElementType {
     * Those names are also config file names, so please be careful when you editing it
     * */
     SETTINGS,
+    INTERNAL_SETTINGS,
     SERVICE_COMMANDS,
     UPDATE_DAP_FOR_TEST_COMMANDS,
     LINKS,
