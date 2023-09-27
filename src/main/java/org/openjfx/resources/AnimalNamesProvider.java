@@ -2,10 +2,17 @@ package org.openjfx.resources;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Random;
 
-public class AnimalsProvider {
+public class AnimalNamesProvider {
 
-    private AnimalsProvider() {}
+    private AnimalNamesProvider() {}
+
+    public static String getRandomAnimal() {
+        List<String> animals = AnimalNamesProvider.ALL;
+        Random random = new Random();
+        return animals.get(random.nextInt(animals.size()));
+    }
 
     /*
     * It's really hard to load elements from directory in JAR so here is the output of parser app

@@ -6,7 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import org.openjfx.service.ImageProvider;
+import org.openjfx.service.AnimalService;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -18,7 +18,7 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         stage.setTitle("Buenos DIAS");
-        Image animalImage = ImageProvider.getRandomAnimal();
+        Image animalImage = AnimalService.getInstance().getCurrentAnimalImage();
         stage.getIcons().add(animalImage);
         scene = new Scene(loadFXML("primary"));
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());

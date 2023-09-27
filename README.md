@@ -40,9 +40,8 @@ If you want to build app to JAR you need:
 1. Choose maven on the right side of Intellij
 2. Choose Lifecycle directory
 3. Double click clean
-4. Double click compile
-5. Double click install
-6. Your jar app will be visible in directory /target
+4. Double click install
+5. Your jar app will be visible in directory /target
 ```
 
 ### How to run from bash console

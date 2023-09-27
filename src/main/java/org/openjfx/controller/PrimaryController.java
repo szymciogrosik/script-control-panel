@@ -21,7 +21,7 @@ import javafx.util.Duration;
 import org.openjfx.dto.ElementType;
 import org.openjfx.dto.LoadedElement;
 import org.openjfx.dto.ScriptType;
-import org.openjfx.service.ImageProvider;
+import org.openjfx.service.AnimalService;
 import org.openjfx.service.LoadFromCsvService;
 import org.openjfx.service.GitBashService;
 import org.openjfx.service.PowerShellService;
@@ -29,6 +29,7 @@ import org.openjfx.service.PowerShellService;
 public class PrimaryController implements Initializable {
 
     private static final int SPACING_BETWEEN_BUTTONS = 5;
+    private static final int SIZE_OF_AUTHOR_IMAGE_IN_PIXELS = 50;
 
     private static int numberOfAuthorClicks = 0;
 
@@ -62,13 +63,13 @@ public class PrimaryController implements Initializable {
     private void addAuthorNote(String authorName) {
         VBox section = new VBox();
         section.setAlignment(Pos.CENTER);
-        Image image = ImageProvider.get("/shiba.png");
-        ImageView imageView = new ImageView(image);
-        imageView.setFitHeight(40);
-        imageView.setFitWidth(40);
+        ImageView imageView = new ImageView(AnimalService.getInstance().getCurrentAnimalImage());
+        imageView.setFitHeight(SIZE_OF_AUTHOR_IMAGE_IN_PIXELS);
+        imageView.setFitWidth(SIZE_OF_AUTHOR_IMAGE_IN_PIXELS);
         Tooltip.install(imageView, createTooltip(authorName));
         imageView.setOnMouseClicked(event -> {
-            imageView.setImage(ImageProvider.getRandomAnimal());
+            AnimalService.getInstance().drawNewRandomAnimal();
+            imageView.setImage(AnimalService.getInstance().getCurrentAnimalImage());
             numberOfAuthorClicks++;
         });
         Group root = new Group(imageView);

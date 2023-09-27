@@ -13,4 +13,6 @@ module hellofx {
     opens org.openjfx.dto to javafx.fxml;
     exports org.openjfx.helpers;
     opens org.openjfx.helpers to javafx.fxml;
+    exports org.openjfx.resources;
+    opens org.openjfx.resources to javafx.fxml;
 }
