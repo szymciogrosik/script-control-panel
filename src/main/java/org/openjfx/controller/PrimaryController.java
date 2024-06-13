@@ -29,6 +29,8 @@ import org.openjfx.service.GitBashService;
 import org.openjfx.service.PowerShellService;
 import org.openjfx.service.SettingsService;
 
+import static javafx.stage.Modality.APPLICATION_MODAL;
+
 public class PrimaryController implements Initializable {
 
     private static final int SPACING_BETWEEN_BUTTONS = 5;
@@ -50,6 +52,11 @@ public class PrimaryController implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        this.loadContent();
+    }
+
+    private void loadContent() {
+        primaryPage.getChildren().clear();
         setMaxHeight();
 
         Map<String, Map<String, Boolean>> visibilitySettings = SettingsService.loadVisibilitySettings();
@@ -121,11 +128,10 @@ public class PrimaryController implements Initializable {
             List<LoadedElement> loadedElements, ElementType type,
             Map<String, Map<String, Boolean>> visibilitySettings
     ) {
-        Set<AbstractMap.SimpleEntry<Integer, String>> uniqueSectionsSet = loadedElements.stream()
-                                                                                        .map(elem -> new AbstractMap.SimpleEntry <>(
-                                                                                                elem.getSectionDisplayOrder(), elem.getSectionName()
-                                                                                        ))
-                                                                                        .collect(Collectors.toSet());
+        Set<AbstractMap.SimpleEntry<Integer, String>> uniqueSectionsSet =
+                loadedElements.stream()
+                              .map(elem -> new AbstractMap.SimpleEntry<>(elem.getSectionDisplayOrder(), elem.getSectionName()))
+                              .collect(Collectors.toSet());
 
         List<AbstractMap.SimpleEntry<Integer, String>> uniqueSections = new ArrayList<>(uniqueSectionsSet);
         uniqueSections.sort(Map.Entry.comparingByKey());
@@ -145,6 +151,9 @@ public class PrimaryController implements Initializable {
                                                                 .sorted(Comparator.comparing(LoadedElement::getCommandOrder))
                                                                 .collect(Collectors.toList());
             for (LoadedElement loadedElement : sectionElements) {
+                if (!isElementVisible(loadedElement, visibilitySettings)) {
+                    continue;
+                }
                 rows.getChildren().add(createButton(
                         loadedElement.getButtonName(), loadedElement.getCommand(), loadedElement.isPopupInputDisplayed(),
                         loadedElement.getPopupInputMessage(), loadedElement.getDescription(), type));
@@ -263,6 +272,7 @@ public class PrimaryController implements Initializable {
     @FXML
     private void handleChangeVisibleElements() {
         Stage settingsStage = new Stage();
+        settingsStage.initModality(APPLICATION_MODAL);
         VBox settingsRoot = new VBox(10);
 
         // Create a scroll pane similar to the main window
@@ -295,7 +305,11 @@ public class PrimaryController implements Initializable {
         Scene scene = new Scene(settingsRoot, 400, 600); // Adjust size as necessary
         settingsStage.setTitle("Settings - Change Visible Elements");
         settingsStage.setScene(scene);
-        settingsStage.show();
+
+        settingsStage.setOnHidden(event -> {
+            loadContent();  // Call to refresh the main view
+        });
+        settingsStage.showAndWait();
     }
 
     private List<LoadedElement> loadAllElements() {
