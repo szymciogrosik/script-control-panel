@@ -307,9 +307,15 @@ public class PrimaryController implements Initializable {
         settingsStage.setScene(scene);
 
         settingsStage.setOnHidden(event -> {
-            loadContent();  // Call to refresh the main view
+            loadContent();
+            resizeMainWindow();
         });
         settingsStage.showAndWait();
+    }
+
+    private void resizeMainWindow() {
+        Stage mainStage = (Stage) primaryPage.getScene().getWindow();
+        mainStage.sizeToScene();
     }
 
     private List<LoadedElement> loadAllElements() {
