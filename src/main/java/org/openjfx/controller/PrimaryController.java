@@ -275,35 +275,36 @@ public class PrimaryController implements Initializable {
         settingsStage.initModality(APPLICATION_MODAL);
         VBox settingsRoot = new VBox(10);
 
-        // Create a scroll pane similar to the main window
         ScrollPane scrollPane = new ScrollPane();
-        VBox contentBox = new VBox(10); // This will hold all the content
+        VBox contentBox = new VBox(10);
 
         List<LoadedElement> allElements = loadAllElements();
         Map<String, Map<String, Boolean>> visibilitySettings = SettingsService.loadVisibilitySettings();
+
         allElements.stream()
-                   .collect(Collectors.groupingBy(LoadedElement::getSectionName))
+                   .collect(Collectors.groupingBy(LoadedElement::getSectionName, LinkedHashMap::new, Collectors.toList()))
                    .forEach((sectionName, elements) -> {
                        VBox sectionBox = new VBox(5);
                        sectionBox.getChildren().add(new Label(sectionName));
-                       elements.forEach(element -> {
+                       elements.sort(Comparator.comparingInt(LoadedElement::getSectionDisplayOrder)
+                                               .thenComparingInt(LoadedElement::getCommandOrder));
+                       for (LoadedElement element : elements) {
                            CheckBox checkBox = new CheckBox(element.getButtonName());
                            boolean isChecked = isElementVisible(element, visibilitySettings);
                            checkBox.setSelected(isChecked);
-
                            checkBox.selectedProperty().addListener((obs, oldVal, newVal) -> {
                                updateVisibilitySetting(element, newVal);
                            });
                            sectionBox.getChildren().add(checkBox);
-                       });
+                       }
                        contentBox.getChildren().add(sectionBox);
                    });
 
         scrollPane.setContent(contentBox);
         settingsRoot.getChildren().add(scrollPane);
 
-        Scene scene = new Scene(settingsRoot, 400, 600); // Adjust size as necessary
-        settingsStage.setTitle("Settings - Change Visible Elements");
+        Scene scene = new Scene(settingsRoot, 400, 600);
+        settingsStage.setTitle("Settings - Change visibility of elements");
         settingsStage.setScene(scene);
 
         settingsStage.setOnHidden(event -> {
@@ -312,6 +313,7 @@ public class PrimaryController implements Initializable {
         });
         settingsStage.showAndWait();
     }
+
 
     private void resizeMainWindow() {
         Stage mainStage = (Stage) primaryPage.getScene().getWindow();
@@ -339,24 +341,14 @@ public class PrimaryController implements Initializable {
     }
 
     private boolean isAnyElementInSectionEnabled(ElementType section, Map<String, Map<String, Boolean>> visibilitySettings) {
-        List<LoadedElement> loadedElements = loadElementsFromCsvFile(section);
-        for (LoadedElement element : loadedElements) {
-            if (isElementVisible(element, visibilitySettings)) {
-                return true;
-            }
-        }
-        return false;
+        return loadElementsFromCsvFile(section)
+                .stream().anyMatch(elem -> isElementVisible(elem, visibilitySettings));
     }
 
     private boolean isAnyElementInSubSectionEnabled(ElementType section, String subsection, Map<String, Map<String, Boolean>> visibilitySettings) {
-        List<LoadedElement> loadedElements = loadElementsFromCsvFile(section)
-                .stream().filter(elem -> Objects.equals(elem.getSectionName(), subsection)).collect(Collectors.toList());
-        for (LoadedElement element : loadedElements) {
-            if (isElementVisible(element, visibilitySettings)) {
-                return true;
-            }
-        }
-        return false;
+        return loadElementsFromCsvFile(section)
+                .stream().filter(elem -> Objects.equals(elem.getSectionName(), subsection))
+                .anyMatch(elem -> isElementVisible(elem, visibilitySettings));
     }
 
 }
