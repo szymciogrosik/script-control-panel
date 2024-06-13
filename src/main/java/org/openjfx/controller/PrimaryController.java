@@ -68,7 +68,7 @@ public class PrimaryController implements Initializable {
         VBox section = new VBox();
         Text text = new Text(headerName);
         text.setStyle("-fx-font: normal bold 20 Langdon");
-        text.setFill(Color.ORANGE);
+        text.getStyleClass().add("text");
         section.getChildren().add(text);
         primaryPage.getChildren().add(section);
     }
@@ -129,7 +129,6 @@ public class PrimaryController implements Initializable {
         VBox section = new VBox();
         Text text = new Text(sectionName);
         text.getStyleClass().add("text");
-        text.setFill(Color.ORANGE);
         section.getChildren().add(text);
         return section;
     }
@@ -137,6 +136,7 @@ public class PrimaryController implements Initializable {
     private Button createButton(String buttonName, String command, boolean popupInputDisplayed,
             String popupInputMessage, String description, ElementType type) {
         Button button = new Button(buttonName);
+        button.setStyle("-fx-background-color: #ffa500; -fx-text-fill: #000000; -fx-font-size: 14px;");
         if (ElementType.SERVICE_COMMANDS.equals(type)) {
             addButtonListenerForServiceCommands(button, popupInputDisplayed, popupInputMessage, command, ScriptType.SERVICE_SCRIPT);
         } else if (ElementType.UPDATE_DAP_FOR_TEST_COMMANDS.equals(type)) {

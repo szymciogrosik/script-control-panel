@@ -1,16 +1,71 @@
+.root {
+    -fx-font-family: 'Roboto', sans-serif;
+}
+
 .button {
-    -fx-font: normal bold 12 Langdon;
-    -fx-text-fill: green;
+    -fx-background-color: #ffa500;  /* Orange background */
+    -fx-text-fill: #000000;  /* Black text for maximum contrast */
+    -fx-font-size: 14px;
 }
+
+.button:hover {
+    -fx-background-color: #ffbf00;  /* Lighter orange on hover */
+    -fx-text-fill: #ffffff;  /* White text on hover */
+}
+
 .tooltip {
-    -fx-font: normal bold 12 Langdon;
-    -fx-text-fill: red;
-    -fx-base: #AE3522;
+    -fx-font-size: 12px;
+    -fx-font-family: 'Roboto', sans-serif;
+    -fx-text-fill: #ffffff;
+    -fx-background-color: rgba(0, 0, 0, 0.7);
+    -fx-padding: 8px 15px;
+    -fx-border-radius: 6px;
 }
-.mainStyle > * {
-    -fx-font: normal bold 12 Langdon;
+
+.text {
+    -fx-fill: #ffa500;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
 }
+
 .scroll-pane {
     -fx-padding: 0;
     -fx-border-width: 0;
+    -fx-background-color: #eeeeee;
+}
+
+.mainStyle > * {
+    -fx-font: normal bold 12px 'Roboto', sans-serif;
+}
+
+.VBox {
+    -fx-spacing: 10px;
+    -fx-alignment: center;
+}
+
+.HBox {
+    -fx-spacing: 10px;
+    -fx-alignment: center;
+}
+
+.label {
+    -fx-text-fill: #333333;
+    -fx-font-size: 14px;
+}
+
+.section-header {
+    -fx-background-color: #424242;
+    -fx-padding: 10px;
+    -fx-text-fill: white;
+}
+
+/* Overrides specific for Angular Material look */
+.mainScrollPane {
+    -fx-background-color: #f5f5f5;
+}
+
+.primaryPage {
+    -fx-spacing: 20px;
+    -fx-padding: 20px;
+    -fx-background-color: #f5f5f5; /* Light grey background */
 }
