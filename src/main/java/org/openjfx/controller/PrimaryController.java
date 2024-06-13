@@ -11,11 +11,13 @@ import javafx.fxml.Initializable;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
+import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.openjfx.dto.ElementType;
 import org.openjfx.dto.LoadedElement;
@@ -38,6 +40,9 @@ public class PrimaryController implements Initializable {
     private static final Color BACKGROUND_COLOR = Color.rgb(33,33,33);
 
     @FXML
+    private MenuItem changeVisibleElements;
+
+    @FXML
     private ScrollPane mainScrollPane;
 
     @FXML
@@ -46,16 +51,34 @@ public class PrimaryController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         setMaxHeight();
-        addSectionHeader("Commands to invoke on environment");
-        addElementsToScene(ElementType.SERVICE_COMMANDS);
-        addSectionHeader("Commands to invoke for replacing DapKeys for local tests");
-        addElementsToScene(ElementType.UPDATE_DAP_FOR_TEST_COMMANDS);
-        addSectionHeader("Links");
-        addElementsToScene(ElementType.LINKS);
-        addSectionHeader("Remote apps");
-        addElementsToScene(ElementType.OPEN_REMOTE_APPS);
-        addSectionHeader("SKAT VPN");
-        addElementsToScene(ElementType.SKAT_VPN);
+
+        Map<String, Map<String, Boolean>> visibilitySettings = SettingsService.loadVisibilitySettings();
+
+        if (isAnyElementInSectionEnabled(ElementType.SERVICE_COMMANDS, visibilitySettings)) {
+            addSectionHeader("Commands to invoke on environment");
+            addElementsToScene(ElementType.SERVICE_COMMANDS, visibilitySettings);
+        }
+
+        if (isAnyElementInSectionEnabled(ElementType.UPDATE_DAP_FOR_TEST_COMMANDS, visibilitySettings)) {
+            addSectionHeader("Commands to invoke for replacing DapKeys for local tests");
+            addElementsToScene(ElementType.UPDATE_DAP_FOR_TEST_COMMANDS, visibilitySettings);
+        }
+
+        if (isAnyElementInSectionEnabled(ElementType.LINKS, visibilitySettings)) {
+            addSectionHeader("Links");
+            addElementsToScene(ElementType.LINKS, visibilitySettings);
+        }
+
+        if (isAnyElementInSectionEnabled(ElementType.OPEN_REMOTE_APPS, visibilitySettings)) {
+            addSectionHeader("Remote apps");
+            addElementsToScene(ElementType.OPEN_REMOTE_APPS, visibilitySettings);
+        }
+
+        if (isAnyElementInSectionEnabled(ElementType.SKAT_VPN, visibilitySettings)) {
+            addSectionHeader("SKAT VPN");
+            addElementsToScene(ElementType.SKAT_VPN, visibilitySettings);
+        }
+
         addAuthorNote("Made with love by Szymon Gross");
     }
 
@@ -89,12 +112,15 @@ public class PrimaryController implements Initializable {
         primaryPage.getChildren().add(section);
     }
 
-    private void addElementsToScene(ElementType type) {
+    private void addElementsToScene(ElementType type, Map<String, Map<String, Boolean>> visibilitySettings) {
         List<LoadedElement> loadedElements = loadElementsFromCsvFile(type);
-        addElementsToScene(loadedElements, type);
+        addElementsToScene(loadedElements, type, visibilitySettings);
     }
 
-    private void addElementsToScene(List<LoadedElement> loadedElements, ElementType type) {
+    private void addElementsToScene(
+            List<LoadedElement> loadedElements, ElementType type,
+            Map<String, Map<String, Boolean>> visibilitySettings
+    ) {
         Set<AbstractMap.SimpleEntry<Integer, String>> uniqueSectionsSet = loadedElements.stream()
                                                                                         .map(elem -> new AbstractMap.SimpleEntry <>(
                                                                                                 elem.getSectionDisplayOrder(), elem.getSectionName()
@@ -105,6 +131,9 @@ public class PrimaryController implements Initializable {
         uniqueSections.sort(Map.Entry.comparingByKey());
 
         for (AbstractMap.SimpleEntry<Integer, String> section : uniqueSections) {
+            if (!isAnyElementInSubSectionEnabled(type, section.getValue(), visibilitySettings)) {
+                continue;
+            }
             primaryPage.getChildren().add(createHeaderForSection(section.getValue()));
             primaryPage.setBackground(new Background(new BackgroundFill(BACKGROUND_COLOR, CornerRadii.EMPTY, Insets.EMPTY)));
 
@@ -229,6 +258,85 @@ public class PrimaryController implements Initializable {
         } catch (IOException e) {
             throw new RuntimeException("Cannot load files from configuration file", e);
         }
+    }
+
+    @FXML
+    private void handleChangeVisibleElements() {
+        Stage settingsStage = new Stage();
+        VBox settingsRoot = new VBox(10);
+
+        // Create a scroll pane similar to the main window
+        ScrollPane scrollPane = new ScrollPane();
+        VBox contentBox = new VBox(10); // This will hold all the content
+
+        List<LoadedElement> allElements = loadAllElements();
+        Map<String, Map<String, Boolean>> visibilitySettings = SettingsService.loadVisibilitySettings();
+        allElements.stream()
+                   .collect(Collectors.groupingBy(LoadedElement::getSectionName))
+                   .forEach((sectionName, elements) -> {
+                       VBox sectionBox = new VBox(5);
+                       sectionBox.getChildren().add(new Label(sectionName));
+                       elements.forEach(element -> {
+                           CheckBox checkBox = new CheckBox(element.getButtonName());
+                           boolean isChecked = isElementVisible(element, visibilitySettings);
+                           checkBox.setSelected(isChecked);
+
+                           checkBox.selectedProperty().addListener((obs, oldVal, newVal) -> {
+                               updateVisibilitySetting(element, newVal);
+                           });
+                           sectionBox.getChildren().add(checkBox);
+                       });
+                       contentBox.getChildren().add(sectionBox);
+                   });
+
+        scrollPane.setContent(contentBox);
+        settingsRoot.getChildren().add(scrollPane);
+
+        Scene scene = new Scene(settingsRoot, 400, 600); // Adjust size as necessary
+        settingsStage.setTitle("Settings - Change Visible Elements");
+        settingsStage.setScene(scene);
+        settingsStage.show();
+    }
+
+    private List<LoadedElement> loadAllElements() {
+        List<LoadedElement> allElements = new ArrayList<>();
+        allElements.addAll(loadElementsFromCsvFile(ElementType.SERVICE_COMMANDS));
+        allElements.addAll(loadElementsFromCsvFile(ElementType.UPDATE_DAP_FOR_TEST_COMMANDS));
+        allElements.addAll(loadElementsFromCsvFile(ElementType.LINKS));
+        allElements.addAll(loadElementsFromCsvFile(ElementType.OPEN_REMOTE_APPS));
+        allElements.addAll(loadElementsFromCsvFile(ElementType.SKAT_VPN));
+        return allElements;
+    }
+
+    private void updateVisibilitySetting(LoadedElement element, boolean newVal) {
+        SettingsService.updateVisibilitySetting(element.getSectionName(), element.getButtonName(), newVal);
+    }
+
+    private boolean isElementVisible(LoadedElement element, Map<String, Map<String, Boolean>> visibilitySettings) {
+        return visibilitySettings
+                .getOrDefault(element.getSectionName(), new HashMap<>())
+                .getOrDefault(element.getButtonName(), true);
+    }
+
+    private boolean isAnyElementInSectionEnabled(ElementType section, Map<String, Map<String, Boolean>> visibilitySettings) {
+        List<LoadedElement> loadedElements = loadElementsFromCsvFile(section);
+        for (LoadedElement element : loadedElements) {
+            if (isElementVisible(element, visibilitySettings)) {
+                return true;
+            }
+        }
+        return false;
+    }
+
+    private boolean isAnyElementInSubSectionEnabled(ElementType section, String subsection, Map<String, Map<String, Boolean>> visibilitySettings) {
+        List<LoadedElement> loadedElements = loadElementsFromCsvFile(section)
+                .stream().filter(elem -> Objects.equals(elem.getSectionName(), subsection)).collect(Collectors.toList());
+        for (LoadedElement element : loadedElements) {
+            if (isElementVisible(element, visibilitySettings)) {
+                return true;
+            }
+        }
+        return false;
     }
 
 }
