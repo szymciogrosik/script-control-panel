@@ -239,7 +239,8 @@ public class PrimaryController implements Initializable {
         dialog.setHeaderText(null);
         dialog.setGraphic(null);
         dialog.setContentText(popupInputMessage);
-
+        Stage dialogStage = (Stage) dialog.getDialogPane().getScene().getWindow();
+        dialogStage.getIcons().add(AnimalService.getInstance().getRandomAnimalImage()); // Update the path accordingly
         return dialog.showAndWait();
     }
 
