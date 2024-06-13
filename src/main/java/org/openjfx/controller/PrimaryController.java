@@ -12,14 +12,12 @@ import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.control.*;
-import javafx.scene.image.Image;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import org.openjfx.dto.ElementType;
-import org.openjfx.dto.InternalSetting;
 import org.openjfx.dto.LoadedElement;
 import org.openjfx.dto.ScriptType;
 import org.openjfx.dto.Setting;
@@ -34,7 +32,10 @@ public class PrimaryController implements Initializable {
     private static final int SPACING_BETWEEN_BUTTONS = 5;
     private static final int SIZE_OF_AUTHOR_IMAGE_IN_PIXELS = 50;
 
-    private static int numberOfAuthorClicks = 0;
+    private static final String BUTTON_STYLES = "-fx-background-color: #d98c00; -fx-text-fill: #000000; -fx-font-size: 13px;";
+    private static final String BUTTON_SELECTED_STYLES = "-fx-background-color: #ffbf00; -fx-text-fill: #000000; -fx-font-size: 13px;";
+    private static final String TOOLTIP_STYLES = "-fx-text-fill: red;";
+    private static final Color BACKGROUND_COLOR = Color.rgb(33,33,33);
 
     @FXML
     private ScrollPane mainScrollPane;
@@ -82,7 +83,6 @@ public class PrimaryController implements Initializable {
         imageView.setOnMouseClicked(event -> {
             AnimalService.getInstance().drawNewRandomAnimal();
             imageView.setImage(AnimalService.getInstance().getCurrentAnimalImage());
-            numberOfAuthorClicks++;
         });
         Group root = new Group(imageView);
         section.getChildren().add(root);
@@ -106,7 +106,7 @@ public class PrimaryController implements Initializable {
 
         for (AbstractMap.SimpleEntry<Integer, String> section : uniqueSections) {
             primaryPage.getChildren().add(createHeaderForSection(section.getValue()));
-            primaryPage.setBackground(new Background(new BackgroundFill(Color.rgb(33,33,33), CornerRadii.EMPTY, Insets.EMPTY)));
+            primaryPage.setBackground(new Background(new BackgroundFill(BACKGROUND_COLOR, CornerRadii.EMPTY, Insets.EMPTY)));
 
             HBox rows = new HBox();
             rows.setSpacing(SPACING_BETWEEN_BUTTONS);
@@ -135,7 +135,9 @@ public class PrimaryController implements Initializable {
     private Button createButton(String buttonName, String command, boolean popupInputDisplayed,
             String popupInputMessage, String description, ElementType type) {
         Button button = new Button(buttonName);
-        button.setStyle("-fx-background-color: #d98c00; -fx-text-fill: #000000; -fx-font-size: 13px;");
+        button.setStyle(BUTTON_STYLES);
+        button.setOnMouseEntered(e -> button.setStyle(BUTTON_SELECTED_STYLES));
+        button.setOnMouseExited(e -> button.setStyle(BUTTON_STYLES));
         if (ElementType.SERVICE_COMMANDS.equals(type)) {
             addButtonListenerForServiceCommands(button, popupInputDisplayed, popupInputMessage, command, ScriptType.SERVICE_SCRIPT);
         } else if (ElementType.UPDATE_DAP_FOR_TEST_COMMANDS.equals(type)) {
@@ -214,7 +216,7 @@ public class PrimaryController implements Initializable {
 
     private Tooltip createTooltip(String tooltipText) {
         Tooltip tt = new Tooltip();
-        tt.setStyle("-fx-text-fill: red;");
+        tt.setStyle(TOOLTIP_STYLES);
         tt.setShowDelay(Duration.ONE);
         tt.setShowDuration(Duration.INDEFINITE);
         tt.setText(tooltipText);
