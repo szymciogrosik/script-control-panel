@@ -10,3 +10,7 @@
 .mainStyle > * {
     -fx-font: normal bold 12 Langdon;
 }
+.scroll-pane {
+    -fx-padding: 0;
+    -fx-border-width: 0;
+}

@@ -19,12 +19,15 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.util.Duration;
 import org.openjfx.dto.ElementType;
+import org.openjfx.dto.InternalSetting;
 import org.openjfx.dto.LoadedElement;
 import org.openjfx.dto.ScriptType;
+import org.openjfx.dto.Setting;
 import org.openjfx.service.AnimalService;
 import org.openjfx.service.LoadFromCsvService;
 import org.openjfx.service.GitBashService;
 import org.openjfx.service.PowerShellService;
+import org.openjfx.service.SettingsService;
 
 public class PrimaryController implements Initializable {
 
@@ -34,10 +37,14 @@ public class PrimaryController implements Initializable {
     private static int numberOfAuthorClicks = 0;
 
     @FXML
+    private ScrollPane mainScrollPane;
+
+    @FXML
     public VBox primaryPage;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        setMaxHeight();
         addSectionHeader("Commands to invoke on environment");
         addElementsToScene(ElementType.SERVICE_COMMANDS);
         addSectionHeader("Commands to invoke for replacing DapKeys for local tests");
@@ -49,6 +56,12 @@ public class PrimaryController implements Initializable {
         addSectionHeader("SKAT VPN");
         addElementsToScene(ElementType.SKAT_VPN);
         addAuthorNote("Made with love by Szymon Gross");
+    }
+
+    private void setMaxHeight() {
+        String maxWindowHeightString = SettingsService.getVariable(Setting.MAX_WINDOW_HEIGHT);
+        int maxWindowHeight = Integer.parseInt(maxWindowHeightString);
+        mainScrollPane.setMaxHeight(maxWindowHeight);
     }
 
     private void addSectionHeader(String headerName) {

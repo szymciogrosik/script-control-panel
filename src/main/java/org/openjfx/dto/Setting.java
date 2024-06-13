@@ -7,7 +7,8 @@ public enum Setting implements BaseSetting{
     SERVICE_SCRIPT_PATH,
     UPDATE_TEST_DAP_SCRIPT_PATH,
     OPEN_REMOTE_APP_SCRIPT_PATH,
-    SKAT_VPN_PATH;
+    SKAT_VPN_PATH,
+    MAX_WINDOW_HEIGHT;
 
     @Override
     public String getName() {
