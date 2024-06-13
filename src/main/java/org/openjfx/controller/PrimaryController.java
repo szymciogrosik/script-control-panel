@@ -277,6 +277,7 @@ public class PrimaryController implements Initializable {
 
         ScrollPane scrollPane = new ScrollPane();
         VBox contentBox = new VBox(10);
+        contentBox.setPadding(new Insets(10));
 
         List<LoadedElement> allElements = loadAllElements();
         Map<String, Map<String, Boolean>> visibilitySettings = SettingsService.loadVisibilitySettings();
