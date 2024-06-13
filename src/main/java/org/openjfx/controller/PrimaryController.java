@@ -67,8 +67,7 @@ public class PrimaryController implements Initializable {
     private void addSectionHeader(String headerName) {
         VBox section = new VBox();
         Text text = new Text(headerName);
-        text.setStyle("-fx-font: normal bold 20 Langdon");
-        text.getStyleClass().add("text");
+        text.getStyleClass().add("text-main-header");
         section.getChildren().add(text);
         primaryPage.getChildren().add(section);
     }
@@ -128,7 +127,7 @@ public class PrimaryController implements Initializable {
     private VBox createHeaderForSection(String sectionName) {
         VBox section = new VBox();
         Text text = new Text(sectionName);
-        text.getStyleClass().add("text");
+        text.getStyleClass().add("text-header");
         section.getChildren().add(text);
         return section;
     }
@@ -136,7 +135,7 @@ public class PrimaryController implements Initializable {
     private Button createButton(String buttonName, String command, boolean popupInputDisplayed,
             String popupInputMessage, String description, ElementType type) {
         Button button = new Button(buttonName);
-        button.setStyle("-fx-background-color: #ffa500; -fx-text-fill: #000000; -fx-font-size: 14px;");
+        button.setStyle("-fx-background-color: #d98c00; -fx-text-fill: #000000; -fx-font-size: 13px;");
         if (ElementType.SERVICE_COMMANDS.equals(type)) {
             addButtonListenerForServiceCommands(button, popupInputDisplayed, popupInputMessage, command, ScriptType.SERVICE_SCRIPT);
         } else if (ElementType.UPDATE_DAP_FOR_TEST_COMMANDS.equals(type)) {
@@ -215,6 +214,7 @@ public class PrimaryController implements Initializable {
 
     private Tooltip createTooltip(String tooltipText) {
         Tooltip tt = new Tooltip();
+        tt.setStyle("-fx-text-fill: red;");
         tt.setShowDelay(Duration.ONE);
         tt.setShowDuration(Duration.INDEFINITE);
         tt.setText(tooltipText);

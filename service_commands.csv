@@ -2,19 +2,20 @@
 1;Managing of environment;1;Start;./service.sh start env;FALSE;;Run the local environment
 1;Managing of environment;2;Stop;./service.sh stop env;FALSE;;Shut down the environment
 1;Managing of environment;3;Restart env;./service.sh restart env;FALSE;;Restart your local environment
-1;Managing of environment;4;Restart dias-weblogic;./service.sh restart dias-weblogic;FALSE;;Restart your dias-weblogic container. It will be usefull when your evironment is really slow.
-1;Managing of environment;5;Reset;./service.sh reset env;FALSE;;Reset your local environment (remove the environment with volumes) and start enviroment with rebuilding
+1;Managing of environment;4;Restart dias-weblogic;./service.sh restart dias-weblogic;FALSE;;Restart your dias-weblogic container. It will be useful when your environment is really slow.
+1;Managing of environment;5;Reset;./service.sh reset env;FALSE;;Reset your local environment (remove the environment with volumes) and start environment with rebuilding
 1;Managing of environment;6;Remove;./service.sh deep-clean;FALSE;;Removing the environment (and volumes)
-2;Deploying to your dias local environment;1;Apps all;./service.sh deploy hotfix all;FALSE;;Deploy hotfix all (copy your current builded images from your local DIAS - backend and frontend - and deploy it)
-2;Deploying to your dias local environment;2;Apps backend;./service.sh deploy hotfix backend;FALSE;;Deploy hotfix backend (copy your current builded images from your local DIAS - only backend - and deploy it)
-2;Deploying to your dias local environment;3;Apps frontend;./service.sh deploy hotfix frontend;FALSE;;Deploy hotfix frontend (copy your current builded images from your local DIAS - only frontend - and deploy it)
-2;Deploying to your dias local environment;4;Local;./service.sh deploy local;FALSE;;Deploy hotfix (copy your current builded images from your local DIAS and deploy it) and after that deploy your local forms
-2;Deploying to your dias local environment;5;Content;./service.sh deploy content;FALSE;;Deploy skatContent
-2;Deploying to your dias local environment;6;Helpers;./service.sh deploy helpers;FALSE;;Deploy standard default libraries
-2;Deploying to your dias local environment;7;Mocks;./service.sh deploy mocks;FALSE;;Deploy mocks
-2;Deploying to your dias local environment;8;Forms;./service.sh deploy forms hotfix;FALSE;;Deploy forms from your local environment
-2;Deploying to your dias local environment;9;App from Nexus;./service.sh deploy snapshots;FALSE;;Deploy latest snapshots from Nexus
-2;Deploying to your dias local environment;10;Forms from Nexus;./service.sh deploy forms snapshots;FALSE;;Deploy latest forms from Nexus
+2;Deploying to your dias local environment;1;Apps all;./service.sh deploy hotfix all;FALSE;;Deploy hotfix all (copy your current built images from your local DIAS - backend and frontend - and deploy it)
+2;Deploying to your dias local environment;2;Apps backend;./service.sh deploy hotfix backend;FALSE;;Deploy hotfix backend (copy your current built images from your local DIAS - only backend - and deploy it)
+2;Deploying to your dias local environment;3;Apps app-backend;./service.sh deploy hotfix app-backend;FALSE;;Deploy hotfix app-backend (copy your current built images from your local DIAS - only app-backend - and deploy it)
+2;Deploying to your dias local environment;4;Apps frontend;./service.sh deploy hotfix frontend;FALSE;;Deploy hotfix frontend (copy your current built images from your local DIAS - only frontend - and deploy it)
+2;Deploying to your dias local environment;5;Local;./service.sh deploy local;FALSE;;Deploy hotfix (copy your current built images from your local DIAS and deploy it) and after that deploy your local forms
+2;Deploying to your dias local environment;6;Content;./service.sh deploy content;FALSE;;Deploy skatContent
+2;Deploying to your dias local environment;7;Helpers;./service.sh deploy helpers;FALSE;;Deploy standard default libraries
+2;Deploying to your dias local environment;8;Mocks;./service.sh deploy mocks;FALSE;;Deploy mocks
+2;Deploying to your dias local environment;9;Forms;./service.sh deploy forms hotfix;FALSE;;Deploy forms from your local environment
+2;Deploying to your dias local environment;10;App from Nexus;./service.sh deploy snapshots;FALSE;;Deploy latest snapshots from Nexus
+2;Deploying to your dias local environment;11;Forms from Nexus;./service.sh deploy forms snapshots;FALSE;;Deploy latest forms from Nexus
 3;Managing database restore points;1;Create default;./service.sh backup-db create;FALSE;;Create default restore point
 3;Managing database restore points;2;Load default;./service.sh backup-db load;FALSE;;Load default restore point
 3;Managing database restore points;3;Drop default;./service.sh backup-db drop;FALSE;;Drop default restore point
@@ -24,10 +25,10 @@
 3;Managing database restore points;7;Drop;./service.sh backup-db drop;TRUE;Restore point name:;Provide name and drop restore point
 3;Managing database restore points;8;Override;./service.sh backup-db override;TRUE;Restore point name:;Provide name and override restore point
 3;Managing database restore points;9;Print all;./service.sh backup-db print;FALSE;;Print all restore points
-4;Reseting;1;Db with forms from local;./service.sh reset db hotfix;FALSE;;After reset deploy forms from your local environmen
-4;Reseting;2;Db with forms from snapshots;./service.sh reset db snapshots;FALSE;;After reset deploy forms from nexus
-4;Reseting;3;Db without forms;./service.sh reset db clean;FALSE;;Clean reset
-4;Reseting;4;Mocks;./service.sh reset dias-mocks;FALSE;;Remove dias-mocks container then build and up it again
+4;Resetting;1;Db with forms from local;./service.sh reset db hotfix;FALSE;;After reset deploy forms from your local environment
+4;Resetting;2;Db with forms from snapshots;./service.sh reset db snapshots;FALSE;;After reset deploy forms from nexus
+4;Resetting;3;Db without forms;./service.sh reset db clean;FALSE;;Clean reset
+4;Resetting;4;Mocks;./service.sh reset dias-mocks;FALSE;;Remove dias-mocks container then build and up it again
 5;Following logs;3;All;./service.sh tailf all;FALSE;;Showing your logs (last 150 lines) and follow on current logs from dias-weblogic
 5;Following logs;4;Weblogic;./service.sh tailf dias-weblogic;FALSE;;Showing your logs (last 150 lines) and follow on current logs from dias-weblogic
 5;Following logs;5;Oracle;./service.sh tailf dias-oracle;FALSE;;Showing your logs (last 150 lines) and follow on current logs from dias-oracle
