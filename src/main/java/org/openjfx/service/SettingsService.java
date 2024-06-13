@@ -64,7 +64,7 @@ public class SettingsService {
         if (presentMyOwnSettings) {
             return SettingsService.getVariable(animalConfig);
         } else {
-            String currentAnimal = AnimalNamesProvider.getRandomAnimal();
+            String currentAnimal = AnimalNamesProvider.getRandomAnimalName();
             createMyOwnInternalSettingsFile(currentAnimal);
             return currentAnimal;
         }

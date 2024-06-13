@@ -8,7 +8,7 @@ public class AnimalNamesProvider {
 
     private AnimalNamesProvider() {}
 
-    public static String getRandomAnimal() {
+    public static String getRandomAnimalName() {
         List<String> animals = AnimalNamesProvider.ALL;
         Random random = new Random();
         return animals.get(random.nextInt(animals.size()));

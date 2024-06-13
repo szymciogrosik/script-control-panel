@@ -30,11 +30,15 @@ public class AnimalService {
     }
 
     public Image getCurrentAnimalImage() {
-        return ImageLoader.getImage(getAnimalPath());
+        return ImageLoader.getImage(getAnimalPath(getCurrentAnimalName()));
+    }
+
+    public Image getRandomAnimalImage() {
+        return ImageLoader.getImage(getAnimalPath(AnimalNamesProvider.getRandomAnimalName()));
     }
 
     public void drawNewRandomAnimal() {
-        currentAnimal = AnimalNamesProvider.getRandomAnimal();
+        currentAnimal = AnimalNamesProvider.getRandomAnimalName();
         replaceCurrentAnimal(currentAnimal);
     }
 
@@ -42,8 +46,8 @@ public class AnimalService {
         SettingsService.replaceConfigVariable(InternalSetting.IMAGE_NAME, newAnimal);
     }
 
-    private String getAnimalPath() {
-        return ANIMAL_RESOURCE_PATH + currentAnimal;
+    private String getAnimalPath(String animal) {
+        return ANIMAL_RESOURCE_PATH + animal;
     }
 
     public static Image getShiba() {

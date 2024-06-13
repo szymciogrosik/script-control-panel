@@ -273,6 +273,7 @@ public class PrimaryController implements Initializable {
     private void handleChangeVisibleElements() {
         Stage settingsStage = new Stage();
         settingsStage.initModality(APPLICATION_MODAL);
+        settingsStage.getIcons().add(AnimalService.getInstance().getRandomAnimalImage());
         VBox settingsRoot = new VBox(10);
 
         ScrollPane scrollPane = new ScrollPane();
