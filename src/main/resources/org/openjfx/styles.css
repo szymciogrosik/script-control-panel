@@ -12,13 +12,13 @@
 }
 
 .text-header {
-    -fx-fill: #ffa500;
+    -fx-fill: #0073e6;
     -fx-font-size: 13px;
     -fx-font-weight: bold;
 }
 
 .text-main-header {
-    -fx-fill: #0073e6;
+    -fx-fill: #06a650;
     -fx-font-size: 18px;
     -fx-font-weight: bold;
 }
