@@ -98,7 +98,11 @@ public class PrimaryController implements Initializable {
         mainScrollPane.setFitToHeight(true);
         mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
-        mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
+        String maxWindowWidthString = SettingsService.getVariable(Setting.MAX_WINDOW_WIDTH);
+        int maxWindowWidth = Integer.parseInt(maxWindowWidthString);
+        mainScrollPane.setMaxWidth(maxWindowWidth);
+        mainScrollPane.setFitToWidth(true);
+        mainScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
     }
 
     private void addSectionHeader(String headerName) {

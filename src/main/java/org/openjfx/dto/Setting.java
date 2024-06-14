@@ -8,7 +8,8 @@ public enum Setting implements BaseSetting{
     UPDATE_TEST_DAP_SCRIPT_PATH,
     OPEN_REMOTE_APP_SCRIPT_PATH,
     SKAT_VPN_PATH,
-    MAX_WINDOW_HEIGHT;
+    MAX_WINDOW_HEIGHT,
+    MAX_WINDOW_WIDTH;
 
     @Override
     public String getName() {
