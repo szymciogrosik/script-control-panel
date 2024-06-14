@@ -59,7 +59,7 @@ public class PrimaryController implements Initializable {
 
     private void loadContent() {
         primaryPage.getChildren().clear();
-        setMaxHeight();
+        setupScrollPane();
 
         Map<String, Map<String, Boolean>> visibilitySettings = SettingsService.loadVisibilitySettings();
 
@@ -91,10 +91,14 @@ public class PrimaryController implements Initializable {
         addAuthorNote("Made with love by Szymon Gross");
     }
 
-    private void setMaxHeight() {
+    private void setupScrollPane() {
         String maxWindowHeightString = SettingsService.getVariable(Setting.MAX_WINDOW_HEIGHT);
         int maxWindowHeight = Integer.parseInt(maxWindowHeightString);
         mainScrollPane.setMaxHeight(maxWindowHeight);
+        mainScrollPane.setFitToHeight(true);
+        mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+
+        mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.NEVER);
     }
 
     private void addSectionHeader(String headerName) {
@@ -176,6 +180,8 @@ public class PrimaryController implements Initializable {
             String popupInputMessage, String description, ElementType type) {
         Button button = new Button(buttonName);
         button.setStyle(BUTTON_STYLES);
+        button.setMinWidth(Region.USE_PREF_SIZE);
+        button.setMaxWidth(Region.USE_PREF_SIZE);
         button.setOnMouseEntered(e -> button.setStyle(BUTTON_SELECTED_STYLES));
         button.setOnMouseExited(e -> button.setStyle(BUTTON_STYLES));
         if (ElementType.SERVICE_COMMANDS.equals(type)) {

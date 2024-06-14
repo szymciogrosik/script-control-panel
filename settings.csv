@@ -4,4 +4,4 @@ SERVICE_SCRIPT_PATH;../../dias-docker
 UPDATE_TEST_DAP_SCRIPT_PATH;../update-content-in-dias-tests
 OPEN_REMOTE_APP_SCRIPT_PATH;../open-remote-apps
 SKAT_VPN_PATH;../../VPN-Cisco-AnyConnect-Docker
-MAX_WINDOW_HEIGHT;1000
+MAX_WINDOW_HEIGHT;910
