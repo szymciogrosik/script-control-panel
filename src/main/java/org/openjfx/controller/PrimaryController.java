@@ -36,8 +36,10 @@ public class PrimaryController implements Initializable {
     private static final int SPACING_BETWEEN_BUTTONS = 5;
     private static final int SIZE_OF_AUTHOR_IMAGE_IN_PIXELS = 50;
 
-    private static final String BUTTON_STYLES = "-fx-background-color: #E39100FF; -fx-text-fill: #000000; -fx-font-size: 13px;";
-    private static final String BUTTON_SELECTED_STYLES = "-fx-background-color: #00b6ae; -fx-text-fill: #000000; -fx-font-size: 13px;";
+    private static final String COMMON_BUTTON_STYLES = "-fx-text-fill: #000000; -fx-font-size: 12px;";
+
+    private static final String BUTTON_STYLES = "-fx-background-color: #E39100FF; " + COMMON_BUTTON_STYLES;
+    private static final String BUTTON_SELECTED_STYLES = "-fx-background-color: #00b6ae; " + COMMON_BUTTON_STYLES;
     private static final String TOOLTIP_STYLES = "-fx-text-fill: red;";
     private static final Color BACKGROUND_COLOR = Color.rgb(33,33,33);
 
