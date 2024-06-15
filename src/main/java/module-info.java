@@ -3,16 +3,16 @@ module hellofx {
     requires javafx.fxml;
     requires java.desktop;
 
-    opens org.openjfx to javafx.fxml;
-    exports org.openjfx;
-    exports org.openjfx.service;
-    opens org.openjfx.service to javafx.fxml;
-    exports org.openjfx.controller;
-    opens org.openjfx.controller to javafx.fxml;
-    exports org.openjfx.dto;
-    opens org.openjfx.dto to javafx.fxml;
-    exports org.openjfx.helpers;
-    opens org.openjfx.helpers to javafx.fxml;
-    exports org.openjfx.resources;
-    opens org.openjfx.resources to javafx.fxml;
+    opens org.codefromheaven to javafx.fxml;
+    exports org.codefromheaven;
+    exports org.codefromheaven.service;
+    opens org.codefromheaven.service to javafx.fxml;
+    exports org.codefromheaven.controller;
+    opens org.codefromheaven.controller to javafx.fxml;
+    exports org.codefromheaven.dto;
+    opens org.codefromheaven.dto to javafx.fxml;
+    exports org.codefromheaven.helpers;
+    opens org.codefromheaven.helpers to javafx.fxml;
+    exports org.codefromheaven.resources;
+    opens org.codefromheaven.resources to javafx.fxml;
 }

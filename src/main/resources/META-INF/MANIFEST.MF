@@ -1,3 +1,2 @@
 Manifest-Version: 1.0
-Main-Class: org.openjfx.App
-
+Main-Class: org.codefromheaven.App
