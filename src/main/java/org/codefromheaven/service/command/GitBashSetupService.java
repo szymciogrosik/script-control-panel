@@ -1,4 +1,4 @@
-package org.codefromheaven.service;
+package org.codefromheaven.service.command;
 
 import org.codefromheaven.dto.GitBashDTO;
 import org.codefromheaven.dto.ScriptType;

@@ -6,7 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
-import org.codefromheaven.service.AnimalService;
+import org.codefromheaven.service.animal.AnimalService;
 
 import java.io.IOException;
 import java.util.Objects;

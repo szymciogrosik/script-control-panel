@@ -1,6 +1,6 @@
 package org.codefromheaven.dto;
 
-import org.codefromheaven.service.SettingsService;
+import org.codefromheaven.service.settings.InternalSettingsService;
 
 public enum Setting implements BaseSetting{
     BASH_PATH,
@@ -18,7 +18,7 @@ public enum Setting implements BaseSetting{
 
     @Override
     public String getValue() {
-        return SettingsService.getVariable(this);
+        return InternalSettingsService.getVariable(this);
     }
 
     @Override

@@ -23,11 +23,12 @@ import org.codefromheaven.dto.LoadedElementDTO;
 import org.codefromheaven.dto.ElementType;
 import org.codefromheaven.dto.ScriptType;
 import org.codefromheaven.dto.Setting;
-import org.codefromheaven.service.AnimalService;
+import org.codefromheaven.service.animal.AnimalService;
 import org.codefromheaven.service.LoadFromCsvService;
-import org.codefromheaven.service.GitBashService;
-import org.codefromheaven.service.PowerShellService;
-import org.codefromheaven.service.SettingsService;
+import org.codefromheaven.service.command.GitBashService;
+import org.codefromheaven.service.command.PowerShellService;
+import org.codefromheaven.service.settings.InternalSettingsService;
+import org.codefromheaven.service.settings.InternalVisibilitySettingsService;
 
 import static javafx.stage.Modality.APPLICATION_MODAL;
 
@@ -61,7 +62,7 @@ public class MainWindowController implements Initializable {
         primaryPage.getChildren().clear();
         setupScrollPane();
 
-        Map<String, Map<String, Boolean>> visibilitySettings = SettingsService.loadVisibilitySettings();
+        Map<String, Map<String, Boolean>> visibilitySettings = InternalVisibilitySettingsService.loadVisibilitySettings();
 
         if (isAnyElementInSectionEnabled(ElementType.SERVICE_COMMANDS, visibilitySettings)) {
             addSectionHeader("Commands to invoke on environment");
@@ -92,13 +93,13 @@ public class MainWindowController implements Initializable {
     }
 
     private void setupScrollPane() {
-        String maxWindowHeightString = SettingsService.getVariable(Setting.MAX_WINDOW_HEIGHT);
+        String maxWindowHeightString = InternalSettingsService.getVariable(Setting.MAX_WINDOW_HEIGHT);
         int maxWindowHeight = Integer.parseInt(maxWindowHeightString);
         mainScrollPane.setMaxHeight(maxWindowHeight);
         mainScrollPane.setFitToHeight(true);
         mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
-        String maxWindowWidthString = SettingsService.getVariable(Setting.MAX_WINDOW_WIDTH);
+        String maxWindowWidthString = InternalSettingsService.getVariable(Setting.MAX_WINDOW_WIDTH);
         int maxWindowWidth = Integer.parseInt(maxWindowWidthString);
         mainScrollPane.setMaxWidth(maxWindowWidth);
         mainScrollPane.setFitToWidth(true);
@@ -294,7 +295,7 @@ public class MainWindowController implements Initializable {
         contentBox.setPadding(new Insets(10));
 
         List<LoadedElementDTO> allElements = loadAllElements();
-        Map<String, Map<String, Boolean>> visibilitySettings = SettingsService.loadVisibilitySettings();
+        Map<String, Map<String, Boolean>> visibilitySettings = InternalVisibilitySettingsService.loadVisibilitySettings();
 
         allElements.stream()
                    .collect(Collectors.groupingBy(LoadedElementDTO::getSectionName, LinkedHashMap::new, Collectors.toList()))
@@ -346,7 +347,7 @@ public class MainWindowController implements Initializable {
     }
 
     private void updateVisibilitySetting(LoadedElementDTO element, boolean newVal) {
-        SettingsService.updateVisibilitySetting(element.getSectionName(), element.getButtonName(), newVal);
+        InternalVisibilitySettingsService.updateVisibilitySetting(element.getSectionName(), element.getButtonName(), newVal);
     }
 
     private boolean isElementVisible(LoadedElementDTO element, Map<String, Map<String, Boolean>> visibilitySettings) {
