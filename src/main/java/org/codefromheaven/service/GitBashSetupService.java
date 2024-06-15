@@ -1,21 +1,23 @@
-package org.codefromheaven.dto;
+package org.codefromheaven.service;
 
-import java.io.*;
+import org.codefromheaven.dto.GitBashDTO;
+import org.codefromheaven.dto.ScriptType;
+import org.codefromheaven.dto.Setting;
 
-public class GitBash implements Runnable {
+import java.io.IOException;
+
+public class GitBashSetupService implements Runnable {
 
     private static final String SEPARATOR = " ; ";
 
-    private final ScriptType scriptType;
-    private final String command;
+    private final GitBashDTO gitBashDTO;
 
-    public GitBash(ScriptType scriptType, String command) {
-        this.scriptType = scriptType;
-        this.command = command;
+    public GitBashSetupService(GitBashDTO gitBashDTO) {
+        this.gitBashDTO = gitBashDTO;
     }
 
     public void run() {
-        runCommand(scriptType, command);
+        runCommand(gitBashDTO.getScriptType(), gitBashDTO.getCommand());
     }
 
     private static void runCommand(ScriptType scriptType, String command) {

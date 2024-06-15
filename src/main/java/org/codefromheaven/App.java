@@ -20,14 +20,10 @@ public class App extends Application {
         stage.setTitle("Buenos DIAS");
         Image animalImage = AnimalService.getInstance().getCurrentAnimalImage();
         stage.getIcons().add(animalImage);
-        scene = new Scene(loadFXML("primary"));
+        scene = new Scene(loadFXML("mainWindow"));
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
         stage.setScene(scene);
         stage.show();
-    }
-
-    public static void setRoot(String fxml) throws IOException {
-        scene.setRoot(loadFXML(fxml));
     }
 
     private static Parent loadFXML(String fxml) throws IOException {

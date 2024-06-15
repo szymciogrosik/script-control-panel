@@ -1,6 +1,6 @@
 package org.codefromheaven.dto;
 
-public class LoadedElement {
+public class LoadedElementDTO {
 
     private final int sectionDisplayOrder;
     private final String sectionName;
@@ -11,7 +11,7 @@ public class LoadedElement {
     private final String popupInputMessage;
     private final String description;
 
-    public LoadedElement(
+    public LoadedElementDTO(
             int sectionDisplayOrder, String sectionName, int commandOrder, String buttonName, String command,
             boolean popupInputDisplayed, String popupInputMessage, String description) {
         this.sectionDisplayOrder = sectionDisplayOrder;

@@ -5,7 +5,7 @@
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.geometry.Insets?>
 
-<VBox xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.codefromheaven.controller.PrimaryController">
+<VBox xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.codefromheaven.controller.MainWindowController">
    <MenuBar>
       <Menu text="Settings">
          <MenuItem fx:id="changeVisibleElements" text="Change visible elements" onAction="#handleChangeVisibleElements"/>

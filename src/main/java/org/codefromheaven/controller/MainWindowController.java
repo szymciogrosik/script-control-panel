@@ -19,7 +19,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import org.codefromheaven.dto.LoadedElement;
+import org.codefromheaven.dto.LoadedElementDTO;
 import org.codefromheaven.dto.ElementType;
 import org.codefromheaven.dto.ScriptType;
 import org.codefromheaven.dto.Setting;
@@ -31,7 +31,7 @@ import org.codefromheaven.service.SettingsService;
 
 import static javafx.stage.Modality.APPLICATION_MODAL;
 
-public class PrimaryController implements Initializable {
+public class MainWindowController implements Initializable {
 
     private static final int SPACING_BETWEEN_BUTTONS = 5;
     private static final int SIZE_OF_AUTHOR_IMAGE_IN_PIXELS = 50;
@@ -130,12 +130,12 @@ public class PrimaryController implements Initializable {
     }
 
     private void addElementsToScene(ElementType type, Map<String, Map<String, Boolean>> visibilitySettings) {
-        List<LoadedElement> loadedElements = loadElementsFromCsvFile(type);
+        List<LoadedElementDTO> loadedElements = loadElementsFromCsvFile(type);
         addElementsToScene(loadedElements, type, visibilitySettings);
     }
 
     private void addElementsToScene(
-            List<LoadedElement> loadedElements, ElementType type,
+            List<LoadedElementDTO> loadedElements, ElementType type,
             Map<String, Map<String, Boolean>> visibilitySettings
     ) {
         Set<AbstractMap.SimpleEntry<Integer, String>> uniqueSectionsSet =
@@ -156,11 +156,11 @@ public class PrimaryController implements Initializable {
             HBox rows = new HBox();
             rows.setSpacing(SPACING_BETWEEN_BUTTONS);
 
-            List<LoadedElement> sectionElements = loadedElements.stream()
-                                                                .filter(elem -> elem.getSectionName().equals(section.getValue()))
-                                                                .sorted(Comparator.comparing(LoadedElement::getCommandOrder))
-                                                                .collect(Collectors.toList());
-            for (LoadedElement loadedElement : sectionElements) {
+            List<LoadedElementDTO> sectionElements = loadedElements.stream()
+                                                                   .filter(elem -> elem.getSectionName().equals(section.getValue()))
+                                                                   .sorted(Comparator.comparing(LoadedElementDTO::getCommandOrder))
+                                                                   .collect(Collectors.toList());
+            for (LoadedElementDTO loadedElement : sectionElements) {
                 if (!isElementVisible(loadedElement, visibilitySettings)) {
                     continue;
                 }
@@ -274,7 +274,7 @@ public class PrimaryController implements Initializable {
         return tt;
     }
 
-    private List<LoadedElement> loadElementsFromCsvFile(ElementType type) {
+    private List<LoadedElementDTO> loadElementsFromCsvFile(ElementType type) {
         try {
             return LoadFromCsvService.load(type);
         } catch (IOException e) {
@@ -293,17 +293,17 @@ public class PrimaryController implements Initializable {
         VBox contentBox = new VBox(10);
         contentBox.setPadding(new Insets(10));
 
-        List<LoadedElement> allElements = loadAllElements();
+        List<LoadedElementDTO> allElements = loadAllElements();
         Map<String, Map<String, Boolean>> visibilitySettings = SettingsService.loadVisibilitySettings();
 
         allElements.stream()
-                   .collect(Collectors.groupingBy(LoadedElement::getSectionName, LinkedHashMap::new, Collectors.toList()))
+                   .collect(Collectors.groupingBy(LoadedElementDTO::getSectionName, LinkedHashMap::new, Collectors.toList()))
                    .forEach((sectionName, elements) -> {
                        VBox sectionBox = new VBox(5);
                        sectionBox.getChildren().add(new Label(sectionName));
-                       elements.sort(Comparator.comparingInt(LoadedElement::getSectionDisplayOrder)
-                                               .thenComparingInt(LoadedElement::getCommandOrder));
-                       for (LoadedElement element : elements) {
+                       elements.sort(Comparator.comparingInt(LoadedElementDTO::getSectionDisplayOrder)
+                                               .thenComparingInt(LoadedElementDTO::getCommandOrder));
+                       for (LoadedElementDTO element : elements) {
                            CheckBox checkBox = new CheckBox(element.getButtonName());
                            boolean isChecked = isElementVisible(element, visibilitySettings);
                            checkBox.setSelected(isChecked);
@@ -335,8 +335,8 @@ public class PrimaryController implements Initializable {
         mainStage.sizeToScene();
     }
 
-    private List<LoadedElement> loadAllElements() {
-        List<LoadedElement> allElements = new ArrayList<>();
+    private List<LoadedElementDTO> loadAllElements() {
+        List<LoadedElementDTO> allElements = new ArrayList<>();
         allElements.addAll(loadElementsFromCsvFile(ElementType.SERVICE_COMMANDS));
         allElements.addAll(loadElementsFromCsvFile(ElementType.UPDATE_DAP_FOR_TEST_COMMANDS));
         allElements.addAll(loadElementsFromCsvFile(ElementType.LINKS));
@@ -345,11 +345,11 @@ public class PrimaryController implements Initializable {
         return allElements;
     }
 
-    private void updateVisibilitySetting(LoadedElement element, boolean newVal) {
+    private void updateVisibilitySetting(LoadedElementDTO element, boolean newVal) {
         SettingsService.updateVisibilitySetting(element.getSectionName(), element.getButtonName(), newVal);
     }
 
-    private boolean isElementVisible(LoadedElement element, Map<String, Map<String, Boolean>> visibilitySettings) {
+    private boolean isElementVisible(LoadedElementDTO element, Map<String, Map<String, Boolean>> visibilitySettings) {
         return visibilitySettings
                 .getOrDefault(element.getSectionName(), new HashMap<>())
                 .getOrDefault(element.getButtonName(), true);
