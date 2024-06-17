@@ -17,8 +17,8 @@ public enum InternalSetting implements BaseSetting {
     }
 
     @Override
-    public ElementType getElementType() {
-        return ElementType.INTERNAL_SETTINGS;
+    public FileType getElementType() {
+        return FileType.INTERNAL_SETTINGS;
     }
 
 }

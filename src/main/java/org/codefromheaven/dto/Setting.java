@@ -22,8 +22,8 @@ public enum Setting implements BaseSetting{
     }
 
     @Override
-    public ElementType getElementType() {
-        return ElementType.SETTINGS;
+    public FileType getElementType() {
+        return FileType.SETTINGS;
     }
 
 }

@@ -1,28 +1,36 @@
 package org.codefromheaven.dto;
 
+import java.util.Arrays;
+import java.util.List;
+import java.util.stream.Collectors;
+
 public enum ElementType {
 
     /*
-    * Those names are also config file names, so please be careful when you editing it
-    * */
-    SETTINGS,
-    INTERNAL_SETTINGS,
-    INTERNAL_VISIBILITY_SETTINGS,
-    SERVICE_COMMANDS,
-    UPDATE_DAP_FOR_TEST_COMMANDS,
-    LINKS,
-    OPEN_REMOTE_APPS,
-    SKAT_VPN;
+     * Those paramNames are also parameters names in config files, so please be careful when you're editing them
+     * */
+    BASH("BASH"),
+    POWERSHELL("POWERSHELL"),
+    LINK("LINK");
 
-    private static final String MY_OWN_PREFIX = "my_own_";
-    private static final String CONFIG_FILE_EXTENSION = ".csv";
+    private final String paramName;
 
-    public String getDefaultFileName() {
-        return name().toLowerCase() + CONFIG_FILE_EXTENSION;
+    ElementType(String paramName) {
+        this.paramName = paramName;
     }
 
-    public String getPersonalizedConfigName() {
-        return MY_OWN_PREFIX + getDefaultFileName();
+    public String getParamName() {
+        return paramName;
+    }
+
+    public static ElementType getEnumType(String paramName) {
+        List<ElementType> foundEnumTypes = Arrays.stream(ElementType.values()).filter(elem -> elem.paramName.equals(paramName)).collect(Collectors.toList());
+        if (foundEnumTypes.size() > 1) {
+            throw new RuntimeException("Found multiple enum types for " + paramName);
+        } else if (foundEnumTypes.isEmpty()) {
+            throw new RuntimeException("No enum type found for " + paramName);
+        }
+        return foundEnumTypes.get(0);
     }
 
 }

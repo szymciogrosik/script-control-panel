@@ -6,6 +6,6 @@ public interface BaseSetting {
 
     String getValue();
 
-    ElementType getElementType();
+    FileType getElementType();
 
 }

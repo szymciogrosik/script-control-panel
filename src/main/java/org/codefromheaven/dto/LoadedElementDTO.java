@@ -3,22 +3,26 @@ package org.codefromheaven.dto;
 public class LoadedElementDTO {
 
     private final int sectionDisplayOrder;
-    private final String sectionName;
     private final int commandOrder;
+    private final String sectionName;
+    private final String subSectionName;
     private final String buttonName;
     private final String command;
+    private final ElementType elementType;
     private final boolean popupInputDisplayed;
     private final String popupInputMessage;
     private final String description;
 
     public LoadedElementDTO(
-            int sectionDisplayOrder, String sectionName, int commandOrder, String buttonName, String command,
+            int sectionDisplayOrder, int commandOrder, String sectionName, String subSectionName, String buttonName, String command, ElementType elementType,
             boolean popupInputDisplayed, String popupInputMessage, String description) {
         this.sectionDisplayOrder = sectionDisplayOrder;
-        this.sectionName = sectionName;
         this.commandOrder = commandOrder;
+        this.sectionName = sectionName;
+        this.subSectionName = subSectionName;
         this.buttonName = buttonName;
         this.command = command;
+        this.elementType = elementType;
         this.popupInputDisplayed = popupInputDisplayed;
         this.popupInputMessage = popupInputMessage;
         this.description = description;
@@ -28,12 +32,16 @@ public class LoadedElementDTO {
         return sectionDisplayOrder;
     }
 
+    public int getCommandOrder() {
+        return commandOrder;
+    }
+
     public String getSectionName() {
         return sectionName;
     }
 
-    public int getCommandOrder() {
-        return commandOrder;
+    public String getSubSectionName() {
+        return subSectionName;
     }
 
     public String getButtonName() {
@@ -42,6 +50,10 @@ public class LoadedElementDTO {
 
     public String getCommand() {
         return command;
+    }
+
+    public ElementType getElementType() {
+        return elementType;
     }
 
     public boolean isPopupInputDisplayed() {

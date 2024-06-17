@@ -1,6 +1,6 @@
 package org.codefromheaven.service.settings;
 
-import org.codefromheaven.dto.ElementType;
+import org.codefromheaven.dto.FileType;
 
 import java.io.BufferedReader;
 import java.io.BufferedWriter;
@@ -24,7 +24,7 @@ public class InternalVisibilitySettingsService {
 
     private static void createMyOwnInternalVisibilitySettingsFile() {
         try {
-            PrintWriter writer = new PrintWriter(ElementType.INTERNAL_VISIBILITY_SETTINGS.getPersonalizedConfigName(), StandardCharsets.UTF_8);
+            PrintWriter writer = new PrintWriter(FileType.INTERNAL_VISIBILITY_SETTINGS.getPersonalizedConfigName(), StandardCharsets.UTF_8);
             writer.println(INTERNAL_SETTING_FIRST_LINE);
             writer.close();
         } catch (IOException ex) {
@@ -34,11 +34,11 @@ public class InternalVisibilitySettingsService {
 
     public static Map<String, Map<String, Boolean>> loadVisibilitySettings() {
         Map<String, Map<String, Boolean>> settings = new HashMap<>();
-        boolean presentMyOwnSettings = SettingsServiceBase.isPresentMyOwnSettingFile(ElementType.INTERNAL_VISIBILITY_SETTINGS);
+        boolean presentMyOwnSettings = SettingsServiceBase.isPresentMyOwnSettingFile(FileType.INTERNAL_VISIBILITY_SETTINGS);
         if (!presentMyOwnSettings) {
             createMyOwnInternalVisibilitySettingsFile();
         }
-        Path path = Paths.get(ElementType.INTERNAL_VISIBILITY_SETTINGS.getPersonalizedConfigName());
+        Path path = Paths.get(FileType.INTERNAL_VISIBILITY_SETTINGS.getPersonalizedConfigName());
         try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
             String line;
             reader.readLine(); // Skip header
@@ -73,7 +73,7 @@ public class InternalVisibilitySettingsService {
     }
 
     public static void saveVisibilitySettings(Map<String, Map<String, Boolean>> settings) {
-        Path path = Paths.get(ElementType.INTERNAL_VISIBILITY_SETTINGS.getPersonalizedConfigName());
+        Path path = Paths.get(FileType.INTERNAL_VISIBILITY_SETTINGS.getPersonalizedConfigName());
         try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
             writer.write(INTERNAL_SETTING_FIRST_LINE);
             writer.newLine();

@@ -1,13 +1,13 @@
-SECTION_DISPLAY_ORDER;SECTION_NAME;COMMAND_ORDER;BUTTON_NAME;COMMAND;POPUP_INPUT_DISPLAY;POPUP_INPUT_MESSAGE;DESCRIPTION
-1;Open remote app from your PAM safe;1;Chrome;./open_ops_chrome.sh;FALSE;;Open remote chrome browser f.e. for opening Jenkins
-1;Open remote app from your PAM safe;2;Edge;./open_ops_edge.sh;FALSE;;Open remote Edge browser f.e. for opening Jenkins
-1;Open remote app from your PAM safe;3;TEST DBeaver;./open_test_db_dbeaver.sh;FALSE;;Open remote DBeaver for TEST db
-1;Open remote app from your PAM safe;4;CONV DBeaver;./open_conv_db_dbeaver.sh;FALSE;;Open remote DBeaver for CONV db
-1;Open remote app from your PAM safe;5;PREPROD DBeaver;./open_preprod_db_dbeaver.sh;FALSE;;Open remote DBeaver for PREPROD db
-1;Open remote app from your PAM safe;6;PROD DBeaver;./open_prod_db_dbeaver.sh;FALSE;;Open remote DBeaver for PROD db
-1;Open remote app from your PAM safe;7;TEST SQLDev;./open_test_db_sqldeveloper.sh;FALSE;;Open remote SQL Developer for TEST db
-1;Open remote app from your PAM safe;8;CONV SQLDev;./open_conv_db_sqldeveloper.sh;FALSE;;Open remote SQL Developer for CONV db
-1;Open remote app from your PAM safe;9;PREPROD SQLDev;./open_preprod_db_sqldeveloper.sh;FALSE;;Open remote SQL Developer for PREPROD db
-1;Open remote app from your PAM safe;10;PROD SQLDev;./open_prod_db_sqldeveloper.sh;FALSE;;Open remote SQL Developer for PROD db
-1;Open remote app from your PAM safe;11;KiTTY;./open_ops_kitty.sh;FALSE;;Open remote KiTTY console f.e. for opening remote service workspace
-1;Open remote app from your PAM safe;12;WinSCP;./open_ops_winSCP.sh;FALSE;;Open remote KiTTY console f.e. for opening remote service workspace to copy data
+SECTION_DISPLAY_ORDER;COMMAND_ORDER;SECTION_NAME;SUB_SECTION_NAME;BUTTON_NAME;COMMAND;ELEMENT_TYPE;POPUP_INPUT_DISPLAY;POPUP_INPUT_MESSAGE;DESCRIPTION
+1;1;Remote apps;Open remote app from your PAM safe;Chrome;./open_ops_chrome.sh;BASH;FALSE;;Open remote chrome browser f.e. for opening Jenkins
+1;2;Remote apps;Open remote app from your PAM safe;Edge;./open_ops_edge.sh;BASH;FALSE;;Open remote Edge browser f.e. for opening Jenkins
+1;3;Remote apps;Open remote app from your PAM safe;TEST DBeaver;./open_test_db_dbeaver.sh;BASH;FALSE;;Open remote DBeaver for TEST db
+1;4;Remote apps;Open remote app from your PAM safe;CONV DBeaver;./open_conv_db_dbeaver.sh;BASH;FALSE;;Open remote DBeaver for CONV db
+1;5;Remote apps;Open remote app from your PAM safe;PREPROD DBeaver;./open_preprod_db_dbeaver.sh;BASH;FALSE;;Open remote DBeaver for PREPROD db
+1;6;Remote apps;Open remote app from your PAM safe;PROD DBeaver;./open_prod_db_dbeaver.sh;BASH;FALSE;;Open remote DBeaver for PROD db
+1;7;Remote apps;Open remote app from your PAM safe;TEST SQLDev;./open_test_db_sqldeveloper.sh;BASH;FALSE;;Open remote SQL Developer for TEST db
+1;8;Remote apps;Open remote app from your PAM safe;CONV SQLDev;./open_conv_db_sqldeveloper.sh;BASH;FALSE;;Open remote SQL Developer for CONV db
+1;9;Remote apps;Open remote app from your PAM safe;PREPROD SQLDev;./open_preprod_db_sqldeveloper.sh;BASH;FALSE;;Open remote SQL Developer for PREPROD db
+1;10;Remote apps;Open remote app from your PAM safe;PROD SQLDev;./open_prod_db_sqldeveloper.sh;BASH;FALSE;;Open remote SQL Developer for PROD db
+1;11;Remote apps;Open remote app from your PAM safe;KiTTY;./open_ops_kitty.sh;BASH;FALSE;;Open remote KiTTY console f.e. for opening remote service workspace
+1;12;Remote apps;Open remote app from your PAM safe;WinSCP;./open_ops_winSCP.sh;BASH;FALSE;;Open remote KiTTY console f.e. for opening remote service workspace to copy data

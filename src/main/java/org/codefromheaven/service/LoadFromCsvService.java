@@ -1,6 +1,7 @@
 package org.codefromheaven.service;
 
 import org.codefromheaven.dto.ElementType;
+import org.codefromheaven.dto.FileType;
 import org.codefromheaven.dto.LoadedElementDTO;
 
 import java.io.BufferedReader;
@@ -16,7 +17,7 @@ public class LoadFromCsvService {
 
     private LoadFromCsvService() { }
 
-    public static List<LoadedElementDTO> load(ElementType type) throws IOException {
+    public static List<LoadedElementDTO> load(FileType type) throws IOException {
         Optional<List<LoadedElementDTO>> commands = loadBase(type.getPersonalizedConfigName());
         return commands.orElseGet(() -> loadBase(type.getDefaultFileName()).get());
     }
@@ -30,8 +31,8 @@ public class LoadFromCsvService {
             while ((line = br.readLine()) != null) {
                 String[] values = line.split(DELIMITER);
                 commands.add(new LoadedElementDTO(
-                        Integer.parseInt(values[0]), values[1], Integer.parseInt(values[2]), values[3], values[4],
-                        Boolean.parseBoolean(values[5]), values[6], values[7]));
+                        Integer.parseInt(values[0]), Integer.parseInt(values[1]), values[2], values[3], values[4], values[5],
+                        ElementType.getEnumType(values[6]), Boolean.parseBoolean(values[7]), values[8], values[9]));
             }
         } catch (IOException e) {
             return Optional.empty();

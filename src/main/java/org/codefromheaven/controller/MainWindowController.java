@@ -20,7 +20,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.codefromheaven.dto.LoadedElementDTO;
-import org.codefromheaven.dto.ElementType;
+import org.codefromheaven.dto.FileType;
 import org.codefromheaven.dto.ScriptType;
 import org.codefromheaven.dto.Setting;
 import org.codefromheaven.service.animal.AnimalService;
@@ -64,29 +64,29 @@ public class MainWindowController implements Initializable {
 
         Map<String, Map<String, Boolean>> visibilitySettings = InternalVisibilitySettingsService.loadVisibilitySettings();
 
-        if (isAnyElementInSectionEnabled(ElementType.SERVICE_COMMANDS, visibilitySettings)) {
+        if (isAnyElementInSectionEnabled(FileType.SERVICE_COMMANDS, visibilitySettings)) {
             addSectionHeader("Commands to invoke on environment");
-            addElementsToScene(ElementType.SERVICE_COMMANDS, visibilitySettings);
+            addElementsToScene(FileType.SERVICE_COMMANDS, visibilitySettings);
         }
 
-        if (isAnyElementInSectionEnabled(ElementType.UPDATE_DAP_FOR_TEST_COMMANDS, visibilitySettings)) {
+        if (isAnyElementInSectionEnabled(FileType.UPDATE_DAP_FOR_TEST_COMMANDS, visibilitySettings)) {
             addSectionHeader("Commands to invoke for replacing DapKeys for local tests");
-            addElementsToScene(ElementType.UPDATE_DAP_FOR_TEST_COMMANDS, visibilitySettings);
+            addElementsToScene(FileType.UPDATE_DAP_FOR_TEST_COMMANDS, visibilitySettings);
         }
 
-        if (isAnyElementInSectionEnabled(ElementType.LINKS, visibilitySettings)) {
+        if (isAnyElementInSectionEnabled(FileType.LINKS, visibilitySettings)) {
             addSectionHeader("Links");
-            addElementsToScene(ElementType.LINKS, visibilitySettings);
+            addElementsToScene(FileType.LINKS, visibilitySettings);
         }
 
-        if (isAnyElementInSectionEnabled(ElementType.OPEN_REMOTE_APPS, visibilitySettings)) {
+        if (isAnyElementInSectionEnabled(FileType.OPEN_REMOTE_APPS, visibilitySettings)) {
             addSectionHeader("Remote apps");
-            addElementsToScene(ElementType.OPEN_REMOTE_APPS, visibilitySettings);
+            addElementsToScene(FileType.OPEN_REMOTE_APPS, visibilitySettings);
         }
 
-        if (isAnyElementInSectionEnabled(ElementType.SKAT_VPN, visibilitySettings)) {
+        if (isAnyElementInSectionEnabled(FileType.SKAT_VPN, visibilitySettings)) {
             addSectionHeader("SKAT VPN");
-            addElementsToScene(ElementType.SKAT_VPN, visibilitySettings);
+            addElementsToScene(FileType.SKAT_VPN, visibilitySettings);
         }
 
         addAuthorNote("Made with love by Szymon Gross");
@@ -130,18 +130,18 @@ public class MainWindowController implements Initializable {
         primaryPage.getChildren().add(section);
     }
 
-    private void addElementsToScene(ElementType type, Map<String, Map<String, Boolean>> visibilitySettings) {
+    private void addElementsToScene(FileType type, Map<String, Map<String, Boolean>> visibilitySettings) {
         List<LoadedElementDTO> loadedElements = loadElementsFromCsvFile(type);
         addElementsToScene(loadedElements, type, visibilitySettings);
     }
 
     private void addElementsToScene(
-            List<LoadedElementDTO> loadedElements, ElementType type,
+            List<LoadedElementDTO> loadedElements, FileType type,
             Map<String, Map<String, Boolean>> visibilitySettings
     ) {
         Set<AbstractMap.SimpleEntry<Integer, String>> uniqueSectionsSet =
                 loadedElements.stream()
-                              .map(elem -> new AbstractMap.SimpleEntry<>(elem.getSectionDisplayOrder(), elem.getSectionName()))
+                              .map(elem -> new AbstractMap.SimpleEntry<>(elem.getSectionDisplayOrder(), elem.getSubSectionName()))
                               .collect(Collectors.toSet());
 
         List<AbstractMap.SimpleEntry<Integer, String>> uniqueSections = new ArrayList<>(uniqueSectionsSet);
@@ -158,7 +158,7 @@ public class MainWindowController implements Initializable {
             rows.setSpacing(SPACING_BETWEEN_BUTTONS);
 
             List<LoadedElementDTO> sectionElements = loadedElements.stream()
-                                                                   .filter(elem -> elem.getSectionName().equals(section.getValue()))
+                                                                   .filter(elem -> elem.getSubSectionName().equals(section.getValue()))
                                                                    .sorted(Comparator.comparing(LoadedElementDTO::getCommandOrder))
                                                                    .collect(Collectors.toList());
             for (LoadedElementDTO loadedElement : sectionElements) {
@@ -182,22 +182,22 @@ public class MainWindowController implements Initializable {
     }
 
     private Button createButton(String buttonName, String command, boolean popupInputDisplayed,
-            String popupInputMessage, String description, ElementType type) {
+            String popupInputMessage, String description, FileType type) {
         Button button = new Button(buttonName);
         button.setStyle(BUTTON_STYLES);
         button.setMinWidth(Region.USE_PREF_SIZE);
         button.setMaxWidth(Region.USE_PREF_SIZE);
         button.setOnMouseEntered(e -> button.setStyle(BUTTON_SELECTED_STYLES));
         button.setOnMouseExited(e -> button.setStyle(BUTTON_STYLES));
-        if (ElementType.SERVICE_COMMANDS.equals(type)) {
+        if (FileType.SERVICE_COMMANDS.equals(type)) {
             addButtonListenerForServiceCommands(button, popupInputDisplayed, popupInputMessage, command, ScriptType.SERVICE_SCRIPT);
-        } else if (ElementType.UPDATE_DAP_FOR_TEST_COMMANDS.equals(type)) {
+        } else if (FileType.UPDATE_DAP_FOR_TEST_COMMANDS.equals(type)) {
             addButtonListenerForServiceCommands(button, popupInputDisplayed, popupInputMessage, command, ScriptType.UPDATE_DAP_FOR_TESTS_SCRIPT);
-        } else if (ElementType.LINKS.equals(type)) {
+        } else if (FileType.LINKS.equals(type)) {
             button.setOnMouseClicked(event -> openPageInBrowser(command));
-        } else if (ElementType.OPEN_REMOTE_APPS.equals(type)) {
+        } else if (FileType.OPEN_REMOTE_APPS.equals(type)) {
             addButtonListenerForServiceCommands(button, popupInputDisplayed, popupInputMessage, command, ScriptType.OPEN_REMOTE_APP_SCRIPT);
-        } else if (ElementType.SKAT_VPN.equals(type)) {
+        } else if (FileType.SKAT_VPN.equals(type)) {
             addButtonListenerForServiceCommands(button, popupInputDisplayed, popupInputMessage, command, ScriptType.SKAT_VPN_SCRIPT);
         } else {
             throw new RuntimeException("Unrecognised element type provided: " + type);
@@ -275,7 +275,7 @@ public class MainWindowController implements Initializable {
         return tt;
     }
 
-    private List<LoadedElementDTO> loadElementsFromCsvFile(ElementType type) {
+    private List<LoadedElementDTO> loadElementsFromCsvFile(FileType type) {
         try {
             return LoadFromCsvService.load(type);
         } catch (IOException e) {
@@ -298,7 +298,7 @@ public class MainWindowController implements Initializable {
         Map<String, Map<String, Boolean>> visibilitySettings = InternalVisibilitySettingsService.loadVisibilitySettings();
 
         allElements.stream()
-                   .collect(Collectors.groupingBy(LoadedElementDTO::getSectionName, LinkedHashMap::new, Collectors.toList()))
+                   .collect(Collectors.groupingBy(LoadedElementDTO::getSubSectionName, LinkedHashMap::new, Collectors.toList()))
                    .forEach((sectionName, elements) -> {
                        VBox sectionBox = new VBox(5);
                        sectionBox.getChildren().add(new Label(sectionName));
@@ -338,32 +338,32 @@ public class MainWindowController implements Initializable {
 
     private List<LoadedElementDTO> loadAllElements() {
         List<LoadedElementDTO> allElements = new ArrayList<>();
-        allElements.addAll(loadElementsFromCsvFile(ElementType.SERVICE_COMMANDS));
-        allElements.addAll(loadElementsFromCsvFile(ElementType.UPDATE_DAP_FOR_TEST_COMMANDS));
-        allElements.addAll(loadElementsFromCsvFile(ElementType.LINKS));
-        allElements.addAll(loadElementsFromCsvFile(ElementType.OPEN_REMOTE_APPS));
-        allElements.addAll(loadElementsFromCsvFile(ElementType.SKAT_VPN));
+        allElements.addAll(loadElementsFromCsvFile(FileType.SERVICE_COMMANDS));
+        allElements.addAll(loadElementsFromCsvFile(FileType.UPDATE_DAP_FOR_TEST_COMMANDS));
+        allElements.addAll(loadElementsFromCsvFile(FileType.LINKS));
+        allElements.addAll(loadElementsFromCsvFile(FileType.OPEN_REMOTE_APPS));
+        allElements.addAll(loadElementsFromCsvFile(FileType.SKAT_VPN));
         return allElements;
     }
 
     private void updateVisibilitySetting(LoadedElementDTO element, boolean newVal) {
-        InternalVisibilitySettingsService.updateVisibilitySetting(element.getSectionName(), element.getButtonName(), newVal);
+        InternalVisibilitySettingsService.updateVisibilitySetting(element.getSubSectionName(), element.getButtonName(), newVal);
     }
 
     private boolean isElementVisible(LoadedElementDTO element, Map<String, Map<String, Boolean>> visibilitySettings) {
         return visibilitySettings
-                .getOrDefault(element.getSectionName(), new HashMap<>())
+                .getOrDefault(element.getSubSectionName(), new HashMap<>())
                 .getOrDefault(element.getButtonName(), true);
     }
 
-    private boolean isAnyElementInSectionEnabled(ElementType section, Map<String, Map<String, Boolean>> visibilitySettings) {
+    private boolean isAnyElementInSectionEnabled(FileType section, Map<String, Map<String, Boolean>> visibilitySettings) {
         return loadElementsFromCsvFile(section)
                 .stream().anyMatch(elem -> isElementVisible(elem, visibilitySettings));
     }
 
-    private boolean isAnyElementInSubSectionEnabled(ElementType section, String subsection, Map<String, Map<String, Boolean>> visibilitySettings) {
+    private boolean isAnyElementInSubSectionEnabled(FileType section, String subsection, Map<String, Map<String, Boolean>> visibilitySettings) {
         return loadElementsFromCsvFile(section)
-                .stream().filter(elem -> Objects.equals(elem.getSectionName(), subsection))
+                .stream().filter(elem -> Objects.equals(elem.getSubSectionName(), subsection))
                 .anyMatch(elem -> isElementVisible(elem, visibilitySettings));
     }
 

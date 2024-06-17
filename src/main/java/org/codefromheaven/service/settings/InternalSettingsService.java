@@ -1,12 +1,11 @@
 package org.codefromheaven.service.settings;
 
 import org.codefromheaven.dto.BaseSetting;
-import org.codefromheaven.dto.ElementType;
+import org.codefromheaven.dto.FileType;
 import org.codefromheaven.dto.InternalSetting;
 import org.codefromheaven.resources.AnimalNamesProvider;
 
 import java.io.BufferedReader;
-import java.io.BufferedWriter;
 import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -15,11 +14,7 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 public class InternalSettingsService {
 
@@ -64,7 +59,7 @@ public class InternalSettingsService {
 
     private static void createMyOwnInternalSettingsFile(String animal) {
         try {
-            PrintWriter writer = new PrintWriter(ElementType.INTERNAL_SETTINGS.getPersonalizedConfigName(), StandardCharsets.UTF_8);
+            PrintWriter writer = new PrintWriter(FileType.INTERNAL_SETTINGS.getPersonalizedConfigName(), StandardCharsets.UTF_8);
             writer.println(INTERNAL_SETTING_FIRST_LINE);
             writer.println(getSettingConfigLine(InternalSetting.IMAGE_NAME, animal));
             writer.close();
@@ -80,7 +75,7 @@ public class InternalSettingsService {
     public static void replaceConfigVariable(BaseSetting elementToReplace, String newValue) {
         String currentAnimal = getAnimalImageFromConfigAndCreateMyOwnInternalSettingFileIfDoesNotExist();
 
-        Path path = Paths.get(ElementType.INTERNAL_SETTINGS.getPersonalizedConfigName());
+        Path path = Paths.get(FileType.INTERNAL_SETTINGS.getPersonalizedConfigName());
         Charset charset = StandardCharsets.UTF_8;
 
         String content = null;

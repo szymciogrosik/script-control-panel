@@ -1,65 +1,65 @@
-﻿SECTION_DISPLAY_ORDER;SECTION_NAME;COMMAND_ORDER;BUTTON_NAME;COMMAND;POPUP_INPUT_DISPLAY;POPUP_INPUT_MESSAGE;DESCRIPTION
-1;Managing of environment;1;Start;./service.sh start env;FALSE;;Run the local environment
-1;Managing of environment;2;Stop;./service.sh stop env;FALSE;;Shut down the environment
-1;Managing of environment;3;Restart env;./service.sh restart env;FALSE;;Restart your local environment
-1;Managing of environment;4;Restart dias-weblogic;./service.sh restart dias-weblogic;FALSE;;Restart your dias-weblogic container. It will be useful when your environment is really slow.
-1;Managing of environment;5;Reset;./service.sh reset env;FALSE;;Reset your local environment (remove the environment with volumes) and start environment with rebuilding
-1;Managing of environment;6;Remove;./service.sh deep-clean;FALSE;;Removing the environment (and volumes)
-2;Deploying to your dias local environment;1;Apps all;./service.sh deploy hotfix all;FALSE;;Deploy hotfix all (copy your current built images from your local DIAS - backend and frontend - and deploy it)
-2;Deploying to your dias local environment;2;Apps backend;./service.sh deploy hotfix backend;FALSE;;Deploy hotfix backend (copy your current built images from your local DIAS - only backend - and deploy it)
-2;Deploying to your dias local environment;3;Apps app-backend;./service.sh deploy hotfix app-backend;FALSE;;Deploy hotfix app-backend (copy your current built images from your local DIAS - only app-backend - and deploy it)
-2;Deploying to your dias local environment;4;Apps frontend;./service.sh deploy hotfix frontend;FALSE;;Deploy hotfix frontend (copy your current built images from your local DIAS - only frontend - and deploy it)
-2;Deploying to your dias local environment;5;Local;./service.sh deploy local;FALSE;;Deploy hotfix (copy your current built images from your local DIAS and deploy it) and after that deploy your local forms
-2;Deploying to your dias local environment;6;Content;./service.sh deploy content;FALSE;;Deploy skatContent
-2;Deploying to your dias local environment;7;Helpers;./service.sh deploy helpers;FALSE;;Deploy standard default libraries
-2;Deploying to your dias local environment;8;Mocks;./service.sh deploy mocks;FALSE;;Deploy mocks
-2;Deploying to your dias local environment;9;Forms;./service.sh deploy forms hotfix;FALSE;;Deploy forms from your local environment
-2;Deploying to your dias local environment;10;App from Nexus;./service.sh deploy snapshots;FALSE;;Deploy latest snapshots from Nexus
-2;Deploying to your dias local environment;11;Forms from Nexus;./service.sh deploy forms snapshots;FALSE;;Deploy latest forms from Nexus
-3;Managing database restore points;1;Create default;./service.sh backup-db create;FALSE;;Create default restore point
-3;Managing database restore points;2;Load default;./service.sh backup-db load;FALSE;;Load default restore point
-3;Managing database restore points;3;Drop default;./service.sh backup-db drop;FALSE;;Drop default restore point
-3;Managing database restore points;4;Override default;./service.sh backup-db override;FALSE;;Override default restore point
-3;Managing database restore points;5;Create;./service.sh backup-db create;TRUE;Restore point name:;Provide name and create restore point
-3;Managing database restore points;6;Load;./service.sh backup-db load;TRUE;Restore point name:;Provide name and load restore point
-3;Managing database restore points;7;Drop;./service.sh backup-db drop;TRUE;Restore point name:;Provide name and drop restore point
-3;Managing database restore points;8;Override;./service.sh backup-db override;TRUE;Restore point name:;Provide name and override restore point
-3;Managing database restore points;9;Print all;./service.sh backup-db print;FALSE;;Print all restore points
-4;Resetting;1;Db with forms from local;./service.sh reset db hotfix;FALSE;;After reset deploy forms from your local environment
-4;Resetting;2;Db with forms from snapshots;./service.sh reset db snapshots;FALSE;;After reset deploy forms from nexus
-4;Resetting;3;Db without forms;./service.sh reset db clean;FALSE;;Clean reset
-4;Resetting;4;Mocks;./service.sh reset dias-mocks;FALSE;;Remove dias-mocks container then build and up it again
-5;Following logs;3;All;./service.sh tailf all;FALSE;;Showing your logs (last 150 lines) and follow on current logs from dias-weblogic
-5;Following logs;4;Weblogic;./service.sh tailf dias-weblogic;FALSE;;Showing your logs (last 150 lines) and follow on current logs from dias-weblogic
-5;Following logs;5;Oracle;./service.sh tailf dias-oracle;FALSE;;Showing your logs (last 150 lines) and follow on current logs from dias-oracle
-5;Following logs;6;Mocks;./service.sh tailf dias-mocks;FALSE;;Showing your logs (last 150 lines) and follow on current logs from dias-mocks
-5;Following logs;7;Flyway;./service.sh tailf dias-flyway;FALSE;;Showing your logs (last 150 lines) and follow on current logs from dias-mocks
-5;Following logs;1;Apps frontend;./service.sh tailf frontend;FALSE;;Showing your logs (last 10 lines) and follow on current logs from frontend
-5;Following logs;2;Apps backend;./service.sh tailf backend;FALSE;;Showing your logs (last 10 lines) and follow on current logs from backend
-5;Following logs;8;File parser;./service.sh tailf dias-file-parser;FALSE;;Showing your logs (last 10 lines) and follow on current logs from dias-file-parser
-5;Following logs;9;FTP;./service.sh tailf dias-ftp;FALSE;;Showing your logs (last 10 lines) and follow on current logs from dias-ftp
-6;Opening containers;1;Weblogic;./service.sh open dias-weblogic;FALSE;;Open container (go inside it)
-6;Opening containers;2;Oracle;./service.sh open dias-oracle;FALSE;;Open container (go inside it)
-6;Opening containers;3;Mocks;./service.sh open dias-mocks;FALSE;;Open container (go inside it)
-6;Opening containers;4;Flyway;./service.sh open dias-flyway;FALSE;;Open container (go inside it)
-6;Opening containers;5;FTP;./service.sh open dias-ftp;FALSE;;Open container (go inside it)
-7;Controlling your weblogic managed servers;1;Start backend;./service.sh start server backend;FALSE;;Start backend server
-7;Controlling your weblogic managed servers;2;Start frontend;./service.sh start server frontend;FALSE;;Start frontend server
-7;Controlling your weblogic managed servers;3;Start all;./service.sh start server all;FALSE;;Start all servers
-7;Controlling your weblogic managed servers;4;Stop backend;./service.sh stop server backend;FALSE;;Stop backend server
-7;Controlling your weblogic managed servers;5;Stop frontend;./service.sh stop server frontend;FALSE;;Stop frontend server
-7;Controlling your weblogic managed servers;6;Stop all;./service.sh stop server all;FALSE;;Stop all servers
-7;Controlling your weblogic managed servers;7;Restart backend;./service.sh restart server backend;FALSE;;Restart backend server
-7;Controlling your weblogic managed servers;8;Restart frontend;./service.sh restart server frontend;FALSE;;Restart frontend server
-7;Controlling your weblogic managed servers;9;Restart all;./service.sh restart server all;FALSE;;Restart all servers
-8;Showing logs;3;All;./service.sh logs all;FALSE;;Show logs regarding the dias-weblogic container
-8;Showing logs;4;Weblogic;./service.sh logs dias-weblogic;FALSE;;Show logs regarding the dias-weblogic container
-8;Showing logs;5;Oracle;./service.sh logs dias-oracle;FALSE;;Show logs regarding the dias-oracle container
-8;Showing logs;6;Mocks;./service.sh logs dias-mocks;FALSE;;Show logs regarding the dias-mocks container
-8;Showing logs;7;Flyway;./service.sh logs dias-flyway;FALSE;;Show logs regarding the dias-mocks container
-8;Showing logs;1;Apps frontend;./service.sh logs frontend;FALSE;;Show logs regarding frontend managed server
-8;Showing logs;2;Apps backend;./service.sh logs backend;FALSE;;Show logs regarding backend managed server
-8;Showing logs;8;File parser;./service.sh logs dias-file-parser;FALSE;;Show logs regarding the dias-file-parser container
-8;Showing logs;9;FTP;./service.sh logs dias-ftp;FALSE;;Show logs regarding the dias-ftp container
-9;Login/logout to/from artifactory artifactory;1;Login;./service.sh login;FALSE;;Login to artifactory. Only if you are not logged in.
-9;Login/logout to/from artifactory artifactory;2;Logout;./service.sh logout;FALSE;;Logout from artifactory.
+﻿SECTION_DISPLAY_ORDER;COMMAND_ORDER;SECTION_NAME;SUB_SECTION_NAME;BUTTON_NAME;COMMAND;ELEMENT_TYPE;POPUP_INPUT_DISPLAY;POPUP_INPUT_MESSAGE;DESCRIPTION
+1;1;Commands to invoke on environment;Managing of environment;Start;./service.sh start env;BASH;FALSE;;Run the local environment
+1;2;Commands to invoke on environment;Managing of environment;Stop;./service.sh stop env;BASH;FALSE;;Shut down the environment
+1;3;Commands to invoke on environment;Managing of environment;Restart env;./service.sh restart env;BASH;FALSE;;Restart your local environment
+1;4;Commands to invoke on environment;Managing of environment;Restart dias-weblogic;./service.sh restart dias-weblogic;BASH;FALSE;;Restart your dias-weblogic container. It will be useful when your environment is really slow.
+1;5;Commands to invoke on environment;Managing of environment;Reset;./service.sh reset env;BASH;FALSE;;Reset your local environment (remove the environment with volumes) and start environment with rebuilding
+1;6;Commands to invoke on environment;Managing of environment;Remove;./service.sh deep-clean;BASH;FALSE;;Removing the environment (and volumes)
+2;1;Commands to invoke on environment;Deploying to your dias local environment;Apps all;./service.sh deploy hotfix all;BASH;FALSE;;Deploy hotfix all (copy your current built images from your local DIAS - backend and frontend - and deploy it)
+2;2;Commands to invoke on environment;Deploying to your dias local environment;Apps backend;./service.sh deploy hotfix backend;BASH;FALSE;;Deploy hotfix backend (copy your current built images from your local DIAS - only backend - and deploy it)
+2;3;Commands to invoke on environment;Deploying to your dias local environment;Apps app-backend;./service.sh deploy hotfix app-backend;BASH;FALSE;;Deploy hotfix app-backend (copy your current built images from your local DIAS - only app-backend - and deploy it)
+2;4;Commands to invoke on environment;Deploying to your dias local environment;Apps frontend;./service.sh deploy hotfix frontend;BASH;FALSE;;Deploy hotfix frontend (copy your current built images from your local DIAS - only frontend - and deploy it)
+2;5;Commands to invoke on environment;Deploying to your dias local environment;Local;./service.sh deploy local;BASH;FALSE;;Deploy hotfix (copy your current built images from your local DIAS and deploy it) and after that deploy your local forms
+2;6;Commands to invoke on environment;Deploying to your dias local environment;Content;./service.sh deploy content;BASH;FALSE;;Deploy skatContent
+2;7;Commands to invoke on environment;Deploying to your dias local environment;Helpers;./service.sh deploy helpers;BASH;FALSE;;Deploy standard default libraries
+2;8;Commands to invoke on environment;Deploying to your dias local environment;Mocks;./service.sh deploy mocks;BASH;FALSE;;Deploy mocks
+2;9;Commands to invoke on environment;Deploying to your dias local environment;Forms;./service.sh deploy forms hotfix;BASH;FALSE;;Deploy forms from your local environment
+2;10;Commands to invoke on environment;Deploying to your dias local environment;App from Nexus;./service.sh deploy snapshots;BASH;FALSE;;Deploy latest snapshots from Nexus
+2;11;Commands to invoke on environment;Deploying to your dias local environment;Forms from Nexus;./service.sh deploy forms snapshots;BASH;FALSE;;Deploy latest forms from Nexus
+3;1;Commands to invoke on environment;Managing database restore points;Create default;./service.sh backup-db create;BASH;FALSE;;Create default restore point
+3;2;Commands to invoke on environment;Managing database restore points;Load default;./service.sh backup-db load;BASH;FALSE;;Load default restore point
+3;3;Commands to invoke on environment;Managing database restore points;Drop default;./service.sh backup-db drop;BASH;FALSE;;Drop default restore point
+3;4;Commands to invoke on environment;Managing database restore points;Override default;./service.sh backup-db override;BASH;FALSE;;Override default restore point
+3;5;Commands to invoke on environment;Managing database restore points;Create;./service.sh backup-db create;BASH;TRUE;Restore point name:;Provide name and create restore point
+3;6;Commands to invoke on environment;Managing database restore points;Load;./service.sh backup-db load;BASH;TRUE;Restore point name:;Provide name and load restore point
+3;7;Commands to invoke on environment;Managing database restore points;Drop;./service.sh backup-db drop;BASH;TRUE;Restore point name:;Provide name and drop restore point
+3;8;Commands to invoke on environment;Managing database restore points;Override;./service.sh backup-db override;BASH;TRUE;Restore point name:;Provide name and override restore point
+3;9;Commands to invoke on environment;Managing database restore points;Print all;./service.sh backup-db print;BASH;FALSE;;Print all restore points
+4;1;Commands to invoke on environment;Resetting;Db with forms from local;./service.sh reset db hotfix;BASH;FALSE;;After reset deploy forms from your local environment
+4;2;Commands to invoke on environment;Resetting;Db with forms from snapshots;./service.sh reset db snapshots;BASH;FALSE;;After reset deploy forms from nexus
+4;3;Commands to invoke on environment;Resetting;Db without forms;./service.sh reset db clean;BASH;FALSE;;Clean reset
+4;4;Commands to invoke on environment;Resetting;Mocks;./service.sh reset dias-mocks;BASH;FALSE;;Remove dias-mocks container then build and up it again
+5;1;Commands to invoke on environment;Following logs;Apps frontend;./service.sh tailf frontend;BASH;FALSE;;Showing your logs (last 10 lines) and follow on current logs from frontend
+5;2;Commands to invoke on environment;Following logs;Apps backend;./service.sh tailf backend;BASH;FALSE;;Showing your logs (last 10 lines) and follow on current logs from backend
+5;3;Commands to invoke on environment;Following logs;All;./service.sh tailf all;BASH;FALSE;;Showing your logs (last 150 lines) and follow on current logs from dias-weblogic
+5;4;Commands to invoke on environment;Following logs;Weblogic;./service.sh tailf dias-weblogic;BASH;FALSE;;Showing your logs (last 150 lines) and follow on current logs from dias-weblogic
+5;5;Commands to invoke on environment;Following logs;Oracle;./service.sh tailf dias-oracle;BASH;FALSE;;Showing your logs (last 150 lines) and follow on current logs from dias-oracle
+5;6;Commands to invoke on environment;Following logs;Mocks;./service.sh tailf dias-mocks;BASH;FALSE;;Showing your logs (last 150 lines) and follow on current logs from dias-mocks
+5;7;Commands to invoke on environment;Following logs;Flyway;./service.sh tailf dias-flyway;BASH;FALSE;;Showing your logs (last 150 lines) and follow on current logs from dias-mocks
+5;8;Commands to invoke on environment;Following logs;File parser;./service.sh tailf dias-file-parser;BASH;FALSE;;Showing your logs (last 10 lines) and follow on current logs from dias-file-parser
+5;9;Commands to invoke on environment;Following logs;FTP;./service.sh tailf dias-ftp;BASH;FALSE;;Showing your logs (last 10 lines) and follow on current logs from dias-ftp
+6;1;Commands to invoke on environment;Opening containers;Weblogic;./service.sh open dias-weblogic;BASH;FALSE;;Open container (go inside it)
+6;2;Commands to invoke on environment;Opening containers;Oracle;./service.sh open dias-oracle;BASH;FALSE;;Open container (go inside it)
+6;3;Commands to invoke on environment;Opening containers;Mocks;./service.sh open dias-mocks;BASH;FALSE;;Open container (go inside it)
+6;4;Commands to invoke on environment;Opening containers;Flyway;./service.sh open dias-flyway;BASH;FALSE;;Open container (go inside it)
+6;5;Commands to invoke on environment;Opening containers;FTP;./service.sh open dias-ftp;BASH;FALSE;;Open container (go inside it)
+7;1;Commands to invoke on environment;Controlling your weblogic managed servers;Start backend;./service.sh start server backend;BASH;FALSE;;Start backend server
+7;2;Commands to invoke on environment;Controlling your weblogic managed servers;Start frontend;./service.sh start server frontend;BASH;FALSE;;Start frontend server
+7;3;Commands to invoke on environment;Controlling your weblogic managed servers;Start all;./service.sh start server all;BASH;FALSE;;Start all servers
+7;4;Commands to invoke on environment;Controlling your weblogic managed servers;Stop backend;./service.sh stop server backend;BASH;FALSE;;Stop backend server
+7;5;Commands to invoke on environment;Controlling your weblogic managed servers;Stop frontend;./service.sh stop server frontend;BASH;FALSE;;Stop frontend server
+7;6;Commands to invoke on environment;Controlling your weblogic managed servers;Stop all;./service.sh stop server all;BASH;FALSE;;Stop all servers
+7;7;Commands to invoke on environment;Controlling your weblogic managed servers;Restart backend;./service.sh restart server backend;BASH;FALSE;;Restart backend server
+7;8;Commands to invoke on environment;Controlling your weblogic managed servers;Restart frontend;./service.sh restart server frontend;BASH;FALSE;;Restart frontend server
+7;9;Commands to invoke on environment;Controlling your weblogic managed servers;Restart all;./service.sh restart server all;BASH;FALSE;;Restart all servers
+8;1;Commands to invoke on environment;Showing logs;Apps frontend;./service.sh logs frontend;BASH;FALSE;;Show logs regarding frontend managed server
+8;2;Commands to invoke on environment;Showing logs;Apps backend;./service.sh logs backend;BASH;FALSE;;Show logs regarding backend managed server
+8;3;Commands to invoke on environment;Showing logs;All;./service.sh logs all;BASH;FALSE;;Show logs regarding the dias-weblogic container
+8;4;Commands to invoke on environment;Showing logs;Weblogic;./service.sh logs dias-weblogic;BASH;FALSE;;Show logs regarding the dias-weblogic container
+8;5;Commands to invoke on environment;Showing logs;Oracle;./service.sh logs dias-oracle;BASH;FALSE;;Show logs regarding the dias-oracle container
+8;6;Commands to invoke on environment;Showing logs;Mocks;./service.sh logs dias-mocks;BASH;FALSE;;Show logs regarding the dias-mocks container
+8;7;Commands to invoke on environment;Showing logs;Flyway;./service.sh logs dias-flyway;BASH;FALSE;;Show logs regarding the dias-mocks container
+8;8;Commands to invoke on environment;Showing logs;File parser;./service.sh logs dias-file-parser;BASH;FALSE;;Show logs regarding the dias-file-parser container
+8;9;Commands to invoke on environment;Showing logs;FTP;./service.sh logs dias-ftp;BASH;FALSE;;Show logs regarding the dias-ftp container
+9;1;Commands to invoke on environment;Login/logout to/from artifactory artifactory;Login;./service.sh login;BASH;FALSE;;Login to artifactory. Only if you are not logged in.
+9;2;Commands to invoke on environment;Login/logout to/from artifactory artifactory;Logout;./service.sh logout;BASH;FALSE;;Logout from artifactory.
