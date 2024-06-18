@@ -2,7 +2,7 @@ package org.codefromheaven.dto;
 
 import org.codefromheaven.service.settings.InternalSettingsService;
 
-public enum Setting implements BaseSetting{
+public enum Setting implements BaseSetting {
     BASH_PATH,
     SERVICE_SCRIPT_PATH,
     UPDATE_TEST_DAP_SCRIPT_PATH,

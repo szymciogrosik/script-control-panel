@@ -1,6 +1,6 @@
 package org.codefromheaven.service.command;
 
-import org.codefromheaven.dto.GitBashDTO;
+import org.codefromheaven.dto.CommandDTO;
 import org.codefromheaven.dto.ScriptType;
 import org.codefromheaven.dto.Setting;
 
@@ -10,14 +10,14 @@ public class GitBashSetupService implements Runnable {
 
     private static final String SEPARATOR = " ; ";
 
-    private final GitBashDTO gitBashDTO;
+    private final CommandDTO commandDTO;
 
-    public GitBashSetupService(GitBashDTO gitBashDTO) {
-        this.gitBashDTO = gitBashDTO;
+    public GitBashSetupService(CommandDTO commandDTO) {
+        this.commandDTO = commandDTO;
     }
 
     public void run() {
-        runCommand(gitBashDTO.getScriptType(), gitBashDTO.getCommand());
+        runCommand(commandDTO.getScriptType(), commandDTO.getCommand());
     }
 
     private static void runCommand(ScriptType scriptType, String command) {

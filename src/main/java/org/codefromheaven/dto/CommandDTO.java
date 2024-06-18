@@ -1,11 +1,11 @@
 package org.codefromheaven.dto;
 
-public class GitBashDTO {
+public class CommandDTO {
 
     private final ScriptType scriptType;
     private final String command;
 
-    public GitBashDTO(ScriptType scriptType, String command) {
+    public CommandDTO(ScriptType scriptType, String command) {
         this.scriptType = scriptType;
         this.command = command;
     }

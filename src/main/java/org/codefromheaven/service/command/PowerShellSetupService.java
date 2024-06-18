@@ -1,6 +1,6 @@
 package org.codefromheaven.service.command;
 
-import org.codefromheaven.dto.PowerShellDTO;
+import org.codefromheaven.dto.CommandDTO;
 import org.codefromheaven.dto.ScriptType;
 
 import java.io.IOException;
@@ -9,14 +9,14 @@ public class PowerShellSetupService implements Runnable {
 
     private static final String SEPARATOR = " ; ";
 
-    private final PowerShellDTO powerShellDTO;
+    private final CommandDTO commandDTO;
 
-    public PowerShellSetupService(PowerShellDTO powerShellDTO) {
-        this.powerShellDTO = powerShellDTO;
+    public PowerShellSetupService(CommandDTO commandDTO) {
+        this.commandDTO = commandDTO;
     }
 
     public void run() {
-        runCommand(powerShellDTO.getScriptType(), powerShellDTO.getCommand());
+        runCommand(commandDTO.getScriptType(), commandDTO.getCommand());
     }
 
     private static void runCommand(ScriptType scriptType, String command) {
