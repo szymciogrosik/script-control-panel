@@ -1,3 +1,3 @@
-﻿SECTION_DISPLAY_ORDER;COMMAND_ORDER;SECTION_NAME;SUB_SECTION_NAME;BUTTON_NAME;COMMAND;ELEMENT_TYPE;POPUP_INPUT_DISPLAY;POPUP_INPUT_MESSAGE;DESCRIPTION
-1;1;Commands to invoke for replacing DapKeys for local tests;Updating DapKeys for local automated tests;Update;./update_dap.sh;BASH;FALSE;;Packing dias-content to zip and replacing it in correct directories in DIAS repository.
-1;2;Commands to invoke for replacing DapKeys for local tests;Updating DapKeys for local automated tests;Build only;./update_dap.sh build;BASH;FALSE;;Building dias-content to zip. "dias-content-master.zip" file will be located inside your dias-content.
+﻿SECTION_DISPLAY_ORDER;COMMAND_ORDER;SECTION_NAME;SUB_SECTION_NAME;SCRIPT_LOCATION_PARAM_NAME;BUTTON_NAME;COMMAND;ELEMENT_TYPE;AUTO_CLOSE_CONSOLE;POPUP_INPUT_DISPLAY;POPUP_INPUT_MESSAGE;DESCRIPTION
+1;1;Commands to invoke for replacing DapKeys for local tests;Updating DapKeys for local automated tests;Update;UPDATE_TEST_DAP_SCRIPT_PATH;./update_dap.sh;BASH;FALSE;FALSE;;Packing dias-content to zip and replacing it in correct directories in DIAS repository.
+1;2;Commands to invoke for replacing DapKeys for local tests;Updating DapKeys for local automated tests;Build only;UPDATE_TEST_DAP_SCRIPT_PATH;./update_dap.sh build;BASH;FALSE;FALSE;;Building dias-content to zip. "dias-content-master.zip" file will be located inside your dias-content.
