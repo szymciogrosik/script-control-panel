@@ -21,14 +21,13 @@ import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.codefromheaven.dto.LoadedElementDTO;
 import org.codefromheaven.dto.FileType;
-import org.codefromheaven.dto.ScriptType;
 import org.codefromheaven.dto.Setting;
 import org.codefromheaven.service.animal.AnimalService;
 import org.codefromheaven.service.LoadFromCsvService;
 import org.codefromheaven.service.command.GitBashService;
 import org.codefromheaven.service.command.PowerShellService;
-import org.codefromheaven.service.settings.InternalSettingsService;
 import org.codefromheaven.service.settings.InternalVisibilitySettingsService;
+import org.codefromheaven.service.settings.SettingsServiceBase;
 
 import static javafx.stage.Modality.APPLICATION_MODAL;
 
@@ -93,13 +92,13 @@ public class MainWindowController implements Initializable {
     }
 
     private void setupScrollPane() {
-        String maxWindowHeightString = InternalSettingsService.getVariable(Setting.MAX_WINDOW_HEIGHT);
+        String maxWindowHeightString = SettingsServiceBase.getVariable(Setting.MAX_WINDOW_HEIGHT);
         int maxWindowHeight = Integer.parseInt(maxWindowHeightString);
         mainScrollPane.setMaxHeight(maxWindowHeight);
         mainScrollPane.setFitToHeight(true);
         mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
-        String maxWindowWidthString = InternalSettingsService.getVariable(Setting.MAX_WINDOW_WIDTH);
+        String maxWindowWidthString = SettingsServiceBase.getVariable(Setting.MAX_WINDOW_WIDTH);
         int maxWindowWidth = Integer.parseInt(maxWindowWidthString);
         mainScrollPane.setMaxWidth(maxWindowWidth);
         mainScrollPane.setFitToWidth(true);
@@ -165,9 +164,7 @@ public class MainWindowController implements Initializable {
                 if (!isElementVisible(loadedElement, visibilitySettings)) {
                     continue;
                 }
-                rows.getChildren().add(createButton(
-                        loadedElement.getButtonName(), loadedElement.getCommand(), loadedElement.isPopupInputDisplayed(),
-                        loadedElement.getPopupInputMessage(), loadedElement.getDescription(), type));
+                rows.getChildren().add(createButton(loadedElement, type));
             }
             primaryPage.getChildren().add(rows);
         }
@@ -181,66 +178,65 @@ public class MainWindowController implements Initializable {
         return section;
     }
 
-    private Button createButton(String buttonName, String command, boolean popupInputDisplayed,
-            String popupInputMessage, String description, FileType type) {
-        Button button = new Button(buttonName);
+    private Button createButton(LoadedElementDTO loadedElement, FileType type) {
+        Button button = new Button(loadedElement.getButtonName());
         button.setStyle(BUTTON_STYLES);
         button.setMinWidth(Region.USE_PREF_SIZE);
         button.setMaxWidth(Region.USE_PREF_SIZE);
         button.setOnMouseEntered(e -> button.setStyle(BUTTON_SELECTED_STYLES));
         button.setOnMouseExited(e -> button.setStyle(BUTTON_STYLES));
         if (FileType.SERVICE_COMMANDS.equals(type)) {
-            addButtonListenerForServiceCommands(button, popupInputDisplayed, popupInputMessage, command, ScriptType.SERVICE_SCRIPT);
+            addButtonListenerForServiceCommands(button, loadedElement);
         } else if (FileType.UPDATE_DAP_FOR_TEST_COMMANDS.equals(type)) {
-            addButtonListenerForServiceCommands(button, popupInputDisplayed, popupInputMessage, command, ScriptType.UPDATE_DAP_FOR_TESTS_SCRIPT);
+            addButtonListenerForServiceCommands(button, loadedElement);
         } else if (FileType.LINKS.equals(type)) {
-            button.setOnMouseClicked(event -> openPageInBrowser(command));
+            button.setOnMouseClicked(event -> openPageInBrowser(loadedElement.getCommand()));
         } else if (FileType.OPEN_REMOTE_APPS.equals(type)) {
-            addButtonListenerForServiceCommands(button, popupInputDisplayed, popupInputMessage, command, ScriptType.OPEN_REMOTE_APP_SCRIPT);
+            addButtonListenerForServiceCommands(button, loadedElement);
         } else if (FileType.SKAT_VPN.equals(type)) {
-            addButtonListenerForServiceCommands(button, popupInputDisplayed, popupInputMessage, command, ScriptType.SKAT_VPN_SCRIPT);
+            addButtonListenerForServiceCommands(button, loadedElement);
         } else {
             throw new RuntimeException("Unrecognised element type provided: " + type);
         }
-        button.setTooltip(createTooltip(description));
+        button.setTooltip(createTooltip(loadedElement.getDescription()));
         return button;
     }
 
-    private void addButtonListenerForServiceCommands(Button button, boolean popupInputDisplayed, String popupInputMessage, String command, ScriptType scriptType) {
-        switch (scriptType.getConsole()) {
+    private void addButtonListenerForServiceCommands(Button button, LoadedElementDTO loadedElement) {
+        switch (loadedElement.getElementType()) {
             case BASH:
-                addButtonListenerForBashCommand(button, popupInputDisplayed, popupInputMessage, command, scriptType);
+                addButtonListenerForBashCommand(button, loadedElement);
                 break;
             case POWERSHELL:
-                addButtonListenerForPowerShellCommand(button, popupInputDisplayed, popupInputMessage, command, scriptType);
+                addButtonListenerForPowerShellCommand(button, loadedElement);
                 break;
             default:
-                throw new RuntimeException("Not recognised console: " + scriptType.getConsole());
+                throw new RuntimeException("Not recognised console: " + loadedElement.getElementType());
         }
     }
 
-    private void addButtonListenerForBashCommand(Button button, boolean popupInputDisplayed, String popupInputMessage, String command, ScriptType scriptType) {
+    private void addButtonListenerForBashCommand(Button button, LoadedElementDTO loadedElement) {
         button.setOnMouseClicked(event -> {
-            if (popupInputDisplayed) {
-                Optional<String> result = createTextInputDialog(popupInputMessage);
+            if (loadedElement.isPopupInputDisplayed()) {
+                Optional<String> result = createTextInputDialog(loadedElement.getPopupInputMessage());
                 result.ifPresent(name -> {
-                    GitBashService.runCommand(scriptType, command + " " + name);
+                    GitBashService.runCommand(loadedElement.getScriptLocationParamName(), loadedElement.isAutoCloseConsole(), loadedElement.getCommand() + " " + name);
                 });
             } else {
-                GitBashService.runCommand(scriptType, command);
+                GitBashService.runCommand(loadedElement.getScriptLocationParamName(), loadedElement.isAutoCloseConsole(), loadedElement.getCommand());
             }
         });
     }
 
-    private void addButtonListenerForPowerShellCommand(Button button, boolean popupInputDisplayed, String popupInputMessage, String command, ScriptType scriptType) {
+    private void addButtonListenerForPowerShellCommand(Button button, LoadedElementDTO loadedElement) {
         button.setOnMouseClicked(event -> {
-            if (popupInputDisplayed) {
-                Optional<String> result = createTextInputDialog(popupInputMessage);
+            if (loadedElement.isPopupInputDisplayed()) {
+                Optional<String> result = createTextInputDialog(loadedElement.getPopupInputMessage());
                 result.ifPresent(name -> {
-                    PowerShellService.runCommand(scriptType, command + " " + name);
+                    PowerShellService.runCommand(loadedElement.getScriptLocationParamName(), loadedElement.isAutoCloseConsole(), loadedElement.getCommand() + " " + name);
                 });
             } else {
-                PowerShellService.runCommand(scriptType, command);
+                PowerShellService.runCommand(loadedElement.getScriptLocationParamName(), loadedElement.isAutoCloseConsole(), loadedElement.getCommand());
             }
         });
     }

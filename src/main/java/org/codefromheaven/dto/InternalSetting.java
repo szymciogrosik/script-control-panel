@@ -1,6 +1,6 @@
 package org.codefromheaven.dto;
 
-import org.codefromheaven.service.settings.InternalSettingsService;
+import org.codefromheaven.service.settings.SettingsServiceBase;
 
 public enum InternalSetting implements BaseSetting {
 
@@ -13,12 +13,22 @@ public enum InternalSetting implements BaseSetting {
 
     @Override
     public String getValue() {
-        return InternalSettingsService.getVariable(this);
+        return SettingsServiceBase.getVariable(this);
     }
 
     @Override
     public FileType getElementType() {
         return FileType.INTERNAL_SETTINGS;
+    }
+
+    @Override
+    public BaseSetting[] getAll() {
+        return InternalSetting.values();
+    }
+
+    public static BaseSetting getSettingByName(String settingName) {
+        // No matter what setting selected
+        return InternalSetting.IMAGE_NAME.getElementByName(settingName);
     }
 
 }

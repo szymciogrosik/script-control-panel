@@ -5,8 +5,6 @@ import org.codefromheaven.dto.FileType;
 import org.codefromheaven.dto.InternalSetting;
 import org.codefromheaven.resources.AnimalNamesProvider;
 
-import java.io.BufferedReader;
-import java.io.FileReader;
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.nio.charset.Charset;
@@ -14,42 +12,18 @@ import java.nio.charset.StandardCharsets;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
-import java.util.Optional;
 
-public class InternalSettingsService {
+public class InternalSettingsService extends SettingsServiceBase {
 
     private static final String INTERNAL_SETTING_FIRST_LINE = "VARIABLE_NAME;VARIABLE_VALUE";
-    private static final String DELIMITER = ";";
 
     private InternalSettingsService() {}
 
-    public static String getVariable(BaseSetting setting) {
-        Optional<String> value = getVariableBase(setting, setting.getElementType().getPersonalizedConfigName());
-        return value.orElseGet(() -> getVariableBase(setting, setting.getElementType().getDefaultFileName()).get());
-    }
-
-    private static Optional<String> getVariableBase(BaseSetting setting, String settingCsvPath) {
-        try (BufferedReader br = new BufferedReader(new FileReader(settingCsvPath))) {
-            String line;
-            // skip first line
-            br.readLine();
-            while ((line = br.readLine()) != null) {
-                String[] values = line.split(DELIMITER);
-                if (setting.getName().equals(values[0])) {
-                    return Optional.of(values[1]);
-                }
-            }
-        } catch (IOException e) {
-            return Optional.empty();
-        }
-        return Optional.empty();
-    }
-
     public static String getAnimalImageFromConfigAndCreateMyOwnInternalSettingFileIfDoesNotExist() {
         InternalSetting animalConfig = InternalSetting.IMAGE_NAME;
-        boolean presentMyOwnSettings = SettingsServiceBase.isPresentMyOwnSettingFile(animalConfig.getElementType());
+        boolean presentMyOwnSettings = isPresentMyOwnSettingFile(animalConfig.getElementType());
         if (presentMyOwnSettings) {
-            return InternalSettingsService.getVariable(animalConfig);
+            return SettingsServiceBase.getVariable(animalConfig);
         } else {
             String currentAnimal = AnimalNamesProvider.getRandomAnimalName();
             createMyOwnInternalSettingsFile(currentAnimal);

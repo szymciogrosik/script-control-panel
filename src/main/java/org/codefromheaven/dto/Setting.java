@@ -1,6 +1,6 @@
 package org.codefromheaven.dto;
 
-import org.codefromheaven.service.settings.InternalSettingsService;
+import org.codefromheaven.service.settings.SettingsServiceBase;
 
 public enum Setting implements BaseSetting {
     BASH_PATH,
@@ -18,12 +18,22 @@ public enum Setting implements BaseSetting {
 
     @Override
     public String getValue() {
-        return InternalSettingsService.getVariable(this);
+        return SettingsServiceBase.getVariable(this);
     }
 
     @Override
     public FileType getElementType() {
         return FileType.SETTINGS;
+    }
+
+    @Override
+    public BaseSetting[] getAll() {
+        return Setting.values();
+    }
+
+    public static BaseSetting getSettingByName(String settingName) {
+        // No matter what setting selected
+        return Setting.BASH_PATH.getElementByName(settingName);
     }
 
 }

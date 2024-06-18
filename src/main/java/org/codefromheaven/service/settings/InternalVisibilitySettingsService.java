@@ -15,10 +15,9 @@ import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
 
-public class InternalVisibilitySettingsService {
+public class InternalVisibilitySettingsService extends SettingsServiceBase {
 
     private static final String INTERNAL_SETTING_FIRST_LINE = "VARIABLE_NAME;VARIABLE_VALUE";
-    private static final String DELIMITER = ";";
 
     private InternalVisibilitySettingsService() {}
 
@@ -34,7 +33,7 @@ public class InternalVisibilitySettingsService {
 
     public static Map<String, Map<String, Boolean>> loadVisibilitySettings() {
         Map<String, Map<String, Boolean>> settings = new HashMap<>();
-        boolean presentMyOwnSettings = SettingsServiceBase.isPresentMyOwnSettingFile(FileType.INTERNAL_VISIBILITY_SETTINGS);
+        boolean presentMyOwnSettings = isPresentMyOwnSettingFile(FileType.INTERNAL_VISIBILITY_SETTINGS);
         if (!presentMyOwnSettings) {
             createMyOwnInternalVisibilitySettingsFile();
         }

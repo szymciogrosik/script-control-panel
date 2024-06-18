@@ -1,7 +1,6 @@
 package org.codefromheaven.service.command;
 
 import org.codefromheaven.dto.CommandDTO;
-import org.codefromheaven.dto.ScriptType;
 import org.codefromheaven.dto.Setting;
 
 import java.io.IOException;
@@ -17,13 +16,13 @@ public class GitBashSetupService implements Runnable {
     }
 
     public void run() {
-        runCommand(commandDTO.getScriptType(), commandDTO.getCommand());
+        runCommand(commandDTO.getScriptPathVarName(), commandDTO.isAutoCloseConsole(), commandDTO.getCommand());
     }
 
-    private static void runCommand(ScriptType scriptType, String command) {
+    private static void runCommand(String scriptPathVarName, boolean autoCloseConsole, String command) {
         try {
-            String finalCommand = getOpenDirectoryCommand(scriptType) + SEPARATOR + command;
-            if (scriptType.isNotAutoCloseConsole()) {
+            String finalCommand = getOpenDirectoryCommand(scriptPathVarName) + SEPARATOR + command;
+            if (!autoCloseConsole) {
                 finalCommand += (SEPARATOR + getWaitingForButtonCommand());
             }
 
@@ -36,8 +35,8 @@ public class GitBashSetupService implements Runnable {
         }
     }
 
-    private static String getOpenDirectoryCommand(ScriptType scriptType) {
-        return "cd " + scriptType.getPath();
+    private static String getOpenDirectoryCommand(String scriptPathVarName) {
+        return "cd " + Setting.getSettingByName(scriptPathVarName).getValue();
     }
 
     private static String getWaitingForButtonCommand() {

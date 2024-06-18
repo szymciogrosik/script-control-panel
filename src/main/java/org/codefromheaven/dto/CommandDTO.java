@@ -2,16 +2,22 @@ package org.codefromheaven.dto;
 
 public class CommandDTO {
 
-    private final ScriptType scriptType;
+    private final String scriptPathVarName;
+    private final boolean autoCloseConsole;
     private final String command;
 
-    public CommandDTO(ScriptType scriptType, String command) {
-        this.scriptType = scriptType;
+    public CommandDTO(String scriptPathVarName, boolean autoCloseConsole, String command) {
+        this.scriptPathVarName = scriptPathVarName;
+        this.autoCloseConsole = autoCloseConsole;
         this.command = command;
     }
 
-    public ScriptType getScriptType() {
-        return scriptType;
+    public String getScriptPathVarName() {
+        return scriptPathVarName;
+    }
+
+    public boolean isAutoCloseConsole() {
+        return autoCloseConsole;
     }
 
     public String getCommand() {
