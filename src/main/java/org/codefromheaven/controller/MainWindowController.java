@@ -15,7 +15,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
-import javafx.scene.paint.Color;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
@@ -34,9 +33,6 @@ import org.codefromheaven.service.settings.SettingsServiceBase;
 import static javafx.stage.Modality.APPLICATION_MODAL;
 
 public class MainWindowController implements Initializable {
-
-    private static final int SPACING_BETWEEN_BUTTONS = 5;
-    private static final int SIZE_OF_AUTHOR_IMAGE_IN_PIXELS = 50;
 
     @FXML
     private MenuItem changeVisibleElements;
@@ -92,8 +88,7 @@ public class MainWindowController implements Initializable {
         VBox section = new VBox();
         section.setAlignment(Pos.CENTER);
         ImageView imageView = new ImageView(AnimalService.getInstance().getCurrentAnimalImage());
-        imageView.setFitHeight(SIZE_OF_AUTHOR_IMAGE_IN_PIXELS);
-        imageView.setFitWidth(SIZE_OF_AUTHOR_IMAGE_IN_PIXELS);
+        imageView.getStyleClass().add("author-image");
         Tooltip.install(imageView, createTooltip(authorName));
         imageView.setOnMouseClicked(event -> {
             AnimalService.getInstance().drawNewRandomAnimal();
@@ -130,7 +125,7 @@ public class MainWindowController implements Initializable {
             primaryPage.getStyleClass().add("background-primary");
 
             HBox rows = new HBox();
-            rows.setSpacing(SPACING_BETWEEN_BUTTONS);
+            rows.getStyleClass().add("hbox-spacing");
 
             List<LoadedElementDTO> sectionElements = loadedElements.stream()
                                                                    .filter(elem -> elem.getSubSectionName().equals(subSectionName))

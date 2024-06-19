@@ -72,3 +72,8 @@
 .background-primary {
     -fx-background-color: rgb(33, 33, 33);
 }
+
+.hbox-spacing {
+    -fx-spacing: 5;
+}
+
