@@ -24,17 +24,20 @@ import static javafx.stage.Modality.APPLICATION_MODAL;
 
 public class VisibilitySettingsController {
 
-    private final VBox primaryPage;
     private final MainWindowController.ContentLoader loader;
+    private final MainWindowController.ResizeWindow resizeMainWindow;
 
-    public VisibilitySettingsController(VBox primaryPage, MainWindowController.ContentLoader loader) {
-        this.primaryPage = primaryPage;
+    public VisibilitySettingsController(
+            MainWindowController.ContentLoader loader, MainWindowController.ResizeWindow resizeMainWindow
+    ) {
         this.loader = loader;
+        this.resizeMainWindow = resizeMainWindow;
     }
 
-    public void handleChangeVisibleElements() {
+    public void setupPage() {
         Stage settingsStage = new Stage();
         settingsStage.initModality(APPLICATION_MODAL);
+        settingsStage.setTitle("Settings - Change visibility of elements");
         settingsStage.getIcons().add(AnimalService.getInstance().getRandomAnimalImage());
         VBox settingsRoot = new VBox(10);
 
@@ -42,6 +45,22 @@ public class VisibilitySettingsController {
         VBox contentBox = new VBox(10);
         contentBox.setPadding(new Insets(10));
 
+        loadPageContent(contentBox);
+
+        scrollPane.setContent(contentBox);
+        settingsRoot.getChildren().add(scrollPane);
+
+        Scene scene = new Scene(settingsRoot, 400, 600);
+        settingsStage.setScene(scene);
+
+        settingsStage.setOnHidden(event -> {
+            loader.loadContent();
+            resizeMainWindow.resizeMainWindow();
+        });
+        settingsStage.showAndWait();
+    }
+
+    private void loadPageContent(VBox contentBox) {
         List<LoadedElementDTO> allElements = loadAllElements();
         SettingsDTO visibilitySettings = InternalVisibilitySettingsService.loadVisibilitySettings();
 
@@ -61,24 +80,6 @@ public class VisibilitySettingsController {
                        }
                        contentBox.getChildren().add(sectionBox);
                    });
-
-        scrollPane.setContent(contentBox);
-        settingsRoot.getChildren().add(scrollPane);
-
-        Scene scene = new Scene(settingsRoot, 400, 600);
-        settingsStage.setTitle("Settings - Change visibility of elements");
-        settingsStage.setScene(scene);
-
-        settingsStage.setOnHidden(event -> {
-            loader.loadContent();
-            resizeMainWindow();
-        });
-        settingsStage.showAndWait();
-    }
-
-    private void resizeMainWindow() {
-        Stage mainStage = (Stage) primaryPage.getScene().getWindow();
-        mainStage.sizeToScene();
     }
 
     private List<LoadedElementDTO> loadAllElements() {

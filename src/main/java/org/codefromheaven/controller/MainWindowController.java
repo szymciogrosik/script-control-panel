@@ -239,10 +239,20 @@ public class MainWindowController implements Initializable {
                                   .anyMatch(elem -> VisibilitySettingsController.isElementVisible(elem, visibilitySettings));
     }
 
+    @FunctionalInterface
+    public interface ResizeWindow {
+        void resizeMainWindow();
+    }
+
+    private void resizeMainWindow() {
+        Stage mainStage = (Stage) primaryPage.getScene().getWindow();
+        mainStage.sizeToScene();
+    }
+
     @FXML
     private void handleChangeVisibleElements() {
-        VisibilitySettingsController controller = new VisibilitySettingsController(primaryPage, this::loadContent);
-        controller.handleChangeVisibleElements();
+        VisibilitySettingsController controller = new VisibilitySettingsController(this::loadContent, this::resizeMainWindow);
+        controller.setupPage();
     }
 
 }
