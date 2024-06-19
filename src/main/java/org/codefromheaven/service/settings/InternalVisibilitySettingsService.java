@@ -1,94 +1,51 @@
 package org.codefromheaven.service.settings;
 
 import org.codefromheaven.dto.FileType;
-
-import java.io.BufferedReader;
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
-import java.util.Arrays;
-import java.util.HashMap;
-import java.util.Map;
-import java.util.stream.Collectors;
+import org.codefromheaven.dto.settings.KeyValueDTO;
+import org.codefromheaven.dto.settings.SettingsDTO;
 
 public class InternalVisibilitySettingsService extends SettingsServiceBase {
 
-    private static final String INTERNAL_SETTING_FIRST_LINE = "VARIABLE_NAME;VARIABLE_VALUE";
+    private static final FileType FILE_TYPE = FileType.INTERNAL_VISIBILITY_SETTINGS;
 
     private InternalVisibilitySettingsService() {}
 
-    private static void createMyOwnInternalVisibilitySettingsFile() {
-        try {
-            PrintWriter writer = new PrintWriter(FileType.INTERNAL_VISIBILITY_SETTINGS.getPersonalizedConfigName(), StandardCharsets.UTF_8);
-            writer.println(INTERNAL_SETTING_FIRST_LINE);
-            writer.close();
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
+    public static SettingsDTO loadVisibilitySettings() {
+        boolean presentMyOwnSettings = isPresentMyOwnSettingFile(FILE_TYPE);
+        if (presentMyOwnSettings) {
+            return getSettingsFile(FILE_TYPE);
         }
+        return new SettingsDTO();
     }
 
-    public static Map<String, Map<String, Boolean>> loadVisibilitySettings() {
-        Map<String, Map<String, Boolean>> settings = new HashMap<>();
-        boolean presentMyOwnSettings = isPresentMyOwnSettingFile(FileType.INTERNAL_VISIBILITY_SETTINGS);
-        if (!presentMyOwnSettings) {
-            createMyOwnInternalVisibilitySettingsFile();
+    public static void updateVisibilitySetting(String section, String checkboxName, boolean checked) {
+        SettingsDTO allSettings = loadVisibilitySettings();
+        boolean settingPresentInFile = allSettings
+                .getSettings().stream().anyMatch(elem -> isMatchingSetting(elem, section, checkboxName));
+
+        boolean settingPresentAndNotChecked = settingPresentInFile && !checked;
+        boolean settingNotPresentAndChecked = !settingPresentInFile && checked;
+
+        boolean settingPresentAndChecked = settingPresentInFile && checked;
+        boolean settingNotPresentAndNotChecked = !settingPresentInFile && !checked;
+
+        if (settingPresentAndNotChecked || settingNotPresentAndChecked) {
+            return;
         }
-        Path path = Paths.get(FileType.INTERNAL_VISIBILITY_SETTINGS.getPersonalizedConfigName());
-        try (BufferedReader reader = Files.newBufferedReader(path, StandardCharsets.UTF_8)) {
-            String line;
-            reader.readLine(); // Skip header
-            while ((line = reader.readLine()) != null) {
-                String[] parts = line.split(";");
-                if (parts.length == 2) {
-                    String section = parts[0];
-                    Map<String, Boolean> checkboxStates = Arrays.stream(parts[1].split(","))
-                                                                .map(s -> s.split("="))
-                                                                .filter(a -> a.length == 2)  // Ensure there are two elements
-                                                                .collect(Collectors.toMap(a -> a[0], a -> Boolean.parseBoolean(a[1]), (oldValue, newValue) -> newValue, HashMap::new));
-                    settings.put(section, checkboxStates);
-                }
-            }
-        } catch (IOException e) {
-            System.err.println("Failed to load settings: " + e.getMessage());
+
+        if (settingPresentAndChecked) {
+            allSettings.getSettings().removeIf(elem -> isMatchingSetting(elem, section, checkboxName));
         }
-        return settings;
+
+        if (settingNotPresentAndNotChecked) {
+            allSettings.getSettings().add(new KeyValueDTO(section, checkboxName));
+        }
+
+        saveSettings(FILE_TYPE, allSettings);
     }
 
-    public static void updateVisibilitySetting(String section, String checkboxName, boolean isChecked) {
-        Map<String, Map<String, Boolean>> allSettings = loadVisibilitySettings();
-        Map<String, Boolean> sectionSettings = allSettings.computeIfAbsent(section, k -> new HashMap<>());
-
-        if (isChecked) {
-            sectionSettings.remove(checkboxName); // Remove if checked
-        } else {
-            sectionSettings.put(checkboxName, false); // Only store if unchecked
-        }
-
-        saveVisibilitySettings(allSettings);
-    }
-
-    public static void saveVisibilitySettings(Map<String, Map<String, Boolean>> settings) {
-        Path path = Paths.get(FileType.INTERNAL_VISIBILITY_SETTINGS.getPersonalizedConfigName());
-        try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
-            writer.write(INTERNAL_SETTING_FIRST_LINE);
-            writer.newLine();
-            for (Map.Entry<String, Map<String, Boolean>> entry : settings.entrySet()) {
-                String section = entry.getKey();
-                String values = entry.getValue().entrySet().stream()
-                                     .map(e -> e.getKey() + "=" + e.getValue())
-                                     .collect(Collectors.joining(","));
-                if (!values.isEmpty()) {
-                    writer.write(section + DELIMITER + values);
-                    writer.newLine();
-                }
-            }
-        } catch (IOException e) {
-            throw new RuntimeException("Failed to save settings", e);
-        }
+    public static boolean isMatchingSetting(KeyValueDTO keyValue, String section, String checkboxName) {
+        return keyValue.getKey().equals(section) && keyValue.getValue().equals(checkboxName);
     }
 
 }

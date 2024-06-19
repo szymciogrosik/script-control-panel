@@ -1,5 +1,6 @@
 package org.codefromheaven.dto;
 
+import org.codefromheaven.dto.settings.BaseSetting;
 import org.codefromheaven.service.settings.SettingsServiceBase;
 
 public enum InternalSetting implements BaseSetting {
@@ -13,7 +14,7 @@ public enum InternalSetting implements BaseSetting {
 
     @Override
     public String getValue() {
-        return SettingsServiceBase.getVariable(this);
+        return SettingsServiceBase.getValue(this);
     }
 
     @Override

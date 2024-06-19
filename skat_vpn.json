@@ -1,0 +1,35 @@
+﻿[
+  {
+    "sectionDisplayOrder": 1,
+    "sectionName": "SKAT VPN",
+    "subSections": [
+      {
+        "subSectionName": "Connect with SKAT VPN",
+        "commands": [
+          {
+            "commandOrder": 1,
+            "buttonName": "Connect",
+            "scriptLocationParamName": "SKAT_VPN_PATH",
+            "command": ".\\startVPN.bat",
+            "elementType": "POWERSHELL",
+            "autoCloseConsole": false,
+            "popupInputDisplayed": false,
+            "popupInputMessage": "",
+            "description": "Connect with SKAT VPN, SMS code will be required"
+          },
+          {
+            "commandOrder": 2,
+            "buttonName": "Disconnect",
+            "scriptLocationParamName": "SKAT_VPN_PATH",
+            "command": ".\\stopVPN.bat",
+            "elementType": "POWERSHELL",
+            "autoCloseConsole": false,
+            "popupInputDisplayed": false,
+            "popupInputMessage": "",
+            "description": "Disconnect with SKAT VPN"
+          }
+        ]
+      }
+    ]
+  }
+]

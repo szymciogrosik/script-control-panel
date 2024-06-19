@@ -1,69 +1,43 @@
 package org.codefromheaven.service.settings;
 
-import org.codefromheaven.dto.BaseSetting;
+import org.codefromheaven.dto.settings.BaseSetting;
 import org.codefromheaven.dto.FileType;
 import org.codefromheaven.dto.InternalSetting;
+import org.codefromheaven.dto.settings.KeyValueDTO;
+import org.codefromheaven.dto.settings.SettingsDTO;
 import org.codefromheaven.resources.AnimalNamesProvider;
 
-import java.io.IOException;
-import java.io.PrintWriter;
-import java.nio.charset.Charset;
-import java.nio.charset.StandardCharsets;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
+import java.util.Collections;
 
 public class InternalSettingsService extends SettingsServiceBase {
 
-    private static final String INTERNAL_SETTING_FIRST_LINE = "VARIABLE_NAME;VARIABLE_VALUE";
+    private static final FileType FILE_TYPE = FileType.INTERNAL_SETTINGS;
+
+    private static final InternalSetting IMAGE_SETTING = InternalSetting.IMAGE_NAME;
 
     private InternalSettingsService() {}
 
     public static String getAnimalImageFromConfigAndCreateMyOwnInternalSettingFileIfDoesNotExist() {
-        InternalSetting animalConfig = InternalSetting.IMAGE_NAME;
-        boolean presentMyOwnSettings = isPresentMyOwnSettingFile(animalConfig.getElementType());
+        boolean presentMyOwnSettings = isPresentMyOwnSettingFile(IMAGE_SETTING.getElementType());
         if (presentMyOwnSettings) {
-            return SettingsServiceBase.getVariable(animalConfig);
+            return getValue(IMAGE_SETTING);
         } else {
-            String currentAnimal = AnimalNamesProvider.getRandomAnimalName();
-            createMyOwnInternalSettingsFile(currentAnimal);
-            return currentAnimal;
+            String animal = AnimalNamesProvider.getRandomAnimalName();
+            SettingsDTO settings = new SettingsDTO(Collections.singletonList(new KeyValueDTO(IMAGE_SETTING.getName(), animal)));
+            saveSettings(FILE_TYPE, settings);
+            return animal;
         }
-    }
-
-    private static void createMyOwnInternalSettingsFile(String animal) {
-        try {
-            PrintWriter writer = new PrintWriter(FileType.INTERNAL_SETTINGS.getPersonalizedConfigName(), StandardCharsets.UTF_8);
-            writer.println(INTERNAL_SETTING_FIRST_LINE);
-            writer.println(getSettingConfigLine(InternalSetting.IMAGE_NAME, animal));
-            writer.close();
-        } catch (IOException ex) {
-            throw new RuntimeException(ex);
-        }
-    }
-
-    private static String getSettingConfigLine(BaseSetting baseSetting, String animal) {
-        return baseSetting.getName() + ";" + animal;
     }
 
     public static void replaceConfigVariable(BaseSetting elementToReplace, String newValue) {
-        String currentAnimal = getAnimalImageFromConfigAndCreateMyOwnInternalSettingFileIfDoesNotExist();
+        SettingsDTO settings = getSettingsFile(FILE_TYPE);
 
-        Path path = Paths.get(FileType.INTERNAL_SETTINGS.getPersonalizedConfigName());
-        Charset charset = StandardCharsets.UTF_8;
+        KeyValueDTO keyValue = settings.getSettings().stream()
+                                       .filter(elem -> elem.getKey().equals(elementToReplace.getName()))
+                                       .findFirst().get();
+        keyValue.setValue(newValue);
 
-        String content = null;
-        try {
-            content = Files.readString(path, charset);
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
-        content = content.replaceAll(getSettingConfigLine(elementToReplace, currentAnimal), getSettingConfigLine(elementToReplace, newValue));
-        try {
-            Files.write(path, content.getBytes(charset));
-        } catch (IOException e) {
-            throw new RuntimeException(e);
-        }
+        saveSettings(FILE_TYPE, settings);
     }
 
 }

@@ -22,8 +22,9 @@ import javafx.util.Duration;
 import org.codefromheaven.dto.LoadedElementDTO;
 import org.codefromheaven.dto.FileType;
 import org.codefromheaven.dto.Setting;
+import org.codefromheaven.dto.settings.SettingsDTO;
+import org.codefromheaven.service.LoadFromJsonService;
 import org.codefromheaven.service.animal.AnimalService;
-import org.codefromheaven.service.LoadFromCsvService;
 import org.codefromheaven.service.command.GitBashService;
 import org.codefromheaven.service.command.PowerShellService;
 import org.codefromheaven.service.settings.InternalVisibilitySettingsService;
@@ -61,7 +62,7 @@ public class MainWindowController implements Initializable {
         primaryPage.getChildren().clear();
         setupScrollPane();
 
-        Map<String, Map<String, Boolean>> visibilitySettings = InternalVisibilitySettingsService.loadVisibilitySettings();
+        SettingsDTO visibilitySettings = InternalVisibilitySettingsService.loadVisibilitySettings();
 
         if (isAnyElementInSectionEnabled(FileType.SERVICE_COMMANDS, visibilitySettings)) {
             addSectionHeader("Commands to invoke on environment");
@@ -92,13 +93,13 @@ public class MainWindowController implements Initializable {
     }
 
     private void setupScrollPane() {
-        String maxWindowHeightString = SettingsServiceBase.getVariable(Setting.MAX_WINDOW_HEIGHT);
+        String maxWindowHeightString = SettingsServiceBase.getValue(Setting.MAX_WINDOW_HEIGHT);
         int maxWindowHeight = Integer.parseInt(maxWindowHeightString);
         mainScrollPane.setMaxHeight(maxWindowHeight);
         mainScrollPane.setFitToHeight(true);
         mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
-        String maxWindowWidthString = SettingsServiceBase.getVariable(Setting.MAX_WINDOW_WIDTH);
+        String maxWindowWidthString = SettingsServiceBase.getValue(Setting.MAX_WINDOW_WIDTH);
         int maxWindowWidth = Integer.parseInt(maxWindowWidthString);
         mainScrollPane.setMaxWidth(maxWindowWidth);
         mainScrollPane.setFitToWidth(true);
@@ -129,14 +130,14 @@ public class MainWindowController implements Initializable {
         primaryPage.getChildren().add(section);
     }
 
-    private void addElementsToScene(FileType type, Map<String, Map<String, Boolean>> visibilitySettings) {
+    private void addElementsToScene(FileType type, SettingsDTO visibilitySettings) {
         List<LoadedElementDTO> loadedElements = loadElementsFromCsvFile(type);
         addElementsToScene(loadedElements, type, visibilitySettings);
     }
 
     private void addElementsToScene(
             List<LoadedElementDTO> loadedElements, FileType type,
-            Map<String, Map<String, Boolean>> visibilitySettings
+            SettingsDTO visibilitySettings
     ) {
         Set<AbstractMap.SimpleEntry<Integer, String>> uniqueSectionsSet =
                 loadedElements.stream()
@@ -273,7 +274,7 @@ public class MainWindowController implements Initializable {
 
     private List<LoadedElementDTO> loadElementsFromCsvFile(FileType type) {
         try {
-            return LoadFromCsvService.load(type);
+            return LoadFromJsonService.load(type);
         } catch (IOException e) {
             throw new RuntimeException("Cannot load files from configuration file", e);
         }
@@ -291,7 +292,7 @@ public class MainWindowController implements Initializable {
         contentBox.setPadding(new Insets(10));
 
         List<LoadedElementDTO> allElements = loadAllElements();
-        Map<String, Map<String, Boolean>> visibilitySettings = InternalVisibilitySettingsService.loadVisibilitySettings();
+        SettingsDTO visibilitySettings = InternalVisibilitySettingsService.loadVisibilitySettings();
 
         allElements.stream()
                    .collect(Collectors.groupingBy(LoadedElementDTO::getSubSectionName, LinkedHashMap::new, Collectors.toList()))
@@ -346,18 +347,17 @@ public class MainWindowController implements Initializable {
         InternalVisibilitySettingsService.updateVisibilitySetting(element.getSubSectionName(), element.getButtonName(), newVal);
     }
 
-    private boolean isElementVisible(LoadedElementDTO element, Map<String, Map<String, Boolean>> visibilitySettings) {
-        return visibilitySettings
-                .getOrDefault(element.getSubSectionName(), new HashMap<>())
-                .getOrDefault(element.getButtonName(), true);
+    private boolean isElementVisible(LoadedElementDTO element, SettingsDTO visibilitySettings) {
+        return visibilitySettings.getSettings().stream().noneMatch(elem ->
+                InternalVisibilitySettingsService.isMatchingSetting(elem, element.getSubSectionName(), element.getButtonName()));
     }
 
-    private boolean isAnyElementInSectionEnabled(FileType section, Map<String, Map<String, Boolean>> visibilitySettings) {
+    private boolean isAnyElementInSectionEnabled(FileType section, SettingsDTO visibilitySettings) {
         return loadElementsFromCsvFile(section)
                 .stream().anyMatch(elem -> isElementVisible(elem, visibilitySettings));
     }
 
-    private boolean isAnyElementInSubSectionEnabled(FileType section, String subsection, Map<String, Map<String, Boolean>> visibilitySettings) {
+    private boolean isAnyElementInSubSectionEnabled(FileType section, String subsection, SettingsDTO visibilitySettings) {
         return loadElementsFromCsvFile(section)
                 .stream().filter(elem -> Objects.equals(elem.getSubSectionName(), subsection))
                 .anyMatch(elem -> isElementVisible(elem, visibilitySettings));

@@ -1,0 +1,145 @@
+[
+  {
+    "sectionDisplayOrder": 1,
+    "sectionName": "Remote apps",
+    "subSections": [
+      {
+        "subSectionName": "Open remote app from your PAM safe",
+        "commands": [
+          {
+            "commandOrder": 1,
+            "buttonName": "Chrome",
+            "scriptLocationParamName": "OPEN_REMOTE_APP_SCRIPT_PATH",
+            "command": "./open_ops_chrome.sh",
+            "elementType": "BASH",
+            "autoCloseConsole": true,
+            "popupInputDisplayed": false,
+            "popupInputMessage": "",
+            "description": "Open remote chrome browser f.e. for opening Jenkins"
+          },
+          {
+            "commandOrder": 2,
+            "buttonName": "Edge",
+            "scriptLocationParamName": "OPEN_REMOTE_APP_SCRIPT_PATH",
+            "command": "./open_ops_edge.sh",
+            "elementType": "BASH",
+            "autoCloseConsole": true,
+            "popupInputDisplayed": false,
+            "popupInputMessage": "",
+            "description": "Open remote Edge browser f.e. for opening Jenkins"
+          },
+          {
+            "commandOrder": 3,
+            "buttonName": "TEST DBeaver",
+            "scriptLocationParamName": "OPEN_REMOTE_APP_SCRIPT_PATH",
+            "command": "./open_test_db_dbeaver.sh",
+            "elementType": "BASH",
+            "autoCloseConsole": true,
+            "popupInputDisplayed": false,
+            "popupInputMessage": "",
+            "description": "Open remote DBeaver for TEST db"
+          },
+          {
+            "commandOrder": 4,
+            "buttonName": "CONV DBeaver",
+            "scriptLocationParamName": "OPEN_REMOTE_APP_SCRIPT_PATH",
+            "command": "./open_conv_db_dbeaver.sh",
+            "elementType": "BASH",
+            "autoCloseConsole": true,
+            "popupInputDisplayed": false,
+            "popupInputMessage": "",
+            "description": "Open remote DBeaver for CONV db"
+          },
+          {
+            "commandOrder": 5,
+            "buttonName": "PREPROD DBeaver",
+            "scriptLocationParamName": "OPEN_REMOTE_APP_SCRIPT_PATH",
+            "command": "./open_preprod_db_dbeaver.sh",
+            "elementType": "BASH",
+            "autoCloseConsole": true,
+            "popupInputDisplayed": false,
+            "popupInputMessage": "",
+            "description": "Open remote DBeaver for PREPROD db"
+          },
+          {
+            "commandOrder": 6,
+            "buttonName": "PROD DBeaver",
+            "scriptLocationParamName": "OPEN_REMOTE_APP_SCRIPT_PATH",
+            "command": "./open_prod_db_dbeaver.sh",
+            "elementType": "BASH",
+            "autoCloseConsole": true,
+            "popupInputDisplayed": false,
+            "popupInputMessage": "",
+            "description": "Open remote DBeaver for PROD db"
+          },
+          {
+            "commandOrder": 7,
+            "buttonName": "TEST SQLDev",
+            "scriptLocationParamName": "OPEN_REMOTE_APP_SCRIPT_PATH",
+            "command": "./open_test_db_sqldeveloper.sh",
+            "elementType": "BASH",
+            "autoCloseConsole": true,
+            "popupInputDisplayed": false,
+            "popupInputMessage": "",
+            "description": "Open remote SQL Developer for TEST db"
+          },
+          {
+            "commandOrder": 8,
+            "buttonName": "CONV SQLDev",
+            "scriptLocationParamName": "OPEN_REMOTE_APP_SCRIPT_PATH",
+            "command": "./open_conv_db_sqldeveloper.sh",
+            "elementType": "BASH",
+            "autoCloseConsole": true,
+            "popupInputDisplayed": false,
+            "popupInputMessage": "",
+            "description": "Open remote SQL Developer for CONV db"
+          },
+          {
+            "commandOrder": 9,
+            "buttonName": "PREPROD SQLDev",
+            "scriptLocationParamName": "OPEN_REMOTE_APP_SCRIPT_PATH",
+            "command": "./open_preprod_db_sqldeveloper.sh",
+            "elementType": "BASH",
+            "autoCloseConsole": true,
+            "popupInputDisplayed": false,
+            "popupInputMessage": "",
+            "description": "Open remote SQL Developer for PREPROD db"
+          },
+          {
+            "commandOrder": 10,
+            "buttonName": "PROD SQLDev",
+            "scriptLocationParamName": "OPEN_REMOTE_APP_SCRIPT_PATH",
+            "command": "./open_prod_db_sqldeveloper.sh",
+            "elementType": "BASH",
+            "autoCloseConsole": true,
+            "popupInputDisplayed": false,
+            "popupInputMessage": "",
+            "description": "Open remote SQL Developer for PROD db"
+          },
+          {
+            "commandOrder": 11,
+            "buttonName": "KiTTY",
+            "scriptLocationParamName": "OPEN_REMOTE_APP_SCRIPT_PATH",
+            "command": "./open_ops_kitty.sh",
+            "elementType": "BASH",
+            "autoCloseConsole": true,
+            "popupInputDisplayed": false,
+            "popupInputMessage": "",
+            "description": "Open remote KiTTY console f.e. for opening remote service workspace"
+          },
+          {
+            "commandOrder": 12,
+            "buttonName": "WinSCP",
+            "scriptLocationParamName": "OPEN_REMOTE_APP_SCRIPT_PATH",
+            "command": "./open_ops_winSCP.sh",
+            "elementType": "BASH",
+            "autoCloseConsole": true,
+            "popupInputDisplayed": false,
+            "popupInputMessage": "",
+            "description": "Open remote KiTTY console f.e. for opening remote service workspace to copy data"
+          }
+        ]
+      }
+    ]
+  }
+]

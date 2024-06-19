@@ -1,4 +1,6 @@
-package org.codefromheaven.dto;
+package org.codefromheaven.dto.settings;
+
+import org.codefromheaven.dto.FileType;
 
 import java.util.Arrays;
 import java.util.List;

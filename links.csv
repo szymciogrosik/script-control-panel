@@ -1,7 +1,0 @@
-SECTION_DISPLAY_ORDER;LINK_ORDER;SECTION_NAME;SUB_SECTION_NAME;BUTTON_NAME;SCRIPT_LOCATION_PARAM_NAME;LINK;ELEMENT_TYPE;AUTO_CLOSE_CONSOLE;POPUP_INPUT_DISPLAY;POPUP_INPUT_MESSAGE;DESCRIPTION
-1;1;Links;Application;Auth console;;http://localhost:7020/ufst-authentication-console/;LINK;FALSE;FALSE;;Open authentication console.
-1;2;Links;Application;App;;http://localhost:7020/diasportlet/uc/welcome;LINK;FALSE;FALSE;;Open app
-1;3;Links;Application;App in admin view;;http://localhost:7020/diasportlet/uc/welcome?view=admin;LINK;FALSE;FALSE;;Open app in admin view
-1;4;Links;Application;DIAS support app;;http://localhost:7013/dias-support/;LINK;FALSE;FALSE;;Open app where you can see all incoming and outgoing requests
-1;5;Links;Application;WL-Backend;;http://localhost:7101/console;LINK;FALSE;FALSE;;Open weblogic console for backend. Login:weblogic password:weblogic1
-1;6;Links;Application;WL-Frontend;;http://localhost:7201/console;LINK;FALSE;FALSE;;Open weblogic console for frontend. Login:weblogic password:weblogic1

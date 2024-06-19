@@ -1,0 +1,32 @@
+{
+  "settings": [
+    {
+      "key": "BASH_PATH",
+      "value": "C:/Program Files/Git/git-bash.exe"
+    },
+    {
+      "key": "SERVICE_SCRIPT_PATH",
+      "value": "../../dias-docker"
+    },
+    {
+      "key": "UPDATE_TEST_DAP_SCRIPT_PATH",
+      "value": "../update-content-in-dias-tests"
+    },
+    {
+      "key": "OPEN_REMOTE_APP_SCRIPT_PATH",
+      "value": "../open-remote-apps"
+    },
+    {
+      "key": "SKAT_VPN_PATH",
+      "value": "../../VPN-Cisco-AnyConnect-Docker"
+    },
+    {
+      "key": "MAX_WINDOW_HEIGHT",
+      "value": "910"
+    },
+    {
+      "key": "MAX_WINDOW_WIDTH",
+      "value": "1700"
+    }
+  ]
+}
