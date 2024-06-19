@@ -1,13 +1,11 @@
 [
   {
-    "sectionDisplayOrder": 1,
     "sectionName": "Links",
     "subSections": [
       {
         "subSectionName": "Application",
         "commands": [
           {
-            "commandOrder": 1,
             "buttonName": "Auth console",
             "scriptLocationParamName": "",
             "command": "http://localhost:7020/ufst-authentication-console/",
@@ -18,7 +16,6 @@
             "description": "Open authentication console."
           },
           {
-            "commandOrder": 2,
             "buttonName": "App",
             "scriptLocationParamName": "",
             "command": "http://localhost:7020/diasportlet/uc/welcome",
@@ -29,7 +26,6 @@
             "description": "Open app"
           },
           {
-            "commandOrder": 3,
             "buttonName": "App in admin view",
             "scriptLocationParamName": "",
             "command": "http://localhost:7020/diasportlet/uc/welcome?view=admin",
@@ -40,7 +36,6 @@
             "description": "Open app in admin view"
           },
           {
-            "commandOrder": 4,
             "buttonName": "DIAS support app",
             "scriptLocationParamName": "",
             "command": "http://localhost:7013/dias-support/",
@@ -51,7 +46,6 @@
             "description": "Open app where you can see all incoming and outgoing requests"
           },
           {
-            "commandOrder": 5,
             "buttonName": "WL-Backend",
             "scriptLocationParamName": "",
             "command": "http://localhost:7101/console",
@@ -62,7 +56,6 @@
             "description": "Open weblogic console for backend. Login:weblogic password:weblogic1"
           },
           {
-            "commandOrder": 6,
             "buttonName": "WL-Frontend",
             "scriptLocationParamName": "",
             "command": "http://localhost:7201/console",

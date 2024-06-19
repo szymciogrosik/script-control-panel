@@ -1,13 +1,11 @@
 ﻿[
   {
-    "sectionDisplayOrder": 1,
     "sectionName": "Commands to invoke on environment",
     "subSections": [
       {
         "subSectionName": "Managing of environment",
         "commands": [
           {
-            "commandOrder": 1,
             "buttonName": "Start",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh start env",
@@ -18,7 +16,6 @@
             "description": "Run the local environment"
           },
           {
-            "commandOrder": 2,
             "buttonName": "Stop",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh stop env",
@@ -29,7 +26,6 @@
             "description": "Shut down the environment"
           },
           {
-            "commandOrder": 3,
             "buttonName": "Restart env",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh restart env",
@@ -40,7 +36,6 @@
             "description": "Restart your local environment"
           },
           {
-            "commandOrder": 4,
             "buttonName": "Restart dias-weblogic",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh restart dias-weblogic",
@@ -51,7 +46,6 @@
             "description": "Restart your dias-weblogic container. It will be useful when your environment is really slow."
           },
           {
-            "commandOrder": 5,
             "buttonName": "Reset",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh reset env",
@@ -62,7 +56,6 @@
             "description": "Reset your local environment (remove the environment with volumes) and start environment with rebuilding"
           },
           {
-            "commandOrder": 6,
             "buttonName": "Remove",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh deep-clean",
@@ -77,14 +70,12 @@
     ]
   },
   {
-    "sectionDisplayOrder": 2,
     "sectionName": "Commands to invoke on environment",
     "subSections": [
       {
         "subSectionName": "Deploying to your dias local environment",
         "commands": [
           {
-            "commandOrder": 1,
             "buttonName": "Apps all",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh deploy hotfix all",
@@ -95,7 +86,6 @@
             "description": "Deploy hotfix all (copy your current built images from your local DIAS - backend and frontend - and deploy it)"
           },
           {
-            "commandOrder": 2,
             "buttonName": "Apps backend",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh deploy hotfix backend",
@@ -106,7 +96,6 @@
             "description": "Deploy hotfix backend (copy your current built images from your local DIAS - only backend - and deploy it)"
           },
           {
-            "commandOrder": 3,
             "buttonName": "Apps app-backend",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh deploy hotfix app-backend",
@@ -117,7 +106,6 @@
             "description": "Deploy hotfix app-backend (copy your current built images from your local DIAS - only app-backend - and deploy it)"
           },
           {
-            "commandOrder": 4,
             "buttonName": "Apps frontend",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh deploy hotfix frontend",
@@ -128,7 +116,6 @@
             "description": "Deploy hotfix frontend (copy your current built images from your local DIAS - only frontend - and deploy it)"
           },
           {
-            "commandOrder": 5,
             "buttonName": "Local",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh deploy local",
@@ -139,7 +126,6 @@
             "description": "Deploy hotfix (copy your current built images from your local DIAS and deploy it) and after that deploy your local forms"
           },
           {
-            "commandOrder": 6,
             "buttonName": "Content",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh deploy content",
@@ -150,7 +136,6 @@
             "description": "Deploy skatContent"
           },
           {
-            "commandOrder": 7,
             "buttonName": "Helpers",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh deploy helpers",
@@ -161,7 +146,6 @@
             "description": "Deploy standard default libraries"
           },
           {
-            "commandOrder": 8,
             "buttonName": "Mocks",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh deploy mocks",
@@ -172,7 +156,6 @@
             "description": "Deploy mocks"
           },
           {
-            "commandOrder": 9,
             "buttonName": "Forms",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh deploy forms hotfix",
@@ -183,7 +166,6 @@
             "description": "Deploy forms from your local environment"
           },
           {
-            "commandOrder": 10,
             "buttonName": "App from Nexus",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh deploy snapshots",
@@ -194,7 +176,6 @@
             "description": "Deploy latest snapshots from Nexus"
           },
           {
-            "commandOrder": 11,
             "buttonName": "Forms from Nexus",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh deploy forms snapshots",
@@ -209,14 +190,12 @@
     ]
   },
   {
-    "sectionDisplayOrder": 3,
     "sectionName": "Commands to invoke on environment",
     "subSections": [
       {
         "subSectionName": "Managing database restore points",
         "commands": [
           {
-            "commandOrder": 1,
             "buttonName": "Create default",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh backup-db create",
@@ -227,7 +206,6 @@
             "description": "Create default restore point"
           },
           {
-            "commandOrder": 2,
             "buttonName": "Load default",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh backup-db load",
@@ -238,7 +216,6 @@
             "description": "Load default restore point"
           },
           {
-            "commandOrder": 3,
             "buttonName": "Drop default",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh backup-db drop",
@@ -249,7 +226,6 @@
             "description": "Drop default restore point"
           },
           {
-            "commandOrder": 4,
             "buttonName": "Override default",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh backup-db override",
@@ -260,7 +236,6 @@
             "description": "Override default restore point"
           },
           {
-            "commandOrder": 5,
             "buttonName": "Create",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh backup-db create",
@@ -271,7 +246,6 @@
             "description": "Provide name and create restore point"
           },
           {
-            "commandOrder": 6,
             "buttonName": "Load",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh backup-db load",
@@ -282,7 +256,6 @@
             "description": "Provide name and load restore point"
           },
           {
-            "commandOrder": 7,
             "buttonName": "Drop",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh backup-db drop",
@@ -293,7 +266,6 @@
             "description": "Provide name and drop restore point"
           },
           {
-            "commandOrder": 8,
             "buttonName": "Override",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh backup-db override",
@@ -304,7 +276,6 @@
             "description": "Provide name and override restore point"
           },
           {
-            "commandOrder": 9,
             "buttonName": "Print all",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh backup-db print",
@@ -319,14 +290,12 @@
     ]
   },
   {
-    "sectionDisplayOrder": 4,
     "sectionName": "Commands to invoke on environment",
     "subSections": [
       {
         "subSectionName": "Resetting",
         "commands": [
           {
-            "commandOrder": 1,
             "buttonName": "Db with forms from local",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh reset db hotfix",
@@ -337,7 +306,6 @@
             "description": "After reset deploy forms from your local environment"
           },
           {
-            "commandOrder": 2,
             "buttonName": "Db with forms from snapshots",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh reset db snapshots",
@@ -348,7 +316,6 @@
             "description": "After reset deploy forms from nexus"
           },
           {
-            "commandOrder": 3,
             "buttonName": "Db without forms",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh reset db clean",
@@ -359,7 +326,6 @@
             "description": "Clean reset"
           },
           {
-            "commandOrder": 4,
             "buttonName": "Mocks",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh reset dias-mocks",
@@ -374,14 +340,12 @@
     ]
   },
   {
-    "sectionDisplayOrder": 5,
     "sectionName": "Commands to invoke on environment",
     "subSections": [
       {
         "subSectionName": "Following logs",
         "commands": [
           {
-            "commandOrder": 1,
             "buttonName": "Apps frontend",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh tailf frontend",
@@ -392,7 +356,6 @@
             "description": "Showing your logs (last 10 lines) and follow on current logs from frontend"
           },
           {
-            "commandOrder": 2,
             "buttonName": "Apps backend",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh tailf backend",
@@ -403,7 +366,6 @@
             "description": "Showing your logs (last 10 lines) and follow on current logs from backend"
           },
           {
-            "commandOrder": 3,
             "buttonName": "All",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh tailf all",
@@ -414,7 +376,6 @@
             "description": "Showing your logs (last 150 lines) and follow on current logs from dias-weblogic"
           },
           {
-            "commandOrder": 4,
             "buttonName": "Weblogic",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh tailf dias-weblogic",
@@ -425,7 +386,6 @@
             "description": "Showing your logs (last 150 lines) and follow on current logs from dias-weblogic"
           },
           {
-            "commandOrder": 5,
             "buttonName": "Oracle",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh tailf dias-oracle",
@@ -436,7 +396,6 @@
             "description": "Showing your logs (last 150 lines) and follow on current logs from dias-oracle"
           },
           {
-            "commandOrder": 6,
             "buttonName": "Mocks",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh tailf dias-mocks",
@@ -447,7 +406,6 @@
             "description": "Showing your logs (last 150 lines) and follow on current logs from dias-mocks"
           },
           {
-            "commandOrder": 7,
             "buttonName": "Flyway",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh tailf dias-flyway",
@@ -458,7 +416,6 @@
             "description": "Showing your logs (last 150 lines) and follow on current logs from dias-mocks"
           },
           {
-            "commandOrder": 8,
             "buttonName": "File parser",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh tailf dias-file-parser",
@@ -469,7 +426,6 @@
             "description": "Showing your logs (last 10 lines) and follow on current logs from dias-file-parser"
           },
           {
-            "commandOrder": 9,
             "buttonName": "FTP",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh tailf dias-ftp",
@@ -484,14 +440,12 @@
     ]
   },
   {
-    "sectionDisplayOrder": 6,
     "sectionName": "Commands to invoke on environment",
     "subSections": [
       {
         "subSectionName": "Opening containers",
         "commands": [
           {
-            "commandOrder": 1,
             "buttonName": "Weblogic",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh open dias-weblogic",
@@ -502,7 +456,6 @@
             "description": "Open container (go inside it)"
           },
           {
-            "commandOrder": 2,
             "buttonName": "Oracle",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh open dias-oracle",
@@ -513,7 +466,6 @@
             "description": "Open container (go inside it)"
           },
           {
-            "commandOrder": 3,
             "buttonName": "Mocks",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh open dias-mocks",
@@ -524,7 +476,6 @@
             "description": "Open container (go inside it)"
           },
           {
-            "commandOrder": 4,
             "buttonName": "Flyway",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh open dias-flyway",
@@ -535,7 +486,6 @@
             "description": "Open container (go inside it)"
           },
           {
-            "commandOrder": 5,
             "buttonName": "FTP",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh open dias-ftp",
@@ -550,14 +500,12 @@
     ]
   },
   {
-    "sectionDisplayOrder": 7,
     "sectionName": "Commands to invoke on environment",
     "subSections": [
       {
         "subSectionName": "Controlling your weblogic managed servers",
         "commands": [
           {
-            "commandOrder": 1,
             "buttonName": "Start backend",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh start server backend",
@@ -568,7 +516,6 @@
             "description": "Start backend server"
           },
           {
-            "commandOrder": 2,
             "buttonName": "Start frontend",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh start server frontend",
@@ -579,7 +526,6 @@
             "description": "Start frontend server"
           },
           {
-            "commandOrder": 3,
             "buttonName": "Start all",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh start server all",
@@ -590,7 +536,6 @@
             "description": "Start all servers"
           },
           {
-            "commandOrder": 4,
             "buttonName": "Stop backend",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh stop server backend",
@@ -601,7 +546,6 @@
             "description": "Stop backend server"
           },
           {
-            "commandOrder": 5,
             "buttonName": "Stop frontend",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh stop server frontend",
@@ -612,7 +556,6 @@
             "description": "Stop frontend server"
           },
           {
-            "commandOrder": 6,
             "buttonName": "Stop all",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh stop server all",
@@ -623,7 +566,6 @@
             "description": "Stop all servers"
           },
           {
-            "commandOrder": 7,
             "buttonName": "Restart backend",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh restart server backend",
@@ -634,7 +576,6 @@
             "description": "Restart backend server"
           },
           {
-            "commandOrder": 8,
             "buttonName": "Restart frontend",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh restart server frontend",
@@ -645,7 +586,6 @@
             "description": "Restart frontend server"
           },
           {
-            "commandOrder": 9,
             "buttonName": "Restart all",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh restart server all",
@@ -660,14 +600,12 @@
     ]
   },
   {
-    "sectionDisplayOrder": 8,
     "sectionName": "Commands to invoke on environment",
     "subSections": [
       {
         "subSectionName": "Showing logs",
         "commands": [
           {
-            "commandOrder": 1,
             "buttonName": "Apps frontend",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh logs frontend",
@@ -678,7 +616,6 @@
             "description": "Show logs regarding frontend managed server"
           },
           {
-            "commandOrder": 2,
             "buttonName": "Apps backend",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh logs backend",
@@ -689,7 +626,6 @@
             "description": "Show logs regarding backend managed server"
           },
           {
-            "commandOrder": 3,
             "buttonName": "All",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh logs all",
@@ -700,7 +636,6 @@
             "description": "Show logs regarding the dias-weblogic container"
           },
           {
-            "commandOrder": 4,
             "buttonName": "Weblogic",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh logs dias-weblogic",
@@ -711,7 +646,6 @@
             "description": "Show logs regarding the dias-weblogic container"
           },
           {
-            "commandOrder": 5,
             "buttonName": "Oracle",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh logs dias-oracle",
@@ -722,7 +656,6 @@
             "description": "Show logs regarding the dias-oracle container"
           },
           {
-            "commandOrder": 6,
             "buttonName": "Mocks",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh logs dias-mocks",
@@ -733,7 +666,6 @@
             "description": "Show logs regarding the dias-mocks container"
           },
           {
-            "commandOrder": 7,
             "buttonName": "Flyway",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh logs dias-flyway",
@@ -744,7 +676,6 @@
             "description": "Show logs regarding the dias-mocks container"
           },
           {
-            "commandOrder": 8,
             "buttonName": "File parser",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh logs dias-file-parser",
@@ -755,7 +686,6 @@
             "description": "Show logs regarding the dias-file-parser container"
           },
           {
-            "commandOrder": 9,
             "buttonName": "FTP",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh logs dias-ftp",
@@ -770,14 +700,12 @@
     ]
   },
   {
-    "sectionDisplayOrder": 9,
     "sectionName": "Commands to invoke on environment",
     "subSections": [
       {
         "subSectionName": "Login/logout to/from artifactory artifactory",
         "commands": [
           {
-            "commandOrder": 1,
             "buttonName": "Login",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh login",
@@ -788,7 +716,6 @@
             "description": "Login to artifactory. Only if you are not logged in."
           },
           {
-            "commandOrder": 2,
             "buttonName": "Logout",
             "scriptLocationParamName": "SERVICE_SCRIPT_PATH",
             "command": "./service.sh logout",

@@ -1,13 +1,11 @@
 ﻿[
   {
-    "sectionDisplayOrder": 1,
     "sectionName": "Commands to invoke for replacing DapKeys for local tests",
     "subSections": [
       {
         "subSectionName": "Updating DapKeys for local automated tests",
         "commands": [
           {
-            "commandOrder": 1,
             "buttonName": "Update",
             "scriptLocationParamName": "UPDATE_TEST_DAP_SCRIPT_PATH",
             "command": "./update_dap.sh",
@@ -18,7 +16,6 @@
             "description": "Packing dias-content to zip and replacing it in correct directories in DIAS repository."
           },
           {
-            "commandOrder": 2,
             "buttonName": "Build only",
             "scriptLocationParamName": "UPDATE_TEST_DAP_SCRIPT_PATH",
             "command": "./update_dap.sh build",
