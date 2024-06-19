@@ -17,7 +17,7 @@ public class LoadFromJsonService {
 
     private LoadFromJsonService() { }
 
-    public static List<LoadedElementDTO> load(String fileToLoad) throws IOException {
+    public static List<LoadedElementDTO> load(String fileToLoad) {
         Optional<List<LoadedElementDTO>> commands = loadBase(SettingsServiceBase.getMyOwnFileName(fileToLoad));
         return commands.orElseGet(() -> loadBase(SettingsServiceBase.getDefaultFileName(fileToLoad)).get());
     }

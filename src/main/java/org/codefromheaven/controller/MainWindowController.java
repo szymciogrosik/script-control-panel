@@ -1,6 +1,5 @@
 package org.codefromheaven.controller;
 
-import java.io.IOException;
 import java.net.URI;
 import java.net.URL;
 import java.util.*;
@@ -8,10 +7,8 @@ import java.util.stream.Collectors;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Group;
-import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
@@ -30,8 +27,6 @@ import org.codefromheaven.service.settings.FilesToLoadSettingsService;
 import org.codefromheaven.service.settings.InternalVisibilitySettingsService;
 import org.codefromheaven.service.settings.SettingsServiceBase;
 
-import static javafx.stage.Modality.APPLICATION_MODAL;
-
 public class MainWindowController implements Initializable {
 
     @FXML
@@ -46,6 +41,11 @@ public class MainWindowController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         this.loadContent();
+    }
+
+    @FunctionalInterface
+    public interface ContentLoader {
+        void loadContent();
     }
 
     private void loadContent() {
@@ -100,7 +100,7 @@ public class MainWindowController implements Initializable {
     }
 
     private void addElementsToScene(String fileToLoad, SettingsDTO visibilitySettings) {
-        List<LoadedElementDTO> loadedElements = loadElementsFromFile(fileToLoad);
+        List<LoadedElementDTO> loadedElements = LoadFromJsonService.load(fileToLoad);
         addSectionHeader(loadedElements.stream().findAny().get().getSectionName());
         addElementsToScene(loadedElements, fileToLoad, visibilitySettings);
     }
@@ -131,7 +131,7 @@ public class MainWindowController implements Initializable {
                                                                    .filter(elem -> elem.getSubSectionName().equals(subSectionName))
                                                                    .collect(Collectors.toList());
             for (LoadedElementDTO loadedElement : sectionElements) {
-                if (!isElementVisible(loadedElement, visibilitySettings)) {
+                if (!VisibilitySettingsController.isElementVisible(loadedElement, visibilitySettings)) {
                     continue;
                 }
                 rows.getChildren().add(createButton(loadedElement));
@@ -238,92 +238,21 @@ public class MainWindowController implements Initializable {
         return tt;
     }
 
-    private List<LoadedElementDTO> loadElementsFromFile(String fileToLoad) {
-        try {
-            return LoadFromJsonService.load(fileToLoad);
-        } catch (IOException e) {
-            throw new RuntimeException("Cannot load files from configuration file", e);
-        }
-    }
-
     @FXML
     private void handleChangeVisibleElements() {
-        Stage settingsStage = new Stage();
-        settingsStage.initModality(APPLICATION_MODAL);
-        settingsStage.getIcons().add(AnimalService.getInstance().getRandomAnimalImage());
-        VBox settingsRoot = new VBox(10);
-
-        ScrollPane scrollPane = new ScrollPane();
-        VBox contentBox = new VBox(10);
-        contentBox.setPadding(new Insets(10));
-
-        List<LoadedElementDTO> allElements = loadAllElements();
-        SettingsDTO visibilitySettings = InternalVisibilitySettingsService.loadVisibilitySettings();
-
-        allElements.stream()
-                   .collect(Collectors.groupingBy(LoadedElementDTO::getSubSectionName, LinkedHashMap::new, Collectors.toList()))
-                   .forEach((sectionName, elements) -> {
-                       VBox sectionBox = new VBox(5);
-                       sectionBox.getChildren().add(new Label(sectionName));
-                       for (LoadedElementDTO element : elements) {
-                           CheckBox checkBox = new CheckBox(element.getButtonName());
-                           boolean isChecked = isElementVisible(element, visibilitySettings);
-                           checkBox.setSelected(isChecked);
-                           checkBox.selectedProperty().addListener((obs, oldVal, newVal) -> {
-                               updateVisibilitySetting(element, newVal);
-                           });
-                           sectionBox.getChildren().add(checkBox);
-                       }
-                       contentBox.getChildren().add(sectionBox);
-                   });
-
-        scrollPane.setContent(contentBox);
-        settingsRoot.getChildren().add(scrollPane);
-
-        Scene scene = new Scene(settingsRoot, 400, 600);
-        settingsStage.setTitle("Settings - Change visibility of elements");
-        settingsStage.setScene(scene);
-
-        settingsStage.setOnHidden(event -> {
-            loadContent();
-            resizeMainWindow();
-        });
-        settingsStage.showAndWait();
-    }
-
-
-    private void resizeMainWindow() {
-        Stage mainStage = (Stage) primaryPage.getScene().getWindow();
-        mainStage.sizeToScene();
-    }
-
-    private List<LoadedElementDTO> loadAllElements() {
-        List<LoadedElementDTO> allElements = new ArrayList<>();
-        SettingsDTO filesToLoad = FilesToLoadSettingsService.load();
-        for (String fileToLoad : filesToLoad.getSettings().stream().map(KeyValueDTO::getKey).collect(Collectors.toList())) {
-            allElements.addAll(loadElementsFromFile(fileToLoad));
-        }
-        return allElements;
-    }
-
-    private void updateVisibilitySetting(LoadedElementDTO element, boolean newVal) {
-        InternalVisibilitySettingsService.updateVisibilitySetting(element.getSubSectionName(), element.getButtonName(), newVal);
-    }
-
-    private boolean isElementVisible(LoadedElementDTO element, SettingsDTO visibilitySettings) {
-        return visibilitySettings.getSettings().stream().noneMatch(elem ->
-                InternalVisibilitySettingsService.isMatchingSetting(elem, element.getSubSectionName(), element.getButtonName()));
+        VisibilitySettingsController controller = new VisibilitySettingsController(primaryPage, this::loadContent);
+        controller.handleChangeVisibleElements();
     }
 
     private boolean isAnyElementInSectionEnabled(String fileToLoad, SettingsDTO visibilitySettings) {
-        return loadElementsFromFile(fileToLoad)
-                .stream().anyMatch(elem -> isElementVisible(elem, visibilitySettings));
+        return LoadFromJsonService.load(fileToLoad)
+                                  .stream().anyMatch(elem -> VisibilitySettingsController.isElementVisible(elem, visibilitySettings));
     }
 
     private boolean isAnyElementInSubSectionEnabled(String fileName, String subsection, SettingsDTO visibilitySettings) {
-        return loadElementsFromFile(fileName)
-                .stream().filter(elem -> Objects.equals(elem.getSubSectionName(), subsection))
-                .anyMatch(elem -> isElementVisible(elem, visibilitySettings));
+        return LoadFromJsonService.load(fileName)
+                                  .stream().filter(elem -> Objects.equals(elem.getSubSectionName(), subsection))
+                                  .anyMatch(elem -> VisibilitySettingsController.isElementVisible(elem, visibilitySettings));
     }
 
 }
