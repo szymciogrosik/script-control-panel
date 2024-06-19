@@ -23,10 +23,6 @@
     {
       "key": "MAX_WINDOW_HEIGHT",
       "value": "910"
-    },
-    {
-      "key": "MAX_WINDOW_WIDTH",
-      "value": "1700"
     }
   ]
 }

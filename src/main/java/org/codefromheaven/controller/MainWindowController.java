@@ -30,13 +30,11 @@ import org.codefromheaven.service.settings.SettingsServiceBase;
 public class MainWindowController implements Initializable {
 
     @FXML
-    private MenuItem changeVisibleElements;
-
+    public VBox primaryPage;
     @FXML
     private ScrollPane mainScrollPane;
-
     @FXML
-    public VBox primaryPage;
+    private MenuItem changeVisibleElements;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -68,12 +66,6 @@ public class MainWindowController implements Initializable {
         mainScrollPane.setMaxHeight(maxWindowHeight);
         mainScrollPane.setFitToHeight(true);
         mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-
-        String maxWindowWidthString = SettingsServiceBase.loadValue(Setting.MAX_WINDOW_WIDTH);
-        int maxWindowWidth = Integer.parseInt(maxWindowWidthString);
-        mainScrollPane.setMaxWidth(maxWindowWidth);
-        mainScrollPane.setFitToWidth(true);
-        mainScrollPane.setVbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
     }
 
     private void addSectionHeader(String headerName) {
@@ -151,8 +143,6 @@ public class MainWindowController implements Initializable {
     private Button createButton(LoadedElementDTO loadedElement) {
         Button button = new Button(loadedElement.getButtonName());
         button.getStyleClass().add("button-default");
-        button.setMinWidth(Region.USE_PREF_SIZE);
-        button.setMaxWidth(Region.USE_PREF_SIZE);
         button.setOnMouseEntered(e -> button.getStyleClass().add("button-selected"));
         button.setOnMouseExited(e -> button.getStyleClass().remove("button-selected"));
         button.setTooltip(createTooltip(loadedElement.getDescription()));
@@ -238,12 +228,6 @@ public class MainWindowController implements Initializable {
         return tt;
     }
 
-    @FXML
-    private void handleChangeVisibleElements() {
-        VisibilitySettingsController controller = new VisibilitySettingsController(primaryPage, this::loadContent);
-        controller.handleChangeVisibleElements();
-    }
-
     private boolean isAnyElementInSectionEnabled(String fileToLoad, SettingsDTO visibilitySettings) {
         return LoadFromJsonService.load(fileToLoad)
                                   .stream().anyMatch(elem -> VisibilitySettingsController.isElementVisible(elem, visibilitySettings));
@@ -253,6 +237,12 @@ public class MainWindowController implements Initializable {
         return LoadFromJsonService.load(fileName)
                                   .stream().filter(elem -> Objects.equals(elem.getSubSectionName(), subsection))
                                   .anyMatch(elem -> VisibilitySettingsController.isElementVisible(elem, visibilitySettings));
+    }
+
+    @FXML
+    private void handleChangeVisibleElements() {
+        VisibilitySettingsController controller = new VisibilitySettingsController(primaryPage, this::loadContent);
+        controller.handleChangeVisibleElements();
     }
 
 }

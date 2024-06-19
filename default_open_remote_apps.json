@@ -123,7 +123,7 @@
             "autoCloseConsole": true,
             "popupInputDisplayed": false,
             "popupInputMessage": "",
-            "description": "Open remote KiTTY console f.e. for opening remote service workspace to copy data"
+            "description": "Open remote WIN SCP f.e. for opening remote service workspace to copy data"
           }
         ]
       }
