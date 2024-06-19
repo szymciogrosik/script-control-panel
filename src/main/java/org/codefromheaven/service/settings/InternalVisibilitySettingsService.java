@@ -13,7 +13,7 @@ public class InternalVisibilitySettingsService extends SettingsServiceBase {
     public static SettingsDTO loadVisibilitySettings() {
         boolean presentMyOwnSettings = isPresentMyOwnSettingFile(FILE_TYPE);
         if (presentMyOwnSettings) {
-            return getSettingsFile(FILE_TYPE);
+            return loadSettingsFile(FILE_TYPE);
         }
         return new SettingsDTO();
     }

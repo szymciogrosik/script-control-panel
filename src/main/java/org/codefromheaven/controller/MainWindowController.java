@@ -20,13 +20,14 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.codefromheaven.dto.LoadedElementDTO;
-import org.codefromheaven.dto.FileType;
 import org.codefromheaven.dto.Setting;
+import org.codefromheaven.dto.settings.KeyValueDTO;
 import org.codefromheaven.dto.settings.SettingsDTO;
 import org.codefromheaven.service.LoadFromJsonService;
 import org.codefromheaven.service.animal.AnimalService;
 import org.codefromheaven.service.command.GitBashService;
 import org.codefromheaven.service.command.PowerShellService;
+import org.codefromheaven.service.settings.FilesToLoadSettingsService;
 import org.codefromheaven.service.settings.InternalVisibilitySettingsService;
 import org.codefromheaven.service.settings.SettingsServiceBase;
 
@@ -63,43 +64,23 @@ public class MainWindowController implements Initializable {
         setupScrollPane();
 
         SettingsDTO visibilitySettings = InternalVisibilitySettingsService.loadVisibilitySettings();
-
-        if (isAnyElementInSectionEnabled(FileType.SERVICE_COMMANDS, visibilitySettings)) {
-            addSectionHeader("Commands to invoke on environment");
-            addElementsToScene(FileType.SERVICE_COMMANDS, visibilitySettings);
+        SettingsDTO filesToLoad = FilesToLoadSettingsService.load();
+        for (String fileToLoad : filesToLoad.getSettings().stream().map(KeyValueDTO::getKey).collect(Collectors.toList())) {
+            if (isAnyElementInSectionEnabled(fileToLoad, visibilitySettings)) {
+                addElementsToScene(fileToLoad, visibilitySettings);
+            }
         }
-
-        if (isAnyElementInSectionEnabled(FileType.UPDATE_DAP_FOR_TEST_COMMANDS, visibilitySettings)) {
-            addSectionHeader("Commands to invoke for replacing DapKeys for local tests");
-            addElementsToScene(FileType.UPDATE_DAP_FOR_TEST_COMMANDS, visibilitySettings);
-        }
-
-        if (isAnyElementInSectionEnabled(FileType.LINKS, visibilitySettings)) {
-            addSectionHeader("Links");
-            addElementsToScene(FileType.LINKS, visibilitySettings);
-        }
-
-        if (isAnyElementInSectionEnabled(FileType.OPEN_REMOTE_APPS, visibilitySettings)) {
-            addSectionHeader("Remote apps");
-            addElementsToScene(FileType.OPEN_REMOTE_APPS, visibilitySettings);
-        }
-
-        if (isAnyElementInSectionEnabled(FileType.SKAT_VPN, visibilitySettings)) {
-            addSectionHeader("SKAT VPN");
-            addElementsToScene(FileType.SKAT_VPN, visibilitySettings);
-        }
-
         addAuthorNote("Made with love by Szymon Gross");
     }
 
     private void setupScrollPane() {
-        String maxWindowHeightString = SettingsServiceBase.getValue(Setting.MAX_WINDOW_HEIGHT);
+        String maxWindowHeightString = SettingsServiceBase.loadValue(Setting.MAX_WINDOW_HEIGHT);
         int maxWindowHeight = Integer.parseInt(maxWindowHeightString);
         mainScrollPane.setMaxHeight(maxWindowHeight);
         mainScrollPane.setFitToHeight(true);
         mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
 
-        String maxWindowWidthString = SettingsServiceBase.getValue(Setting.MAX_WINDOW_WIDTH);
+        String maxWindowWidthString = SettingsServiceBase.loadValue(Setting.MAX_WINDOW_WIDTH);
         int maxWindowWidth = Integer.parseInt(maxWindowWidthString);
         mainScrollPane.setMaxWidth(maxWindowWidth);
         mainScrollPane.setFitToWidth(true);
@@ -130,13 +111,14 @@ public class MainWindowController implements Initializable {
         primaryPage.getChildren().add(section);
     }
 
-    private void addElementsToScene(FileType type, SettingsDTO visibilitySettings) {
-        List<LoadedElementDTO> loadedElements = loadElementsFromCsvFile(type);
-        addElementsToScene(loadedElements, type, visibilitySettings);
+    private void addElementsToScene(String fileToLoad, SettingsDTO visibilitySettings) {
+        List<LoadedElementDTO> loadedElements = loadElementsFromFile(fileToLoad);
+        addSectionHeader(loadedElements.stream().findAny().get().getSectionName());
+        addElementsToScene(loadedElements, fileToLoad, visibilitySettings);
     }
 
     private void addElementsToScene(
-            List<LoadedElementDTO> loadedElements, FileType type, SettingsDTO visibilitySettings
+            List<LoadedElementDTO> loadedElements, String fileToLoad, SettingsDTO visibilitySettings
     ) {
         List<String> subSectionsList =
                 loadedElements.stream().map(LoadedElementDTO::getSubSectionName).collect(Collectors.toList());
@@ -148,7 +130,7 @@ public class MainWindowController implements Initializable {
         });
 
         for (String subSectionName : uniqueSubSections) {
-            if (!isAnyElementInSubSectionEnabled(type, subSectionName, visibilitySettings)) {
+            if (!isAnyElementInSubSectionEnabled(fileToLoad, subSectionName, visibilitySettings)) {
                 continue;
             }
             primaryPage.getChildren().add(createHeaderForSection(subSectionName));
@@ -164,7 +146,7 @@ public class MainWindowController implements Initializable {
                 if (!isElementVisible(loadedElement, visibilitySettings)) {
                     continue;
                 }
-                rows.getChildren().add(createButton(loadedElement, type));
+                rows.getChildren().add(createButton(loadedElement));
             }
             primaryPage.getChildren().add(rows);
         }
@@ -178,25 +160,23 @@ public class MainWindowController implements Initializable {
         return section;
     }
 
-    private Button createButton(LoadedElementDTO loadedElement, FileType type) {
+    private Button createButton(LoadedElementDTO loadedElement) {
         Button button = new Button(loadedElement.getButtonName());
         button.setStyle(BUTTON_STYLES);
         button.setMinWidth(Region.USE_PREF_SIZE);
         button.setMaxWidth(Region.USE_PREF_SIZE);
         button.setOnMouseEntered(e -> button.setStyle(BUTTON_SELECTED_STYLES));
         button.setOnMouseExited(e -> button.setStyle(BUTTON_STYLES));
-        if (FileType.SERVICE_COMMANDS.equals(type)) {
-            addButtonListenerForServiceCommands(button, loadedElement);
-        } else if (FileType.UPDATE_DAP_FOR_TEST_COMMANDS.equals(type)) {
-            addButtonListenerForServiceCommands(button, loadedElement);
-        } else if (FileType.LINKS.equals(type)) {
-            button.setOnMouseClicked(event -> openPageInBrowser(loadedElement.getCommand()));
-        } else if (FileType.OPEN_REMOTE_APPS.equals(type)) {
-            addButtonListenerForServiceCommands(button, loadedElement);
-        } else if (FileType.SKAT_VPN.equals(type)) {
-            addButtonListenerForServiceCommands(button, loadedElement);
-        } else {
-            throw new RuntimeException("Unrecognised element type provided: " + type);
+        switch (loadedElement.getElementType()) {
+            case BASH:
+            case POWERSHELL:
+                addButtonListenerForServiceCommands(button, loadedElement);
+                break;
+            case LINK:
+                button.setOnMouseClicked(event -> openPageInBrowser(loadedElement.getCommand()));
+                break;
+            default:
+                throw new RuntimeException("Unrecognised element type provided: " + loadedElement.getElementType());
         }
         button.setTooltip(createTooltip(loadedElement.getDescription()));
         return button;
@@ -271,9 +251,9 @@ public class MainWindowController implements Initializable {
         return tt;
     }
 
-    private List<LoadedElementDTO> loadElementsFromCsvFile(FileType type) {
+    private List<LoadedElementDTO> loadElementsFromFile(String fileToLoad) {
         try {
-            return LoadFromJsonService.load(type);
+            return LoadFromJsonService.load(fileToLoad);
         } catch (IOException e) {
             throw new RuntimeException("Cannot load files from configuration file", e);
         }
@@ -332,11 +312,10 @@ public class MainWindowController implements Initializable {
 
     private List<LoadedElementDTO> loadAllElements() {
         List<LoadedElementDTO> allElements = new ArrayList<>();
-        allElements.addAll(loadElementsFromCsvFile(FileType.SERVICE_COMMANDS));
-        allElements.addAll(loadElementsFromCsvFile(FileType.UPDATE_DAP_FOR_TEST_COMMANDS));
-        allElements.addAll(loadElementsFromCsvFile(FileType.LINKS));
-        allElements.addAll(loadElementsFromCsvFile(FileType.OPEN_REMOTE_APPS));
-        allElements.addAll(loadElementsFromCsvFile(FileType.SKAT_VPN));
+        SettingsDTO filesToLoad = FilesToLoadSettingsService.load();
+        for (String fileToLoad : filesToLoad.getSettings().stream().map(KeyValueDTO::getKey).collect(Collectors.toList())) {
+            allElements.addAll(loadElementsFromFile(fileToLoad));
+        }
         return allElements;
     }
 
@@ -349,13 +328,13 @@ public class MainWindowController implements Initializable {
                 InternalVisibilitySettingsService.isMatchingSetting(elem, element.getSubSectionName(), element.getButtonName()));
     }
 
-    private boolean isAnyElementInSectionEnabled(FileType section, SettingsDTO visibilitySettings) {
-        return loadElementsFromCsvFile(section)
+    private boolean isAnyElementInSectionEnabled(String fileToLoad, SettingsDTO visibilitySettings) {
+        return loadElementsFromFile(fileToLoad)
                 .stream().anyMatch(elem -> isElementVisible(elem, visibilitySettings));
     }
 
-    private boolean isAnyElementInSubSectionEnabled(FileType section, String subsection, SettingsDTO visibilitySettings) {
-        return loadElementsFromCsvFile(section)
+    private boolean isAnyElementInSubSectionEnabled(String fileName, String subsection, SettingsDTO visibilitySettings) {
+        return loadElementsFromFile(fileName)
                 .stream().filter(elem -> Objects.equals(elem.getSubSectionName(), subsection))
                 .anyMatch(elem -> isElementVisible(elem, visibilitySettings));
     }

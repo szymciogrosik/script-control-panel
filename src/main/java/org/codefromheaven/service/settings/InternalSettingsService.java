@@ -20,7 +20,7 @@ public class InternalSettingsService extends SettingsServiceBase {
     public static String getAnimalImageFromConfigAndCreateMyOwnInternalSettingFileIfDoesNotExist() {
         boolean presentMyOwnSettings = isPresentMyOwnSettingFile(IMAGE_SETTING.getElementType());
         if (presentMyOwnSettings) {
-            return getValue(IMAGE_SETTING);
+            return loadValue(IMAGE_SETTING);
         } else {
             String animal = AnimalNamesProvider.getRandomAnimalName();
             SettingsDTO settings = new SettingsDTO(Collections.singletonList(new KeyValueDTO(IMAGE_SETTING.getName(), animal)));
@@ -30,7 +30,7 @@ public class InternalSettingsService extends SettingsServiceBase {
     }
 
     public static void replaceConfigVariable(BaseSetting elementToReplace, String newValue) {
-        SettingsDTO settings = getSettingsFile(FILE_TYPE);
+        SettingsDTO settings = loadSettingsFile(FILE_TYPE);
 
         KeyValueDTO keyValue = settings.getSettings().stream()
                                        .filter(elem -> elem.getKey().equals(elementToReplace.getName()))

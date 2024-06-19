@@ -14,7 +14,7 @@ public enum InternalSetting implements BaseSetting {
 
     @Override
     public String getValue() {
-        return SettingsServiceBase.getValue(this);
+        return SettingsServiceBase.loadValue(this);
     }
 
     @Override
