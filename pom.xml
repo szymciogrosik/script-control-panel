@@ -48,9 +48,9 @@
                 <version>${javafx.maven.plugin.version}</version>
                 <configuration>
                     <release>${maven.compiler.release}</release>
-                    <jlinkImageName>hellofx</jlinkImageName>
+                    <jlinkImageName>servicerunner</jlinkImageName>
                     <launcher>launcher</launcher>
-                    <mainClass>hellofx/org.codefromheaven.App</mainClass>
+                    <mainClass>servicerunner/org.codefromheaven.App</mainClass>
                 </configuration>
             </plugin>
             <plugin>
