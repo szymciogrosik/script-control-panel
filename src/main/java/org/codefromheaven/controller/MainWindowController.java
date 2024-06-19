@@ -38,13 +38,6 @@ public class MainWindowController implements Initializable {
     private static final int SPACING_BETWEEN_BUTTONS = 5;
     private static final int SIZE_OF_AUTHOR_IMAGE_IN_PIXELS = 50;
 
-    private static final String COMMON_BUTTON_STYLES = "-fx-text-fill: #000000; -fx-font-size: 12px;";
-
-    private static final String BUTTON_STYLES = "-fx-background-color: #E39100FF; " + COMMON_BUTTON_STYLES;
-    private static final String BUTTON_SELECTED_STYLES = "-fx-background-color: #00b6ae; " + COMMON_BUTTON_STYLES;
-    private static final String TOOLTIP_STYLES = "-fx-text-fill: red;";
-    private static final Color BACKGROUND_COLOR = Color.rgb(33,33,33);
-
     @FXML
     private MenuItem changeVisibleElements;
 
@@ -134,7 +127,7 @@ public class MainWindowController implements Initializable {
                 continue;
             }
             primaryPage.getChildren().add(createHeaderForSection(subSectionName));
-            primaryPage.setBackground(new Background(new BackgroundFill(BACKGROUND_COLOR, CornerRadii.EMPTY, Insets.EMPTY)));
+            primaryPage.getStyleClass().add("background-primary");
 
             HBox rows = new HBox();
             rows.setSpacing(SPACING_BETWEEN_BUTTONS);
@@ -162,11 +155,12 @@ public class MainWindowController implements Initializable {
 
     private Button createButton(LoadedElementDTO loadedElement) {
         Button button = new Button(loadedElement.getButtonName());
-        button.setStyle(BUTTON_STYLES);
+        button.getStyleClass().add("button-default");
         button.setMinWidth(Region.USE_PREF_SIZE);
         button.setMaxWidth(Region.USE_PREF_SIZE);
-        button.setOnMouseEntered(e -> button.setStyle(BUTTON_SELECTED_STYLES));
-        button.setOnMouseExited(e -> button.setStyle(BUTTON_STYLES));
+        button.setOnMouseEntered(e -> button.getStyleClass().add("button-selected"));
+        button.setOnMouseExited(e -> button.getStyleClass().remove("button-selected"));
+        button.setTooltip(createTooltip(loadedElement.getDescription()));
         switch (loadedElement.getElementType()) {
             case BASH:
             case POWERSHELL:
@@ -178,7 +172,6 @@ public class MainWindowController implements Initializable {
             default:
                 throw new RuntimeException("Unrecognised element type provided: " + loadedElement.getElementType());
         }
-        button.setTooltip(createTooltip(loadedElement.getDescription()));
         return button;
     }
 
@@ -243,11 +236,10 @@ public class MainWindowController implements Initializable {
     }
 
     private Tooltip createTooltip(String tooltipText) {
-        Tooltip tt = new Tooltip();
-        tt.setStyle(TOOLTIP_STYLES);
+        Tooltip tt = new Tooltip(tooltipText);
+        tt.getStyleClass().add("tooltip-custom");
         tt.setShowDelay(Duration.ONE);
         tt.setShowDuration(Duration.INDEFINITE);
-        tt.setText(tooltipText);
         return tt;
     }
 

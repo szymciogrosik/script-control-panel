@@ -47,3 +47,28 @@
     -fx-text-fill: #333333;
     -fx-font-size: 14px;
 }
+
+.button-default {
+    -fx-background-color: #E39100FF;
+    -fx-text-fill: #000000;
+    -fx-font-size: 12px;
+}
+
+.button-selected {
+    -fx-background-color: #00b6ae;
+    -fx-text-fill: #000000;
+    -fx-font-size: 12px;
+}
+
+.tooltip-custom {
+    -fx-text-fill: red;
+}
+
+.author-image {
+    -fx-fit-height: 50px; /* SIZE_OF_AUTHOR_IMAGE_IN_PIXELS */
+    -fx-fit-width: 50px;
+}
+
+.background-primary {
+    -fx-background-color: rgb(33, 33, 33);
+}
