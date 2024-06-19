@@ -136,30 +136,29 @@ public class MainWindowController implements Initializable {
     }
 
     private void addElementsToScene(
-            List<LoadedElementDTO> loadedElements, FileType type,
-            SettingsDTO visibilitySettings
+            List<LoadedElementDTO> loadedElements, FileType type, SettingsDTO visibilitySettings
     ) {
-        Set<AbstractMap.SimpleEntry<Integer, String>> uniqueSectionsSet =
-                loadedElements.stream()
-                              .map(elem -> new AbstractMap.SimpleEntry<>(elem.getSectionDisplayOrder(), elem.getSubSectionName()))
-                              .collect(Collectors.toSet());
+        List<String> subSectionsList =
+                loadedElements.stream().map(LoadedElementDTO::getSubSectionName).collect(Collectors.toList());
+        List<String> uniqueSubSections = new ArrayList<>();
+        subSectionsList.forEach(elem -> {
+            if (!uniqueSubSections.contains(elem)) {
+                uniqueSubSections.add(elem);
+            }
+        });
 
-        List<AbstractMap.SimpleEntry<Integer, String>> uniqueSections = new ArrayList<>(uniqueSectionsSet);
-        uniqueSections.sort(Map.Entry.comparingByKey());
-
-        for (AbstractMap.SimpleEntry<Integer, String> section : uniqueSections) {
-            if (!isAnyElementInSubSectionEnabled(type, section.getValue(), visibilitySettings)) {
+        for (String subSectionName : uniqueSubSections) {
+            if (!isAnyElementInSubSectionEnabled(type, subSectionName, visibilitySettings)) {
                 continue;
             }
-            primaryPage.getChildren().add(createHeaderForSection(section.getValue()));
+            primaryPage.getChildren().add(createHeaderForSection(subSectionName));
             primaryPage.setBackground(new Background(new BackgroundFill(BACKGROUND_COLOR, CornerRadii.EMPTY, Insets.EMPTY)));
 
             HBox rows = new HBox();
             rows.setSpacing(SPACING_BETWEEN_BUTTONS);
 
             List<LoadedElementDTO> sectionElements = loadedElements.stream()
-                                                                   .filter(elem -> elem.getSubSectionName().equals(section.getValue()))
-                                                                   .sorted(Comparator.comparing(LoadedElementDTO::getCommandOrder))
+                                                                   .filter(elem -> elem.getSubSectionName().equals(subSectionName))
                                                                    .collect(Collectors.toList());
             for (LoadedElementDTO loadedElement : sectionElements) {
                 if (!isElementVisible(loadedElement, visibilitySettings)) {
@@ -299,8 +298,6 @@ public class MainWindowController implements Initializable {
                    .forEach((sectionName, elements) -> {
                        VBox sectionBox = new VBox(5);
                        sectionBox.getChildren().add(new Label(sectionName));
-                       elements.sort(Comparator.comparingInt(LoadedElementDTO::getSectionDisplayOrder)
-                                               .thenComparingInt(LoadedElementDTO::getCommandOrder));
                        for (LoadedElementDTO element : elements) {
                            CheckBox checkBox = new CheckBox(element.getButtonName());
                            boolean isChecked = isElementVisible(element, visibilitySettings);

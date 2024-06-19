@@ -31,7 +31,7 @@ public class LoadFromCsvService {
             while ((line = br.readLine()) != null) {
                 String[] values = line.split(DELIMITER);
                 commands.add(new LoadedElementDTO(
-                        Integer.parseInt(values[0]), Integer.parseInt(values[1]), values[2], values[3], values[4], values[5],
+                        values[2], values[3], values[4], values[5],
                         values[6], ElementType.getEnumType(values[7]), Boolean.parseBoolean(values[8]),
                         Boolean.parseBoolean(values[9]), values[10], values[11]));
             }

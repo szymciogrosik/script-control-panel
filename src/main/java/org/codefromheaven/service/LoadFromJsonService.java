@@ -29,7 +29,6 @@ public class LoadFromJsonService {
         try {
             JsonNode root = mapper.readTree(new File(configPath));
             for (JsonNode sectionNode : root) {
-                int sectionDisplayOrder = sectionNode.get("sectionDisplayOrder").asInt();
                 String sectionName = sectionNode.get("sectionName").asText();
 
                 for (JsonNode subSectionNode : sectionNode.get("subSections")) {
@@ -37,8 +36,6 @@ public class LoadFromJsonService {
 
                     for (JsonNode commandNode : subSectionNode.get("commands")) {
                         commands.add(new LoadedElementDTO(
-                                sectionDisplayOrder,
-                                commandNode.get("commandOrder").asInt(),
                                 sectionName,
                                 subSectionName,
                                 commandNode.get("buttonName").asText(),
