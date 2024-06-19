@@ -13,14 +13,12 @@ import java.util.Objects;
 
 public class App extends Application {
 
-    private static Scene scene;
-
     @Override
     public void start(Stage stage) throws IOException {
         stage.setTitle("Buenos DIAS");
         Image animalImage = AnimalService.getInstance().getCurrentAnimalImage();
         stage.getIcons().add(animalImage);
-        scene = new Scene(loadFXML("mainWindow"));
+        Scene scene = new Scene(loadFXML("mainWindow"));
         scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
         stage.setScene(scene);
         stage.show();
