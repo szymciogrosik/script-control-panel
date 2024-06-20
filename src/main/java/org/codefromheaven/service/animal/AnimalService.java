@@ -13,10 +13,9 @@ public class AnimalService {
     private static final String ANIMAL_RESOURCE_PATH = "/" + ANIMAL_DIRECTORY_NAME + "/";
 
     public static AnimalService instance;
-    public static String currentAnimal;
 
     private AnimalService() {
-        currentAnimal = SettingsService.getAnimalImageFromSettingsOrAddIfDoesNotExist();
+        getCurrentAnimalName();
     }
 
     public static AnimalService getInstance() {
@@ -27,7 +26,7 @@ public class AnimalService {
     }
 
     public String getCurrentAnimalName() {
-        return currentAnimal;
+        return SettingsService.getAnimalImageFromSettingsOrAddIfDoesNotExist();
     }
 
     public Image getCurrentAnimalImage() {
@@ -39,8 +38,8 @@ public class AnimalService {
     }
 
     public void replaceCurrentAnimalToRandomAnimal() {
-        currentAnimal = AnimalNamesProvider.getRandomAnimalName();
-        replaceCurrentAnimal(currentAnimal);
+        String newAnimal = AnimalNamesProvider.getRandomAnimalName();
+        replaceCurrentAnimal(newAnimal);
     }
 
     private void replaceCurrentAnimal(String newAnimal) {

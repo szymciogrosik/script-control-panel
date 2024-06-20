@@ -87,14 +87,14 @@ public class MainWindowController implements Initializable {
     private void addAuthorNote(String authorName) {
         VBox section = new VBox();
         section.setAlignment(Pos.CENTER);
-        ImageView imageView = new ImageView(AnimalService.getInstance().getCurrentAnimalImage());
-        imageView.getStyleClass().add("author-image");
-        Tooltip.install(imageView, createTooltip(authorName));
-        imageView.setOnMouseClicked(event -> {
+        ImageView authorImageView = new ImageView(AnimalService.getInstance().getCurrentAnimalImage());
+        authorImageView.getStyleClass().add("author-image");
+        Tooltip.install(authorImageView, createTooltip(authorName));
+        authorImageView.setOnMouseClicked(event -> {
             AnimalService.getInstance().replaceCurrentAnimalToRandomAnimal();
-            imageView.setImage(AnimalService.getInstance().getCurrentAnimalImage());
+            authorImageView.setImage(AnimalService.getInstance().getCurrentAnimalImage());
         });
-        Group root = new Group(imageView);
+        Group root = new Group(authorImageView);
         section.getChildren().add(root);
         primaryPage.getChildren().add(section);
     }
@@ -271,20 +271,17 @@ public class MainWindowController implements Initializable {
 
     @FXML
     private void handleNews() {
-        HiddenElementSettingsController controller = new HiddenElementSettingsController(this::loadContent, this::resizeMainWindow);
-        controller.setupPage();
+
     }
 
     @FXML
     private void handleGithubProject() {
-        HiddenElementSettingsController controller = new HiddenElementSettingsController(this::loadContent, this::resizeMainWindow);
-        controller.setupPage();
+
     }
 
     @FXML
     private void handleAboutAuthor() {
-        HiddenElementSettingsController controller = new HiddenElementSettingsController(this::loadContent, this::resizeMainWindow);
-        controller.setupPage();
+
     }
 
 }

@@ -25,7 +25,9 @@ public class AdditionalSettingsController {
     private final MainWindowController.ContentLoader loader;
     private final MainWindowController.ResizeWindow resizeMainWindow;
 
-    public AdditionalSettingsController(MainWindowController.ContentLoader loader, MainWindowController.ResizeWindow resizeMainWindow) {
+    public AdditionalSettingsController(
+            MainWindowController.ContentLoader loader, MainWindowController.ResizeWindow resizeMainWindow
+    ) {
         this.loader = loader;
         this.resizeMainWindow = resizeMainWindow;
     }
