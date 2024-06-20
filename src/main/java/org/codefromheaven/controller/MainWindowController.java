@@ -24,7 +24,7 @@ import org.codefromheaven.service.animal.AnimalService;
 import org.codefromheaven.service.command.GitBashService;
 import org.codefromheaven.service.command.PowerShellService;
 import org.codefromheaven.service.settings.FilesToLoadSettingsService;
-import org.codefromheaven.service.settings.InternalVisibilitySettingsService;
+import org.codefromheaven.service.settings.HiddenElementSettingsService;
 import org.codefromheaven.service.settings.SettingsServiceBase;
 
 public class MainWindowController implements Initializable {
@@ -35,6 +35,14 @@ public class MainWindowController implements Initializable {
     private ScrollPane mainScrollPane;
     @FXML
     private MenuItem changeVisibleElements;
+    @FXML
+    private MenuItem changeAdditionalSettings;
+    @FXML
+    private MenuItem news;
+    @FXML
+    private MenuItem githubProject;
+    @FXML
+    private MenuItem aboutAuthor;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -50,7 +58,7 @@ public class MainWindowController implements Initializable {
         primaryPage.getChildren().clear();
         setupScrollPane();
 
-        SettingsDTO visibilitySettings = InternalVisibilitySettingsService.loadVisibilitySettings();
+        SettingsDTO visibilitySettings = HiddenElementSettingsService.loadVisibilitySettings();
         SettingsDTO filesToLoad = FilesToLoadSettingsService.load();
         for (String fileToLoad : filesToLoad.getSettings().stream().map(KeyValueDTO::getKey).collect(Collectors.toList())) {
             if (isAnyElementInSectionEnabled(fileToLoad, visibilitySettings)) {
@@ -61,7 +69,7 @@ public class MainWindowController implements Initializable {
     }
 
     private void setupScrollPane() {
-        String maxWindowHeightString = SettingsServiceBase.loadValue(Setting.MAX_WINDOW_HEIGHT);
+        String maxWindowHeightString = SettingsServiceBase.loadValue(Setting.MAX_WINDOW_HEIGHT).get();
         int maxWindowHeight = Integer.parseInt(maxWindowHeightString);
         mainScrollPane.setMaxHeight(maxWindowHeight);
         mainScrollPane.setFitToHeight(true);
@@ -123,7 +131,7 @@ public class MainWindowController implements Initializable {
                                                                    .filter(elem -> elem.getSubSectionName().equals(subSectionName))
                                                                    .collect(Collectors.toList());
             for (LoadedElementDTO loadedElement : sectionElements) {
-                if (!VisibilitySettingsController.isElementVisible(loadedElement, visibilitySettings)) {
+                if (!HiddenElementSettingsController.isElementVisible(loadedElement, visibilitySettings)) {
                     continue;
                 }
                 rows.getChildren().add(createButton(loadedElement));
@@ -230,13 +238,13 @@ public class MainWindowController implements Initializable {
 
     private boolean isAnyElementInSectionEnabled(String fileToLoad, SettingsDTO visibilitySettings) {
         return LoadFromJsonService.load(fileToLoad)
-                                  .stream().anyMatch(elem -> VisibilitySettingsController.isElementVisible(elem, visibilitySettings));
+                                  .stream().anyMatch(elem -> HiddenElementSettingsController.isElementVisible(elem, visibilitySettings));
     }
 
     private boolean isAnyElementInSubSectionEnabled(String fileName, String subsection, SettingsDTO visibilitySettings) {
         return LoadFromJsonService.load(fileName)
                                   .stream().filter(elem -> Objects.equals(elem.getSubSectionName(), subsection))
-                                  .anyMatch(elem -> VisibilitySettingsController.isElementVisible(elem, visibilitySettings));
+                                  .anyMatch(elem -> HiddenElementSettingsController.isElementVisible(elem, visibilitySettings));
     }
 
     @FunctionalInterface
@@ -251,7 +259,31 @@ public class MainWindowController implements Initializable {
 
     @FXML
     private void handleChangeVisibleElements() {
-        VisibilitySettingsController controller = new VisibilitySettingsController(this::loadContent, this::resizeMainWindow);
+        HiddenElementSettingsController controller = new HiddenElementSettingsController(this::loadContent, this::resizeMainWindow);
+        controller.setupPage();
+    }
+
+    @FXML
+    private void handleChangeAdditionalSettings() {
+        AdditionalSettingsController controller = new AdditionalSettingsController(this::loadContent, this::resizeMainWindow);
+        controller.setupPage();
+    }
+
+    @FXML
+    private void handleNews() {
+        HiddenElementSettingsController controller = new HiddenElementSettingsController(this::loadContent, this::resizeMainWindow);
+        controller.setupPage();
+    }
+
+    @FXML
+    private void handleGithubProject() {
+        HiddenElementSettingsController controller = new HiddenElementSettingsController(this::loadContent, this::resizeMainWindow);
+        controller.setupPage();
+    }
+
+    @FXML
+    private void handleAboutAuthor() {
+        HiddenElementSettingsController controller = new HiddenElementSettingsController(this::loadContent, this::resizeMainWindow);
         controller.setupPage();
     }
 

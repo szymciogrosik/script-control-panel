@@ -9,7 +9,8 @@ public enum Setting implements BaseSetting {
     UPDATE_TEST_DAP_SCRIPT_PATH,
     OPEN_REMOTE_APP_SCRIPT_PATH,
     SKAT_VPN_PATH,
-    MAX_WINDOW_HEIGHT;
+    MAX_WINDOW_HEIGHT,
+    IMAGE_NAME;
 
     @Override
     public String getName() {
@@ -18,7 +19,7 @@ public enum Setting implements BaseSetting {
 
     @Override
     public String getValue() {
-        return SettingsServiceBase.loadValue(this);
+        return SettingsServiceBase.loadValue(this).get();
     }
 
     @Override

@@ -13,7 +13,7 @@ import org.codefromheaven.dto.settings.SettingsDTO;
 import org.codefromheaven.service.LoadFromJsonService;
 import org.codefromheaven.service.animal.AnimalService;
 import org.codefromheaven.service.settings.FilesToLoadSettingsService;
-import org.codefromheaven.service.settings.InternalVisibilitySettingsService;
+import org.codefromheaven.service.settings.HiddenElementSettingsService;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -22,12 +22,12 @@ import java.util.stream.Collectors;
 
 import static javafx.stage.Modality.APPLICATION_MODAL;
 
-public class VisibilitySettingsController {
+public class HiddenElementSettingsController {
 
     private final MainWindowController.ContentLoader loader;
     private final MainWindowController.ResizeWindow resizeMainWindow;
 
-    public VisibilitySettingsController(
+    public HiddenElementSettingsController(
             MainWindowController.ContentLoader loader, MainWindowController.ResizeWindow resizeMainWindow
     ) {
         this.loader = loader;
@@ -62,7 +62,7 @@ public class VisibilitySettingsController {
 
     private void loadPageContent(VBox contentBox) {
         List<LoadedElementDTO> allElements = loadAllElements();
-        SettingsDTO visibilitySettings = InternalVisibilitySettingsService.loadVisibilitySettings();
+        SettingsDTO visibilitySettings = HiddenElementSettingsService.loadVisibilitySettings();
 
         allElements.stream()
                    .collect(Collectors.groupingBy(LoadedElementDTO::getSubSectionName, LinkedHashMap::new, Collectors.toList()))
@@ -92,13 +92,13 @@ public class VisibilitySettingsController {
     }
 
     private void updateVisibilitySetting(LoadedElementDTO element, boolean newVal) {
-        InternalVisibilitySettingsService.updateVisibilitySetting(
+        HiddenElementSettingsService.updateVisibilitySetting(
                 element.getSubSectionName(), element.getButtonName(), newVal);
     }
 
     public static boolean isElementVisible(LoadedElementDTO element, SettingsDTO visibilitySettings) {
         return visibilitySettings.getSettings().stream().noneMatch(
-                elem -> InternalVisibilitySettingsService.isMatchingSetting(
+                elem -> HiddenElementSettingsService.isMatchingSetting(
                         elem, element.getSubSectionName(), element.getButtonName()));
     }
 

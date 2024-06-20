@@ -14,12 +14,12 @@ public enum InternalSetting implements BaseSetting {
 
     @Override
     public String getValue() {
-        return SettingsServiceBase.loadValue(this);
+        return SettingsServiceBase.loadValue(this).get();
     }
 
     @Override
     public FileType getElementType() {
-        return FileType.INTERNAL_SETTINGS;
+        return FileType.SETTINGS;
     }
 
     @Override

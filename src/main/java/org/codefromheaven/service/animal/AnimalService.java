@@ -4,7 +4,7 @@ import javafx.scene.image.Image;
 import org.codefromheaven.dto.InternalSetting;
 import org.codefromheaven.helpers.ImageLoader;
 import org.codefromheaven.resources.AnimalNamesProvider;
-import org.codefromheaven.service.settings.InternalSettingsService;
+import org.codefromheaven.service.settings.SettingsService;
 
 public class AnimalService {
 
@@ -16,7 +16,7 @@ public class AnimalService {
     public static String currentAnimal;
 
     private AnimalService() {
-        currentAnimal = InternalSettingsService.getAnimalImageFromConfigAndCreateMyOwnInternalSettingFileIfDoesNotExist();
+        currentAnimal = SettingsService.getAnimalImageFromSettingsOrAddIfDoesNotExist();
     }
 
     public static AnimalService getInstance() {
@@ -44,7 +44,7 @@ public class AnimalService {
     }
 
     private void replaceCurrentAnimal(String newAnimal) {
-        InternalSettingsService.replaceConfigVariable(InternalSetting.IMAGE_NAME, newAnimal);
+        SettingsService.replaceOrCreateConfigVariable(InternalSetting.IMAGE_NAME, newAnimal);
     }
 
     private String getAnimalPath(String animal) {

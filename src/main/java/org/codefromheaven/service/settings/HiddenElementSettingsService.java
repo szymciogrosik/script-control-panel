@@ -4,11 +4,11 @@ import org.codefromheaven.dto.FileType;
 import org.codefromheaven.dto.settings.KeyValueDTO;
 import org.codefromheaven.dto.settings.SettingsDTO;
 
-public class InternalVisibilitySettingsService extends SettingsServiceBase {
+public class HiddenElementSettingsService extends SettingsServiceBase {
 
-    private static final FileType FILE_TYPE = FileType.INTERNAL_VISIBILITY_SETTINGS;
+    private static final FileType FILE_TYPE = FileType.HIDDEN_ELEMENTS_SETTINGS;
 
-    private InternalVisibilitySettingsService() {}
+    private HiddenElementSettingsService() {}
 
     public static SettingsDTO loadVisibilitySettings() {
         boolean presentMyOwnSettings = isPresentMyOwnSettingFile(FILE_TYPE);

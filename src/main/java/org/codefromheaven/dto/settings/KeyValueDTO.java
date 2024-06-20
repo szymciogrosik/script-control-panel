@@ -1,5 +1,7 @@
 package org.codefromheaven.dto.settings;
 
+import java.util.Objects;
+
 public class KeyValueDTO {
     private String key;
     private String value;
@@ -22,5 +24,18 @@ public class KeyValueDTO {
 
     public void setValue(String value) {
         this.value = value;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) {return true;}
+        if (o == null || getClass() != o.getClass()) {return false;}
+        KeyValueDTO that = (KeyValueDTO) o;
+        return Objects.equals(key, that.key) && Objects.equals(value, that.value);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(key, value);
     }
 }
