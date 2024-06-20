@@ -38,7 +38,7 @@ public class AnimalService {
         return ImageLoader.getImage(getAnimalPath(AnimalNamesProvider.getRandomAnimalName()));
     }
 
-    public void drawNewRandomAnimal() {
+    public void replaceCurrentAnimalToRandomAnimal() {
         currentAnimal = AnimalNamesProvider.getRandomAnimalName();
         replaceCurrentAnimal(currentAnimal);
     }
