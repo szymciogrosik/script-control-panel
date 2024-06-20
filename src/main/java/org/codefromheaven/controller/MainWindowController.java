@@ -84,12 +84,12 @@ public class MainWindowController implements Initializable {
         primaryPage.getChildren().add(section);
     }
 
-    private void addAuthorNote(String authorName) {
+    private void addAuthorNote(String authorNote) {
         VBox section = new VBox();
         section.setAlignment(Pos.CENTER);
         ImageView authorImageView = new ImageView(AnimalService.getInstance().getCurrentAnimalImage());
         authorImageView.getStyleClass().add("author-image");
-        Tooltip.install(authorImageView, createTooltip(authorName));
+        Tooltip.install(authorImageView, createTooltip(authorNote));
         authorImageView.setOnMouseClicked(event -> {
             AnimalService.getInstance().replaceCurrentAnimalToRandomAnimal();
             authorImageView.setImage(AnimalService.getInstance().getCurrentAnimalImage());
