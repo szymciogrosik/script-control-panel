@@ -20,12 +20,12 @@ import java.util.stream.Collectors;
 
 import static javafx.stage.Modality.APPLICATION_MODAL;
 
-public class AdditionalSettingsController {
+public class SettingsController {
 
     private final MainWindowController.ContentLoader loader;
     private final MainWindowController.ResizeWindow resizeMainWindow;
 
-    public AdditionalSettingsController(
+    public SettingsController(
             MainWindowController.ContentLoader loader, MainWindowController.ResizeWindow resizeMainWindow
     ) {
         this.loader = loader;

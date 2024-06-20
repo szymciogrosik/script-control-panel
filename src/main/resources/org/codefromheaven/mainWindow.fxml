@@ -9,7 +9,7 @@
    <MenuBar>
       <Menu text="Settings">
          <MenuItem text="Change visible elements" fx:id="changeVisibleElements" onAction="#handleChangeVisibleElements"/>
-         <MenuItem text="Change additional settings" fx:id="changeAdditionalSettings" onAction="#handleChangeAdditionalSettings"/>
+         <MenuItem text="Change additional settings" fx:id="changeSettings" onAction="#handleChangeSettings"/>
       </Menu>
       <Menu text="About">
          <MenuItem text="What's new" fx:id="news" onAction="#handleNews"/>

@@ -33,10 +33,12 @@ public class MainWindowController implements Initializable {
     public VBox primaryPage;
     @FXML
     private ScrollPane mainScrollPane;
+
     @FXML
     private MenuItem changeVisibleElements;
     @FXML
-    private MenuItem changeAdditionalSettings;
+    private MenuItem changeSettings;
+
     @FXML
     private MenuItem news;
     @FXML
@@ -264,8 +266,8 @@ public class MainWindowController implements Initializable {
     }
 
     @FXML
-    private void handleChangeAdditionalSettings() {
-        AdditionalSettingsController controller = new AdditionalSettingsController(this::loadContent, this::resizeMainWindow);
+    private void handleChangeSettings() {
+        SettingsController controller = new SettingsController(this::loadContent, this::resizeMainWindow);
         controller.setupPage();
     }
 
