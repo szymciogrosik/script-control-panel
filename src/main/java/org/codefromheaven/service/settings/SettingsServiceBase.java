@@ -67,8 +67,8 @@ public abstract class SettingsServiceBase {
         }
     }
 
-    public static void saveSettings(FileType fileType, SettingsDTO settings) {
-        SettingsDTO settingsToSave = getCustomSettingsDifferentThanDefault(fileType, settings);
+    public static void saveSettings(FileType fileType, SettingsDTO customSettings) {
+        SettingsDTO settingsToSave = getCustomSettingsDifferentThanDefault(fileType, customSettings);
         Path path = Paths.get(getMyOwnFileName(fileType.name()));
         try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
             writer.write(JsonUtils.serialize(settingsToSave));
@@ -77,10 +77,10 @@ public abstract class SettingsServiceBase {
         }
     }
 
-    private static SettingsDTO getCustomSettingsDifferentThanDefault(FileType fileType, SettingsDTO allSettings) {
+    private static SettingsDTO getCustomSettingsDifferentThanDefault(FileType fileType, SettingsDTO customSettings) {
         SettingsDTO defaultSettings = loadSettingsFile(getDefaultFileName(fileType.name())).get();
         return new SettingsDTO(
-                allSettings.getSettings().stream()
+                customSettings.getSettings().stream()
                            .filter(setting -> defaultSettings.getSettings().stream().noneMatch(defaultSetting -> defaultSetting.equals(setting)))
                            .collect(Collectors.toList()));
     }
