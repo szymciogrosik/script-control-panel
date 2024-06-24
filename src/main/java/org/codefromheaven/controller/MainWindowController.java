@@ -13,6 +13,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.codefromheaven.dto.LoadedElementDTO;
@@ -72,8 +73,12 @@ public class MainWindowController implements Initializable {
 
     private void setupScrollPane() {
         String maxWindowHeightString = SettingsServiceBase.loadValue(Setting.MAX_WINDOW_HEIGHT).get();
-        int maxWindowHeight = Integer.parseInt(maxWindowHeightString);
-        mainScrollPane.setMaxHeight(maxWindowHeight);
+        int maxHeightFromSettings = Integer.parseInt(maxWindowHeightString);
+        double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();
+
+        double maxHeight = (screenHeight > maxHeightFromSettings) ? screenHeight - 65 : maxHeightFromSettings;
+
+        mainScrollPane.setMaxHeight(maxHeight);
         mainScrollPane.setFitToHeight(true);
         mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
     }
