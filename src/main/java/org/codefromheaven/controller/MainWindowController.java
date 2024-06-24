@@ -72,15 +72,19 @@ public class MainWindowController implements Initializable {
     }
 
     private void setupScrollPane() {
-        String maxWindowHeightString = SettingsServiceBase.loadValue(Setting.MAX_WINDOW_HEIGHT).get();
-        int maxHeightFromSettings = Integer.parseInt(maxWindowHeightString);
-        double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();
-
-        double maxHeight = (screenHeight > maxHeightFromSettings) ? screenHeight - 65 : maxHeightFromSettings;
-
-        mainScrollPane.setMaxHeight(maxHeight);
+        mainScrollPane.setMaxHeight(getMaxHeight());
         mainScrollPane.setFitToHeight(true);
         mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
+    }
+
+    private double getMaxHeight() {
+        Optional<String> maxWindowHeightString = SettingsServiceBase.loadValue(Setting.MAX_WINDOW_HEIGHT);
+        if (maxWindowHeightString.isPresent() && !maxWindowHeightString.get().isEmpty()) {
+            return Integer.parseInt(maxWindowHeightString.get());
+        }
+        // Calculate size based on screen height
+        double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();
+        return screenHeight - 65;
     }
 
     private void addSectionHeader(String headerName) {
