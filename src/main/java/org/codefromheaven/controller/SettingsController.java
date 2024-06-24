@@ -83,7 +83,7 @@ public class SettingsController {
         int globalPosition = 0;
         for (int i = 0; i < textSettings.size(); i++, globalPosition++) {
             KeyValueDTO setting = textSettings.get(i);
-            Label label = new Label(setting.getKey() + ":");
+            Label label = new Label(getLabel(setting) + ":");
             TextField field = createTextField(setting.getValue(), textValueFields, i);
             gridPane.add(label, 0, globalPosition);
             gridPane.add(field, 1, globalPosition);
@@ -91,7 +91,7 @@ public class SettingsController {
 
         for (int i = 0; i < comboSettings.size(); i++, globalPosition++) {
             KeyValueDTO setting = comboSettings.get(i);
-            Label label = new Label(setting.getKey() + ":");
+            Label label = new Label(getLabel(setting) + ":");
             ComboBox<String> field = createComboBox(setting.getValue(), comboValueFields, i);
             gridPane.add(label, 0, globalPosition);
             gridPane.add(field, 1, globalPosition);
@@ -151,6 +151,14 @@ public class SettingsController {
         loader.loadContent();
         resizeMainWindow.resizeMainWindow();
         settingsStage.close();
+    }
+
+    private String getLabel(KeyValueDTO keyValueDTO) {
+        if (keyValueDTO.getDescription() != null && !keyValueDTO.getDescription().isBlank()) {
+            return keyValueDTO.getDescription();
+        } else {
+            return keyValueDTO.getKey();
+        }
     }
 
 }

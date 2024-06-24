@@ -25,7 +25,7 @@ public class SettingsService extends SettingsServiceBase {
 
     public static String getAnimalImageFromSettingsOrAddIfDoesNotExist() {
         Optional<String> currentAnimalOptional = loadValue(Setting.IMAGE_NAME);
-        if (currentAnimalOptional.isPresent()) {
+        if (currentAnimalOptional.isPresent() && !currentAnimalOptional.get().isEmpty()) {
             return currentAnimalOptional.get();
         } else {
             String animal = AnimalNamesProvider.getRandomAnimalName();
@@ -43,7 +43,7 @@ public class SettingsService extends SettingsServiceBase {
         if (keyValue.isPresent()) {
             keyValue.get().setValue(newValue);
         } else {
-            settings.getSettings().add(new KeyValueDTO(key, newValue));
+            settings.getSettings().add(new KeyValueDTO(key, newValue, ""));
         }
 
         saveSettings(FILE_TYPE, settings);

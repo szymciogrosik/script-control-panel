@@ -38,7 +38,7 @@ public class HiddenElementSettingsService extends SettingsServiceBase {
         }
 
         if (settingNotPresentAndNotChecked) {
-            allSettings.getSettings().add(new KeyValueDTO(section, checkboxName));
+            allSettings.getSettings().add(new KeyValueDTO(section, checkboxName, ""));
         }
 
         saveSettings(FILE_TYPE, allSettings);

@@ -43,6 +43,8 @@ public abstract class SettingsServiceBase {
                     myOwnSettings.get().getSettings().stream()
                                  .filter(elem -> defaultSetting.getKey().equals(elem.getKey())).findFirst();
             if (myOwn.isPresent()) {
+                // Override my own description with the newest one from default
+                myOwn.get().setDescription(defaultSetting.getDescription());
                 settingsToReturn.add(myOwn.get());
             } else {
                 settingsToReturn.add(defaultSetting);

@@ -2,27 +2,38 @@
   "settings": [
     {
       "key": "BASH_PATH",
-      "value": "C:/Program Files/Git/git-bash.exe"
+      "value": "C:/Program Files/Git/git-bash.exe",
+      "description": "Location of Git bash "
     },
     {
       "key": "SERVICE_SCRIPT_PATH",
-      "value": "../../dias-docker"
+      "value": "../../dias-docker",
+      "description": "Location of 'service.sh' script"
     },
     {
       "key": "UPDATE_TEST_DAP_SCRIPT_PATH",
-      "value": "../update-content-in-dias-tests"
+      "value": "../update-content-in-dias-tests",
+      "description": "Location of 'update-content-in-dias-tests' directory"
     },
     {
       "key": "OPEN_REMOTE_APP_SCRIPT_PATH",
-      "value": "../open-remote-apps"
+      "value": "../open-remote-apps",
+      "description": "Location of 'open-remote-apps' directory"
     },
     {
       "key": "SKAT_VPN_PATH",
-      "value": "../../VPN-Cisco-AnyConnect-Docker"
+      "value": "../../VPN-Cisco-AnyConnect-Docker",
+      "description": "Location of 'VPN-Cisco-AnyConnect-Docker' directory"
     },
     {
       "key": "MAX_WINDOW_HEIGHT",
-      "value": ""
+      "value": "",
+      "description": "Max window height (if empty, height will be adjusted to your screen)"
+    },
+    {
+      "key": "IMAGE_NAME",
+      "value": "",
+      "description": "Select image which displays in application"
     }
   ]
 }
