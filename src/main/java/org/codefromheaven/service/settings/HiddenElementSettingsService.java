@@ -1,6 +1,7 @@
 package org.codefromheaven.service.settings;
 
 import org.codefromheaven.dto.FileType;
+import org.codefromheaven.dto.LoadedElementDTO;
 import org.codefromheaven.dto.settings.KeyValueDTO;
 import org.codefromheaven.dto.settings.SettingsDTO;
 
@@ -18,10 +19,9 @@ public class HiddenElementSettingsService extends SettingsServiceBase {
         return new SettingsDTO();
     }
 
-    public static void updateVisibilitySetting(String section, String checkboxName, boolean checked) {
-        SettingsDTO allSettings = loadVisibilitySettings();
-        boolean settingPresentInFile = allSettings
-                .getSettings().stream().anyMatch(elem -> isMatchingSetting(elem, section, checkboxName));
+    public static void updateVisibilitySetting(SettingsDTO visibilitySettings, LoadedElementDTO loadedElement, boolean checked) {
+        boolean settingPresentInFile = visibilitySettings
+                .getSettings().stream().anyMatch(elem -> isMatchingSetting(elem, loadedElement));
 
         boolean settingPresentAndNotChecked = settingPresentInFile && !checked;
         boolean settingNotPresentAndChecked = !settingPresentInFile && checked;
@@ -34,18 +34,24 @@ public class HiddenElementSettingsService extends SettingsServiceBase {
         }
 
         if (settingPresentAndChecked) {
-            allSettings.getSettings().removeIf(elem -> isMatchingSetting(elem, section, checkboxName));
+            visibilitySettings.getSettings().removeIf(elem -> isMatchingSetting(elem, loadedElement));
         }
 
         if (settingNotPresentAndNotChecked) {
-            allSettings.getSettings().add(new KeyValueDTO(section, checkboxName, ""));
+            visibilitySettings.getSettings().add(new KeyValueDTO(getKey(loadedElement), loadedElement.getButtonName(), ""));
         }
-
-        saveSettings(FILE_TYPE, allSettings);
     }
 
-    public static boolean isMatchingSetting(KeyValueDTO keyValue, String section, String checkboxName) {
-        return keyValue.getKey().equals(section) && keyValue.getValue().equals(checkboxName);
+    public static void saveSettings(SettingsDTO settings) {
+        saveSettings(FILE_TYPE, settings);
+    }
+
+    public static boolean isMatchingSetting(KeyValueDTO keyValue, LoadedElementDTO loadedElement) {
+        return keyValue.getKey().equals(getKey(loadedElement)) && keyValue.getValue().equals(loadedElement.getButtonName());
+    }
+
+    public static String getKey(LoadedElementDTO loadedElement) {
+        return loadedElement.getSectionName() + " - " + loadedElement.getSubSectionName() + " - " + loadedElement.getButtonName();
     }
 
 }

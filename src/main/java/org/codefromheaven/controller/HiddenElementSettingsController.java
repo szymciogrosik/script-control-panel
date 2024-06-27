@@ -2,6 +2,7 @@ package org.codefromheaven.controller;
 
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
+import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
@@ -26,12 +27,14 @@ public class HiddenElementSettingsController {
 
     private final MainWindowController.ContentLoader loader;
     private final MainWindowController.ResizeWindow resizeMainWindow;
+    private final SettingsDTO visibilitySettings;
 
     public HiddenElementSettingsController(
             MainWindowController.ContentLoader loader, MainWindowController.ResizeWindow resizeMainWindow
     ) {
         this.loader = loader;
         this.resizeMainWindow = resizeMainWindow;
+        this.visibilitySettings = HiddenElementSettingsService.loadVisibilitySettings();
     }
 
     public void setupPage() {
@@ -50,19 +53,23 @@ public class HiddenElementSettingsController {
         scrollPane.setContent(contentBox);
         settingsRoot.getChildren().add(scrollPane);
 
+        Button btnSave = new Button("Save");
+        btnSave.setOnAction(event -> {
+            HiddenElementSettingsService.saveSettings(visibilitySettings);
+            loader.loadContent();
+            resizeMainWindow.resizeMainWindow();
+            settingsStage.close();
+        });
+        settingsRoot.getChildren().add(btnSave);
+
         Scene scene = new Scene(settingsRoot, 400, 600);
         settingsStage.setScene(scene);
 
-        settingsStage.setOnHidden(event -> {
-            loader.loadContent();
-            resizeMainWindow.resizeMainWindow();
-        });
         settingsStage.showAndWait();
     }
 
     private void loadPageContent(VBox contentBox) {
         List<LoadedElementDTO> allElements = loadAllElements();
-        SettingsDTO visibilitySettings = HiddenElementSettingsService.loadVisibilitySettings();
 
         allElements.stream()
                    .collect(Collectors.groupingBy(LoadedElementDTO::getSubSectionName, LinkedHashMap::new, Collectors.toList()))
@@ -92,14 +99,12 @@ public class HiddenElementSettingsController {
     }
 
     private void updateVisibilitySetting(LoadedElementDTO element, boolean newVal) {
-        HiddenElementSettingsService.updateVisibilitySetting(
-                element.getSubSectionName(), element.getButtonName(), newVal);
+        HiddenElementSettingsService.updateVisibilitySetting(visibilitySettings, element, newVal);
     }
 
     public static boolean isElementVisible(LoadedElementDTO element, SettingsDTO visibilitySettings) {
         return visibilitySettings.getSettings().stream().noneMatch(
-                elem -> HiddenElementSettingsService.isMatchingSetting(
-                        elem, element.getSubSectionName(), element.getButtonName()));
+                elem -> HiddenElementSettingsService.isMatchingSetting(elem, element));
     }
 
 }
