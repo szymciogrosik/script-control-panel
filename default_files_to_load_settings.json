@@ -1,24 +1,19 @@
 ﻿{
   "settings": [
     {
-      "key": "SERVICE_COMMANDS",
-      "value": ""
+      "key": "SERVICE_COMMANDS"
     },
     {
-      "key": "UPDATE_DAP_FOR_TEST_COMMANDS",
-      "value": ""
+      "key": "UPDATE_DAP_FOR_TEST_COMMANDS"
     },
     {
-      "key": "LINKS",
-      "value": ""
+      "key": "LINKS"
     },
     {
-      "key": "OPEN_REMOTE_APPS",
-      "value": ""
+      "key": "OPEN_REMOTE_APPS"
     },
     {
-      "key": "SKAT_VPN",
-      "value": ""
+      "key": "SKAT_VPN"
     }
   ]
 }
