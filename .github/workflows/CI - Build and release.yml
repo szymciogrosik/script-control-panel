@@ -1,4 +1,4 @@
-name: CI - Step 2 - Build and release
+name: CI - Build and release
 
 on:
   push:
