@@ -2,7 +2,7 @@ name: CI - Step 1 - Create PR from main to release-github
 
 on:
   push:
-    branches: [main]
+    branches: [master]
 
 jobs:
   crete-pr-main-to-ftp-release:
