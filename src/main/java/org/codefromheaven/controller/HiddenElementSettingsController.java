@@ -1,11 +1,14 @@
 package org.codefromheaven.controller;
 
 import javafx.geometry.Insets;
+import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.HBox;
+import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.stage.Stage;
 import org.codefromheaven.dto.LoadedElementDTO;
@@ -54,13 +57,23 @@ public class HiddenElementSettingsController {
         settingsRoot.getChildren().add(scrollPane);
 
         Button btnSave = new Button("Save");
+        btnSave.setMaxWidth(Double.MAX_VALUE); // Make button span full width
+        HBox.setMargin(btnSave, new Insets(0, 10, 10, 10));
+        btnSave.setPadding(new Insets(5));
+
+        // Create an HBox to center the button
+        HBox buttonContainer = new HBox(btnSave);
+        buttonContainer.setAlignment(Pos.CENTER);
+        HBox.setHgrow(btnSave, Priority.ALWAYS);
+
         btnSave.setOnAction(event -> {
             HiddenElementSettingsService.saveSettings(visibilitySettings);
             loader.loadContent();
             resizeMainWindow.resizeMainWindow();
             settingsStage.close();
         });
-        settingsRoot.getChildren().add(btnSave);
+
+        settingsRoot.getChildren().add(buttonContainer);
 
         Scene scene = new Scene(settingsRoot, 400, 600);
         settingsStage.setScene(scene);
