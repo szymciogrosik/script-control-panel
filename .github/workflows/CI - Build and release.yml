@@ -53,5 +53,5 @@ jobs:
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
           asset_path: ./target/script_control_panel-1.0.jar
-          asset_name: script_control_panel-1.0.jar
+          asset_name: script_control_panel.jar
           asset_content_type: application/java-archive
