@@ -23,6 +23,17 @@ public class SettingsService extends SettingsServiceBase {
         saveSettings(FILE_TYPE, settings);
     }
 
+    public static String getAppName() {
+        Optional<String> currentAnimalOptional = loadValue(Setting.APP_NAME);
+        if (currentAnimalOptional.isPresent() && !currentAnimalOptional.get().isEmpty()) {
+            return currentAnimalOptional.get();
+        } else {
+            String animal = AnimalNamesProvider.getRandomAnimalName();
+            replaceOrCreateConfigVariable(Setting.APP_NAME, animal);
+            return animal;
+        }
+    }
+
     public static String getAnimalImageFromSettingsOrAddIfDoesNotExist() {
         Optional<String> currentAnimalOptional = loadValue(Setting.IMAGE_NAME);
         if (currentAnimalOptional.isPresent() && !currentAnimalOptional.get().isEmpty()) {

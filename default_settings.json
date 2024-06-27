@@ -1,6 +1,11 @@
 {
   "settings": [
     {
+      "key": "APP_NAME",
+      "value": "Buenos DIAS",
+      "description": ""
+    },
+    {
       "key": "SERVICE_SCRIPT_PATH",
       "value": "../../dias-docker",
       "description": "Location of 'service.sh' script"

@@ -5,12 +5,9 @@ import org.codefromheaven.service.settings.SettingsServiceBase;
 
 public enum Setting implements BaseSetting {
     BASH_PATH,
-    SERVICE_SCRIPT_PATH,
-    UPDATE_TEST_DAP_SCRIPT_PATH,
-    OPEN_REMOTE_APP_SCRIPT_PATH,
-    SKAT_VPN_PATH,
     MAX_WINDOW_HEIGHT,
-    IMAGE_NAME;
+    IMAGE_NAME,
+    APP_NAME;
 
     @Override
     public String getName() {

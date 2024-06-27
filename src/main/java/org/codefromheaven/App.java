@@ -7,6 +7,7 @@ import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
 import org.codefromheaven.service.animal.AnimalService;
+import org.codefromheaven.service.settings.SettingsService;
 
 import java.io.IOException;
 import java.util.Objects;
@@ -15,7 +16,7 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        stage.setTitle("Buenos DIAS");
+        stage.setTitle(SettingsService.getAppName());
         stage.setResizable(false);
         Image animalImage = AnimalService.getInstance().getCurrentAnimalImage();
         stage.getIcons().add(animalImage);

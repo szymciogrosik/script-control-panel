@@ -69,7 +69,7 @@ public abstract class SettingsServiceBase {
         // Add all default settings from class which does not present in the file
         DefaultSettings.ALL.getSettings().forEach(elem -> {
             if (defaultSettingsFromFile.getSettings().stream().noneMatch(elem2 -> elem2.getKey().equals(elem.getKey()))) {
-                keyValueList.add(elem);
+                keyValueList.add(new KeyValueDTO(elem.getKey(), elem.getValue(), elem.getDescription()));
             }
         });
         // Add all default settings from file
