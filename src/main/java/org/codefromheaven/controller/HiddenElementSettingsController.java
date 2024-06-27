@@ -57,11 +57,10 @@ public class HiddenElementSettingsController {
         settingsRoot.getChildren().add(scrollPane);
 
         Button btnSave = new Button("Save");
-        btnSave.setMaxWidth(Double.MAX_VALUE); // Make button span full width
+        btnSave.setMaxWidth(Double.MAX_VALUE);
         HBox.setMargin(btnSave, new Insets(0, 10, 10, 10));
         btnSave.setPadding(new Insets(5));
 
-        // Create an HBox to center the button
         HBox buttonContainer = new HBox(btnSave);
         buttonContainer.setAlignment(Pos.CENTER);
         HBox.setHgrow(btnSave, Priority.ALWAYS);
