@@ -31,6 +31,17 @@ jobs:
       - name: Build with Maven
         run: mvn clean install -DskipTests -X
 
+      - name: Create ZIP of Default Files
+        run: |
+          zip -r default_files.zip default*
+        shell: bash
+
+      - name: Upload Default Config Files Zip as Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: default-config
+          path: default_config.zip
+
       - name: Extract tag name
         id: extract_tag_name
         run: echo "::set-output name=tag_name::${GITHUB_REF#refs/tags/}"
