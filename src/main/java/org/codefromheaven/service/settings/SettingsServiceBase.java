@@ -29,7 +29,7 @@ public abstract class SettingsServiceBase {
 
     public static SettingsDTO loadSettingsFile(FileType fileType) {
         Optional<SettingsDTO> myOwnSettings = loadSettingsFile(getMyOwnFileName(fileType.name()));
-        SettingsDTO defaultSettings = loadSettingsFile(getDefaultFileName(fileType.name())).get();
+        SettingsDTO defaultSettings = mergeDefaultSettings(loadSettingsFile(getDefaultFileName(fileType.name())).orElse(new SettingsDTO()), fileType);
 
         if (myOwnSettings.isEmpty()) {
             return defaultSettings;
@@ -61,6 +61,22 @@ public abstract class SettingsServiceBase {
         return new SettingsDTO(settingsToReturn);
     }
 
+    private static SettingsDTO mergeDefaultSettings(SettingsDTO defaultSettingsFromFile, FileType fileType) {
+        if (fileType != FileType.SETTINGS) {
+            return defaultSettingsFromFile;
+        }
+        List<KeyValueDTO> keyValueList = new ArrayList<>();
+        // Add all default settings from class which does not present in the file
+        DefaultSettings.ALL.getSettings().forEach(elem -> {
+            if (defaultSettingsFromFile.getSettings().stream().noneMatch(elem2 -> elem2.getKey().equals(elem.getKey()))) {
+                keyValueList.add(elem);
+            }
+        });
+        // Add all default settings from file
+        keyValueList.addAll(defaultSettingsFromFile.getSettings());
+        return new SettingsDTO(keyValueList);
+    }
+
     private static Optional<SettingsDTO> loadSettingsFile(String settingPath) {
         try {
             return Optional.of(JsonUtils.deserialize(new File(settingPath), SettingsDTO.class));
@@ -80,7 +96,7 @@ public abstract class SettingsServiceBase {
     }
 
     private static SettingsDTO getCustomSettingsDifferentThanDefault(FileType fileType, SettingsDTO customSettings) {
-        SettingsDTO defaultSettings = loadSettingsFile(getDefaultFileName(fileType.name())).get();
+        SettingsDTO defaultSettings = mergeDefaultSettings(loadSettingsFile(getDefaultFileName(fileType.name())).orElse(new SettingsDTO()), fileType);
         return new SettingsDTO(
                 customSettings.getSettings().stream()
                            .filter(setting -> defaultSettings.getSettings().stream().noneMatch(defaultSetting -> defaultSetting.equals(setting)))
