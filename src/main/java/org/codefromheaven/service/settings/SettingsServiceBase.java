@@ -103,14 +103,10 @@ public abstract class SettingsServiceBase {
                            .collect(Collectors.toList()));
     }
 
-    public static Optional<String> loadValue(BaseSetting setting) {
-        return loadValue(setting, setting.getElementType());
-    }
-
-    private static Optional<String> loadValue(BaseSetting setting, FileType fileType) {
+    public static Optional<String> loadValue(String setting, FileType fileType) {
         SettingsDTO settingsList = loadSettingsFile(fileType);
         return settingsList.getSettings().stream()
-                           .filter(elem -> elem.getKey().equals(setting.getName()))
+                           .filter(elem -> elem.getKey().equals(setting))
                            .map(KeyValueDTO::getValue).findFirst();
     }
 

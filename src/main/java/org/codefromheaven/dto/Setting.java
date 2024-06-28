@@ -16,22 +16,12 @@ public enum Setting implements BaseSetting {
 
     @Override
     public String getValue() {
-        return SettingsServiceBase.loadValue(this).get();
+        return SettingsServiceBase.loadValue(getName(), getElementType()).get();
     }
 
     @Override
     public FileType getElementType() {
         return FileType.SETTINGS;
-    }
-
-    @Override
-    public BaseSetting[] getAll() {
-        return Setting.values();
-    }
-
-    public static BaseSetting getSettingByName(String settingName) {
-        // No matter what setting selected
-        return Setting.BASH_PATH.getElementByName(settingName);
     }
 
 }

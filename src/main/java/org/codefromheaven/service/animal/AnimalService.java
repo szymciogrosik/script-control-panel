@@ -1,7 +1,7 @@
 package org.codefromheaven.service.animal;
 
 import javafx.scene.image.Image;
-import org.codefromheaven.dto.InternalSetting;
+import org.codefromheaven.dto.Setting;
 import org.codefromheaven.helpers.ImageLoader;
 import org.codefromheaven.resources.AnimalNamesProvider;
 import org.codefromheaven.service.settings.SettingsService;
@@ -43,7 +43,7 @@ public class AnimalService {
     }
 
     private void replaceCurrentAnimal(String newAnimal) {
-        SettingsService.replaceOrCreateConfigVariable(InternalSetting.IMAGE_NAME, newAnimal);
+        SettingsService.replaceOrCreateConfigVariable(Setting.IMAGE_NAME, newAnimal);
     }
 
     private String getAnimalPath(String animal) {

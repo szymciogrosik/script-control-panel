@@ -3,7 +3,7 @@
     {
       "key": "APP_NAME",
       "value": "Buenos DIAS",
-      "description": ""
+      "description": "Override your app name"
     },
     {
       "key": "SERVICE_SCRIPT_PATH",

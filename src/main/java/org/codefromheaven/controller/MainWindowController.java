@@ -26,6 +26,7 @@ import org.codefromheaven.service.command.GitBashService;
 import org.codefromheaven.service.command.PowerShellService;
 import org.codefromheaven.service.settings.FilesToLoadSettingsService;
 import org.codefromheaven.service.settings.HiddenElementSettingsService;
+import org.codefromheaven.service.settings.SettingsService;
 import org.codefromheaven.service.settings.SettingsServiceBase;
 
 public class MainWindowController implements Initializable {
@@ -78,7 +79,7 @@ public class MainWindowController implements Initializable {
     }
 
     private double getMaxHeight() {
-        Optional<String> maxWindowHeightString = SettingsServiceBase.loadValue(Setting.MAX_WINDOW_HEIGHT);
+        Optional<String> maxWindowHeightString = SettingsService.loadValue(Setting.MAX_WINDOW_HEIGHT);
         if (maxWindowHeightString.isPresent() && !maxWindowHeightString.get().isEmpty()) {
             return Integer.parseInt(maxWindowHeightString.get());
         }

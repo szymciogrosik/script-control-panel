@@ -1,7 +1,7 @@
 package org.codefromheaven.service.command;
 
 import org.codefromheaven.dto.CommandDTO;
-import org.codefromheaven.dto.Setting;
+import org.codefromheaven.service.settings.SettingsService;
 
 import java.io.IOException;
 
@@ -38,7 +38,7 @@ public class PowerShellSetupService implements Runnable {
     }
 
     private static String getOpenDirectoryCommand(String scriptPathVarName) {
-        return "cd \"" + Setting.getSettingByName(scriptPathVarName).getValue() + "\"";
+        return "cd \"" + SettingsService.loadValue(scriptPathVarName).get() + "\"";
     }
 
 }
