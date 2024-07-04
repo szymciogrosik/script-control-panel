@@ -63,7 +63,8 @@ jobs:
           fi
           # Print the value of TAG_CREATED
           echo "Value of TAG_CREATED: ${{ env.TAG_CREATED }}"
-          echo "tag_created=${{ env.TAG_CREATED }}" >> $GITHUB_OUTPUT
+          # Set the output for the job
+          echo "::set-output name=tag_created::${{ env.TAG_CREATED }}"
 
     outputs:
       tag_created: ${{ steps.create_tag.outputs.tag_created }}
