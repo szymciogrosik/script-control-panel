@@ -37,14 +37,16 @@ jobs:
           echo "VERSION=$version" >> $GITHUB_ENV
           echo "Found version: $version"
 
+      - name: Fetch all tags
+        run: git fetch --tags
+
       - name: Check for existing tag
         id: check_tag
         run: |
-          TAG_EXISTS=$(git tag -l "v${{ env.VERSION }}")
-          if [ -z "$TAG_EXISTS" ]; then
-            echo "TAG_EXISTS=false" >> $GITHUB_ENV
-          else
+          if git rev-parse "v${{ env.VERSION }}" >/dev/null 2>&1; then
             echo "TAG_EXISTS=true" >> $GITHUB_ENV
+          else
+            echo "TAG_EXISTS=false" >> $GITHUB_ENV
           fi
 
       - name: Create tag if it does not exist
