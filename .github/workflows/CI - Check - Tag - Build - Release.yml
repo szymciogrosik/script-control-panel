@@ -61,6 +61,7 @@ jobs:
           else
             echo "TAG_CREATED=false" >> $GITHUB_ENV
           fi
+          echo "tag_created: ${{ env.TAG_CREATED }}"
           echo "tag_created=${{ env.TAG_CREATED }}" >> $GITHUB_OUTPUT
 
     outputs:
