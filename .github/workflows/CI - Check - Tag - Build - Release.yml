@@ -66,7 +66,7 @@ jobs:
         if: env.TAG_CREATED == 'false'
         run: |
           echo "Tag was not created, interrupting the workflow."
-          exit 0
+          exit 1
 
       - name: Clean Maven repository
         run: mvn clean
