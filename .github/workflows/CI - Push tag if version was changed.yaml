@@ -17,8 +17,8 @@ jobs:
       - name: Set up Java environment
         uses: actions/setup-java@v4
         with:
-          distribution: 'temurin' # Install the latest Temurin JDK
-          java-version: '17'      # Specify the Java version you want to use
+          java-version: '17'
+          distribution: 'temurin'
 
       - name: Install Python
         uses: actions/setup-python@v4
