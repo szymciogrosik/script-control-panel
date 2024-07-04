@@ -40,10 +40,15 @@ jobs:
       - name: Fetch all tags
         run: git fetch --tags
 
+      - name: Prepare tag name
+        id: prepare_tag
+        run: |
+          echo "TAG_NAME=v${{ env.VERSION }}" >> $GITHUB_ENV
+
       - name: Check for existing tag
         id: check_tag
         run: |
-          if git rev-parse "v${{ env.VERSION }}" >/dev/null 2>&1; then
+          if git rev-parse "${{ env.TAG_NAME }}" >/dev/null 2>&1; then
             echo "TAG_EXISTS=true" >> $GITHUB_ENV
           else
             echo "TAG_EXISTS=false" >> $GITHUB_ENV
@@ -55,8 +60,8 @@ jobs:
           if [ "${{ env.TAG_EXISTS }}" == "false" ]; then
             git config --global user.name "github-actions[bot]"
             git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-            git tag "v${{ env.VERSION }}"
-            git push origin "v${{ env.VERSION }}"
+            git tag "${{ env.TAG_NAME }}"
+            git push origin "${{ env.TAG_NAME }}"
             echo "TAG_CREATED=true" >> $GITHUB_ENV
           else
             echo "TAG_CREATED=false" >> $GITHUB_ENV
@@ -85,18 +90,14 @@ jobs:
           name: default-config
           path: default_files.zip
 
-      - name: Extract tag name
-        id: extract_tag_name
-        run: echo "tag_name=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
-
       - name: Create Release
         id: create_release
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
-          tag_name: ${{ env.tag_name }}
-          release_name: Release ${{ env.tag_name }}
+          tag_name: ${{ env.TAG_NAME }}
+          release_name: Release ${{ env.TAG_NAME }}
           draft: true
           prerelease: false
 
