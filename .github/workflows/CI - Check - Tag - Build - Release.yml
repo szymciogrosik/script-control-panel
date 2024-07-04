@@ -50,17 +50,23 @@ jobs:
           fi
 
       - name: Create tag if it does not exist
-        if: env.TAG_EXISTS == 'false'
+        id: create_tag
         run: |
-          git config --global user.name "github-actions[bot]"
-          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
-          git tag "v${{ env.VERSION }}"
-          git push origin "v${{ env.VERSION }}"
-          echo "TAG_CREATED=true" >> $GITHUB_ENV
+          if [ "${{ env.TAG_EXISTS }}" == "false" ]; then
+            git config --global user.name "github-actions[bot]"
+            git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
+            git tag "v${{ env.VERSION }}"
+            git push origin "v${{ env.VERSION }}"
+            echo "TAG_CREATED=true" >> $GITHUB_ENV
+          else
+            echo "TAG_CREATED=false" >> $GITHUB_ENV
+          fi
+        outputs:
+          tag_created: ${{ steps.create_tag.outputs.TAG_CREATED }}
 
   build-and-deploy:
     needs: tag_version
-    if: env.TAG_CREATED == 'true'
+    if: needs.tag_version.outputs.tag_created == 'true'
     runs-on: ubuntu-latest
 
     steps:
