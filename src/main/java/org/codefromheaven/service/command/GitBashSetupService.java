@@ -1,6 +1,6 @@
 package org.codefromheaven.service.command;
 
-import org.codefromheaven.dto.CommandDTO;
+import org.codefromheaven.dto.Command;
 import org.codefromheaven.dto.Setting;
 import org.codefromheaven.service.settings.SettingsService;
 
@@ -10,14 +10,14 @@ public class GitBashSetupService implements Runnable {
 
     private static final String SEPARATOR = " ; ";
 
-    private final CommandDTO commandDTO;
+    private final Command command;
 
-    public GitBashSetupService(CommandDTO commandDTO) {
-        this.commandDTO = commandDTO;
+    public GitBashSetupService(Command command) {
+        this.command = command;
     }
 
     public void run() {
-        runCommand(commandDTO.getScriptPathVarName(), commandDTO.isAutoCloseConsole(), commandDTO.getCommand());
+        runCommand(command.scriptPathVarName(), command.autoCloseConsole(), command.command());
     }
 
     private static void runCommand(String scriptPathVarName, boolean autoCloseConsole, String command) {
