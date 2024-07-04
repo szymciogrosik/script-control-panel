@@ -59,8 +59,9 @@ jobs:
           echo "TAG_CREATED=true" >> $GITHUB_ENV
 
       - name: Set output properties
+        id: set_output_properties
         run: |
-          echo "tag_created=${{ env.TAG_CREATED }}" >> $GITHUB_ENV
+          echo "tag_created=${{ env.TAG_CREATED }}" >> $GITHUB_OUTPUT
 
   build-and-deploy:
     needs: tag_version
