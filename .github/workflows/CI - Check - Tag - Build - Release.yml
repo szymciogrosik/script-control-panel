@@ -74,6 +74,7 @@ jobs:
       - name: Print results
         run: |
           echo "Received value: ${{ needs.tag_version.outputs.tag_created }}"
+          echo "Received value2: ${{ env.VERSION }}"
 
 #      - name: Checkout code
 #        uses: actions/checkout@v4
