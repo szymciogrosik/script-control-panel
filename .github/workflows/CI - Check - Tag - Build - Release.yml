@@ -61,67 +61,67 @@ jobs:
           else
             echo "TAG_CREATED=false" >> $GITHUB_ENV
           fi
-          # Print the value of TAG_CREATED
-          echo "Value of TAG_CREATED: ${{ env.TAG_CREATED }}"
-          # Set the output for the job
-          echo "::set-output name=tag_created::${{ env.TAG_CREATED }}"
+          echo "tag_created=${{ env.TAG_CREATED }}" >> $GITHUB_OUTPUT
 
     outputs:
       tag_created: ${{ steps.create_tag.outputs.tag_created }}
 
   build-and-deploy:
     needs: tag_version
-    if: needs.tag_version.outputs.tag_created == 'true'
     runs-on: ubuntu-latest
 
     steps:
-      - name: Checkout code
-        uses: actions/checkout@v4
-
-      - name: Set up JDK 17
-        uses: actions/setup-java@v4
-        with:
-          java-version: '17'
-          distribution: 'temurin'
-
-      - name: Clean Maven repository
-        run: mvn clean
-
-      - name: Build with Maven
-        run: mvn clean install -DskipTests -X
-
-      - name: Create ZIP of Default Files
+      - name: Print results
         run: |
-          zip -r default_files.zip default*
-        shell: bash
+          echo "Received value: ${{ needs.tag_version.outputs.tag_created }}"
 
-      - name: Upload Default Config Files Zip as Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: default-config
-          path: default_files.zip
-
-      - name: Extract tag name
-        id: extract_tag_name
-        run: echo "tag_name=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
-
-      - name: Create Release
-        id: create_release
-        uses: actions/create-release@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          tag_name: ${{ env.tag_name }}
-          release_name: Release ${{ env.tag_name }}
-          draft: true
-          prerelease: false
-
-      - name: Upload JAR to Release
-        uses: actions/upload-release-asset@v1
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-        with:
-          upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./target/script_control_panel-${{ env.VERSION }}.jar
-          asset_name: script_control_panel.jar
-          asset_content_type: application/java-archive
+#      - name: Checkout code
+#        uses: actions/checkout@v4
+#
+#      - name: Set up JDK 17
+#        uses: actions/setup-java@v4
+#        with:
+#          java-version: '17'
+#          distribution: 'temurin'
+#
+#      - name: Clean Maven repository
+#        run: mvn clean
+#
+#      - name: Build with Maven
+#        run: mvn clean install -DskipTests -X
+#
+#      - name: Create ZIP of Default Files
+#        run: |
+#          zip -r default_files.zip default*
+#        shell: bash
+#
+#      - name: Upload Default Config Files Zip as Artifact
+#        uses: actions/upload-artifact@v3
+#        with:
+#          name: default-config
+#          path: default_files.zip
+#
+#      - name: Extract tag name
+#        id: extract_tag_name
+#        run: echo "tag_name=${GITHUB_REF#refs/tags/}" >> $GITHUB_ENV
+#
+#      - name: Create Release
+#        id: create_release
+#        uses: actions/create-release@v1
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        with:
+#          tag_name: ${{ env.tag_name }}
+#          release_name: Release ${{ env.tag_name }}
+#          draft: true
+#          prerelease: false
+#
+#      - name: Upload JAR to Release
+#        uses: actions/upload-release-asset@v1
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#        with:
+#          upload_url: ${{ steps.create_release.outputs.upload_url }}
+#          asset_path: ./target/script_control_panel-${{ env.VERSION }}.jar
+#          asset_name: script_control_panel.jar
+#          asset_content_type: application/java-archive
