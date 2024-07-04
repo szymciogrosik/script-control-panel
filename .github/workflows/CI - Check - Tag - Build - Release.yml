@@ -61,8 +61,10 @@ jobs:
           else
             echo "TAG_CREATED=false" >> $GITHUB_ENV
           fi
-        outputs:
-          tag_created: ${{ steps.create_tag.outputs.TAG_CREATED }}
+          echo "tag_created=${{ env.TAG_CREATED }}" >> $GITHUB_OUTPUT
+
+    outputs:
+      tag_created: ${{ steps.create_tag.outputs.tag_created }}
 
   build-and-deploy:
     needs: tag_version
