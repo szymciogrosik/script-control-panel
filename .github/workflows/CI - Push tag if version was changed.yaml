@@ -20,10 +20,20 @@ jobs:
           distribution: 'temurin' # Install the latest Temurin JDK
           java-version: '17'      # Specify the Java version you want to use
 
+      - name: Install Python
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.x'
+
       - name: Extract version from pom.xml
         id: extract_version
         run: |
-          version=$(xmllint --xpath "string(//project/version)" pom.xml)
+          version=$(python -c "import xml.etree.ElementTree as ET; \
+                              tree = ET.parse('pom.xml'); \
+                              root = tree.getroot(); \
+                              ns = {'m': 'http://maven.apache.org/POM/4.0.0'}; \
+                              version = root.find('m:version', ns).text; \
+                              print(version)")
           echo "VERSION=$version" >> $GITHUB_ENV
           echo "Found version: $version"
 
