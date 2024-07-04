@@ -1,4 +1,6 @@
-package org.codefromheaven.dto;
+package org.codefromheaven.dto.data;
+
+import org.codefromheaven.dto.ElementType;
 
 public class LoadedElementDTO {
 

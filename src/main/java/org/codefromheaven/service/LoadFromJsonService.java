@@ -4,7 +4,7 @@ import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.codefromheaven.dto.ElementType;
-import org.codefromheaven.dto.LoadedElementDTO;
+import org.codefromheaven.dto.data.LoadedElementDTO;
 import org.codefromheaven.service.settings.SettingsServiceBase;
 
 import java.io.File;

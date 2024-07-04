@@ -1,7 +1,7 @@
 package org.codefromheaven.service.settings;
 
 import org.codefromheaven.dto.FileType;
-import org.codefromheaven.dto.LoadedElementDTO;
+import org.codefromheaven.dto.data.LoadedElementDTO;
 import org.codefromheaven.dto.settings.KeyValueDTO;
 import org.codefromheaven.dto.settings.SettingsDTO;
 

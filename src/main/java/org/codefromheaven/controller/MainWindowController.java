@@ -16,7 +16,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import org.codefromheaven.dto.LoadedElementDTO;
+import org.codefromheaven.dto.data.LoadedElementDTO;
 import org.codefromheaven.dto.Setting;
 import org.codefromheaven.dto.settings.KeyValueDTO;
 import org.codefromheaven.dto.settings.SettingsDTO;
@@ -27,7 +27,6 @@ import org.codefromheaven.service.command.PowerShellService;
 import org.codefromheaven.service.settings.FilesToLoadSettingsService;
 import org.codefromheaven.service.settings.HiddenElementSettingsService;
 import org.codefromheaven.service.settings.SettingsService;
-import org.codefromheaven.service.settings.SettingsServiceBase;
 
 public class MainWindowController implements Initializable {
 
