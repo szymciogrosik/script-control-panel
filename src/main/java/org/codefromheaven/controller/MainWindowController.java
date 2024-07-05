@@ -49,7 +49,13 @@ public class MainWindowController implements Initializable {
     @FXML
     private MenuItem news;
     @FXML
+    private MenuItem reportIssues;
+    @FXML
     private MenuItem githubProject;
+    @FXML
+    private MenuItem githubDocumentation;
+    @FXML
+    private MenuItem githubAboutAuthor;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -303,8 +309,23 @@ public class MainWindowController implements Initializable {
     }
 
     @FXML
+    private void handleReportIssues() {
+        LinkUtils.openPageInBrowser(Link.ISSUES.getUrl());
+    }
+
+    @FXML
     private void handleGithubProject() {
         LinkUtils.openPageInBrowser(Link.GH_PROJECT.getUrl());
+    }
+
+    @FXML
+    private void handleGithubDocumentation() {
+        LinkUtils.openPageInBrowser(Link.DOCUMENTATION.getUrl());
+    }
+
+    @FXML
+    private void handleGithubAboutAuthor() {
+        LinkUtils.openPageInBrowser(Link.ABOUT_AUTHOR.getUrl());
     }
 
 }

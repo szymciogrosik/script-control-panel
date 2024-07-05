@@ -14,7 +14,10 @@
       </Menu>
       <Menu text="About">
          <MenuItem text="What's new" fx:id="news" onAction="#handleNews"/>
+         <MenuItem text="Report issues" fx:id="reportIssues" onAction="#handleReportIssues"/>
          <MenuItem text="GitHub project" fx:id="githubProject" onAction="#handleGithubProject"/>
+         <MenuItem text="Documentation" fx:id="githubDocumentation" onAction="#handleGithubDocumentation"/>
+         <MenuItem text="About author" fx:id="githubAboutAuthor" onAction="#handleGithubAboutAuthor"/>
       </Menu>
    </MenuBar>
    <ScrollPane fx:id="mainScrollPane" fitToWidth="true">
