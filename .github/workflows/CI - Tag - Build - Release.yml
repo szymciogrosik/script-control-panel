@@ -84,14 +84,14 @@ jobs:
 
       - name: Create ZIP of Default Files
         run: |
-          zip -r default_files.zip default* .gitignore
+          zip -r default_config.zip default* .gitignore
         shell: bash
 
       - name: Upload Default Config Files Zip as Artifact
         uses: actions/upload-artifact@v3
         with:
           name: default-config
-          path: default_files.zip
+          path: default_config.zip
 
       - name: Create Release
         id: create_release
@@ -120,6 +120,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./default_files.zip
-          asset_name: default_files.zip
+          asset_path: ./default_config.zip
+          asset_name: default_config.zip
           asset_content_type: application/zip
