@@ -66,7 +66,7 @@ jobs:
           else
             echo "TAG_CREATED=false" >> $GITHUB_ENV
           fi
-          
+
       - name: Interrupt workflow if tag is not created
         if: env.TAG_CREATED == 'false'
         run: |
@@ -79,9 +79,12 @@ jobs:
       - name: Build with Maven
         run: mvn clean install -DskipTests -X
 
+      - name: Rename default.gitignore to .gitignore
+        run: mv default.gitignore .gitignore
+
       - name: Create ZIP of Default Files
         run: |
-          zip -r default_files.zip default*
+          zip -r default_files.zip default* .gitignore
         shell: bash
 
       - name: Upload Default Config Files Zip as Artifact
@@ -110,3 +113,13 @@ jobs:
           asset_path: ./target/script_control_panel-${{ env.VERSION }}.jar
           asset_name: script_control_panel.jar
           asset_content_type: application/java-archive
+
+      - name: Upload Default Files Zip to Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./default_files.zip
+          asset_name: default_files.zip
+          asset_content_type: application/zip
