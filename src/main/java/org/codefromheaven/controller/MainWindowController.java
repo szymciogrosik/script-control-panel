@@ -57,6 +57,11 @@ public class MainWindowController implements Initializable {
     @FXML
     private MenuItem githubAboutAuthor;
 
+    @FXML
+    private MenuItem checkForUpdates;
+    @FXML
+    private MenuItem downloadAndInstall;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         this.loadContent();
@@ -326,6 +331,16 @@ public class MainWindowController implements Initializable {
     @FXML
     private void handleGithubAboutAuthor() {
         LinkUtils.openPageInBrowser(Link.ABOUT_AUTHOR.getUrl());
+    }
+
+    @FXML
+    private void handleCheckForUpdates() {
+
+    }
+
+    @FXML
+    private void handleDownloadAndInstall() {
+
     }
 
 }

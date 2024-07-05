@@ -19,6 +19,10 @@
          <MenuItem text="Documentation" fx:id="githubDocumentation" onAction="#handleGithubDocumentation"/>
          <MenuItem text="About author" fx:id="githubAboutAuthor" onAction="#handleGithubAboutAuthor"/>
       </Menu>
+      <Menu text="Update">
+         <MenuItem text="Check for updates" fx:id="checkForUpdates" onAction="#handleCheckForUpdates"/>
+         <MenuItem text="Download and install" fx:id="downloadAndInstall" onAction="#handleDownloadAndInstall"/>
+      </Menu>
    </MenuBar>
    <ScrollPane fx:id="mainScrollPane" fitToWidth="true">
       <VBox fx:id="primaryPage" spacing="10.0" styleClass="mainStyle">
