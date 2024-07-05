@@ -16,6 +16,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import org.codefromheaven.dto.Link;
 import org.codefromheaven.dto.data.ButtonDTO;
 import org.codefromheaven.dto.data.SectionDTO;
 import org.codefromheaven.dto.Setting;
@@ -23,6 +24,7 @@ import org.codefromheaven.dto.data.SubSectionDTO;
 import org.codefromheaven.dto.settings.KeyValueDTO;
 import org.codefromheaven.dto.settings.SettingsDTO;
 import org.codefromheaven.dto.settings.VisibilitySettingKey;
+import org.codefromheaven.helpers.LinkUtil;
 import org.codefromheaven.service.LoadFromJsonService;
 import org.codefromheaven.service.animal.AnimalService;
 import org.codefromheaven.service.command.GitBashService;
@@ -165,7 +167,7 @@ public class MainWindowController implements Initializable {
                 addButtonListenerForServiceCommands(button, buttonDTO);
                 break;
             case LINK:
-                button.setOnMouseClicked(event -> openPageInBrowser(buttonDTO.command()));
+                button.setOnMouseClicked(event -> LinkUtil.openPageInBrowser(buttonDTO.command()));
                 break;
             default:
                 throw new RuntimeException("Unrecognised element type provided: " + buttonDTO.elementType());
@@ -222,15 +224,6 @@ public class MainWindowController implements Initializable {
         Stage dialogStage = (Stage) dialog.getDialogPane().getScene().getWindow();
         dialogStage.getIcons().add(AnimalService.getInstance().getRandomAnimalImage()); // Update the path accordingly
         return dialog.showAndWait();
-    }
-
-    private void openPageInBrowser(String url) {
-        try {
-            URI u = new URI(url);
-            java.awt.Desktop.getDesktop().browse(u);
-        } catch (Exception e) {
-            throw new RuntimeException("Cannot open page in browser", e);
-        }
     }
 
     private Tooltip createTooltip(String tooltipText) {
@@ -302,12 +295,12 @@ public class MainWindowController implements Initializable {
 
     @FXML
     private void handleNews() {
-
+        LinkUtil.openPageInBrowser(Link.GH_RELEASES.getUrl());
     }
 
     @FXML
     private void handleGithubProject() {
-
+        LinkUtil.openPageInBrowser(Link.GH_PROJECT.getUrl());
     }
 
     @FXML
