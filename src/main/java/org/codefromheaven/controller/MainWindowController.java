@@ -1,6 +1,5 @@
 package org.codefromheaven.controller;
 
-import java.net.URI;
 import java.net.URL;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -24,7 +23,7 @@ import org.codefromheaven.dto.data.SubSectionDTO;
 import org.codefromheaven.dto.settings.KeyValueDTO;
 import org.codefromheaven.dto.settings.SettingsDTO;
 import org.codefromheaven.dto.settings.VisibilitySettingKey;
-import org.codefromheaven.helpers.LinkUtil;
+import org.codefromheaven.helpers.LinkUtils;
 import org.codefromheaven.service.LoadFromJsonService;
 import org.codefromheaven.service.animal.AnimalService;
 import org.codefromheaven.service.command.GitBashService;
@@ -49,8 +48,6 @@ public class MainWindowController implements Initializable {
     private MenuItem news;
     @FXML
     private MenuItem githubProject;
-    @FXML
-    private MenuItem aboutAuthor;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
@@ -167,7 +164,7 @@ public class MainWindowController implements Initializable {
                 addButtonListenerForServiceCommands(button, buttonDTO);
                 break;
             case LINK:
-                button.setOnMouseClicked(event -> LinkUtil.openPageInBrowser(buttonDTO.command()));
+                button.setOnMouseClicked(event -> LinkUtils.openPageInBrowser(buttonDTO.command()));
                 break;
             default:
                 throw new RuntimeException("Unrecognised element type provided: " + buttonDTO.elementType());
@@ -295,17 +292,12 @@ public class MainWindowController implements Initializable {
 
     @FXML
     private void handleNews() {
-        LinkUtil.openPageInBrowser(Link.GH_RELEASES.getUrl());
+        LinkUtils.openPageInBrowser(Link.GH_RELEASES.getUrl());
     }
 
     @FXML
     private void handleGithubProject() {
-        LinkUtil.openPageInBrowser(Link.GH_PROJECT.getUrl());
-    }
-
-    @FXML
-    private void handleAboutAuthor() {
-
+        LinkUtils.openPageInBrowser(Link.GH_PROJECT.getUrl());
     }
 
 }

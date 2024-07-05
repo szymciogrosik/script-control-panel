@@ -2,9 +2,9 @@ package org.codefromheaven.helpers;
 
 import java.net.URI;
 
-public class LinkUtil {
+public class LinkUtils {
 
-    private LinkUtil() {
+    private LinkUtils() {
     }
 
     public static void openPageInBrowser(String url) {

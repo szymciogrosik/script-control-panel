@@ -14,7 +14,6 @@
       <Menu text="About">
          <MenuItem text="What's new" fx:id="news" onAction="#handleNews"/>
          <MenuItem text="GitHub project" fx:id="githubProject" onAction="#handleGithubProject"/>
-         <MenuItem text="About author" fx:id="aboutAuthor" onAction="#handleAboutAuthor"/>
       </Menu>
    </MenuBar>
    <ScrollPane fx:id="mainScrollPane" fitToWidth="true">

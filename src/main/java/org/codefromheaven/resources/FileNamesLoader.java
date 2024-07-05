@@ -29,11 +29,9 @@ public class FileNamesLoader {
         return filenames;
     }
 
-    private static InputStream getResourceAsStream(String resource) {
-        final InputStream in
-                = getContextClassLoader().getResourceAsStream(resource);
-
-        return in == null ? AnimalsParser.class.getResourceAsStream(resource) : in;
+    public static InputStream getResourceAsStream(String resource) {
+        final InputStream in = getContextClassLoader().getResourceAsStream(resource);
+        return in == null ? FileNamesLoader.class.getResourceAsStream(resource) : in;
     }
 
     private static ClassLoader getContextClassLoader() {
