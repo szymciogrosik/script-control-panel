@@ -43,6 +43,8 @@ public class MainWindowController implements Initializable {
     private MenuItem changeVisibleElements;
     @FXML
     private MenuItem changeSettings;
+    @FXML
+    private MenuItem pinJarFileToTaskBar;
 
     @FXML
     private MenuItem news;
@@ -288,6 +290,11 @@ public class MainWindowController implements Initializable {
     private void handleChangeSettings() {
         SettingsController controller = new SettingsController(this::loadContent, this::resizeMainWindow);
         controller.setupPage();
+    }
+
+    @FXML
+    private void handlePinJarFileToTaskBar() {
+        LinkUtils.openPageInBrowser(Link.PIN_JAR_TO_TASKBAR.getUrl());
     }
 
     @FXML
