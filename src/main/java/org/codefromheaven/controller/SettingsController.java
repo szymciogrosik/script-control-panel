@@ -137,13 +137,13 @@ public class SettingsController {
 
         for (int i = 0; i < textSettings.size(); i++) {
             KeyValueDTO setting = textSettings.get(i);
-            String newValue = valueFields.getTextFields()[i].getText();
+            String newValue = valueFields.textFields()[i].getText();
             setting.setValue(newValue);
         }
 
         for (int i = 0; i < comboSettings.size(); i++) {
             KeyValueDTO setting = comboSettings.get(i);
-            String newValue = valueFields.getComboBoxes()[i].getValue();
+            String newValue = valueFields.comboBoxes()[i].getValue();
             setting.setValue(newValue);
         }
 
