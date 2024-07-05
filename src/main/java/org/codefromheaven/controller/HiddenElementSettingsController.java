@@ -10,19 +10,20 @@ import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
+import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.stage.Stage;
-import org.codefromheaven.dto.data.LoadedElementDTO;
+import org.codefromheaven.dto.data.SectionDTO;
 import org.codefromheaven.dto.settings.KeyValueDTO;
 import org.codefromheaven.dto.settings.SettingsDTO;
+import org.codefromheaven.dto.settings.VisibilitySettingKey;
 import org.codefromheaven.service.LoadFromJsonService;
 import org.codefromheaven.service.animal.AnimalService;
 import org.codefromheaven.service.settings.FilesToLoadSettingsService;
 import org.codefromheaven.service.settings.HiddenElementSettingsService;
 
 import java.util.ArrayList;
-import java.util.LinkedHashMap;
 import java.util.List;
-import java.util.stream.Collectors;
 
 import static javafx.stage.Modality.APPLICATION_MODAL;
 
@@ -81,42 +82,46 @@ public class HiddenElementSettingsController {
     }
 
     private void loadPageContent(VBox contentBox) {
-        List<LoadedElementDTO> allElements = loadAllElements();
+        List<SectionDTO> allElements = loadAllElements();
 
-        allElements.stream()
-                   .collect(Collectors.groupingBy(LoadedElementDTO::getSubSectionName, LinkedHashMap::new, Collectors.toList()))
-                   .forEach((sectionName, elements) -> {
-                       VBox sectionBox = new VBox(5);
-                       sectionBox.getChildren().add(new Label(sectionName));
-                       for (LoadedElementDTO element : elements) {
-                           CheckBox checkBox = new CheckBox(element.getButtonName());
-                           boolean isChecked = isElementVisible(element, visibilitySettings);
-                           checkBox.setSelected(isChecked);
-                           checkBox.selectedProperty().addListener((obs, oldVal, newVal) -> {
-                               updateVisibilitySetting(element, newVal);
-                           });
-                           sectionBox.getChildren().add(checkBox);
-                       }
-                       contentBox.getChildren().add(sectionBox);
-                   });
+        allElements.forEach(section -> {
+            VBox sectionBox = new VBox(5);
+            Label sectionLabel = new Label(section.sectionName());
+            sectionLabel.setFont(Font.font("System", FontWeight.BOLD, 12));
+            sectionBox.getChildren().add(sectionLabel);
+            section.subSections().forEach(subSection -> {
+                sectionBox.getChildren().add(new Label(subSection.subSectionName()));
+                subSection.commands().forEach(command -> {
+                    VisibilitySettingKey key = new VisibilitySettingKey(section.sectionName(), subSection.subSectionName(), command.buttonName());
+                    CheckBox checkBox = new CheckBox(command.buttonName());
+                    boolean isChecked = isElementVisible(key, visibilitySettings);
+                    checkBox.setSelected(isChecked);
+                    checkBox.selectedProperty().addListener((obs, oldVal, newVal) -> {
+                        updateVisibilitySetting(key, newVal);
+                    });
+                    sectionBox.getChildren().add(checkBox);
+                });
+            });
+            contentBox.getChildren().add(sectionBox);
+        });
     }
 
-    private List<LoadedElementDTO> loadAllElements() {
-        List<LoadedElementDTO> allElements = new ArrayList<>();
+    private List<SectionDTO> loadAllElements() {
+        List<SectionDTO> allElements = new ArrayList<>();
         SettingsDTO filesToLoad = FilesToLoadSettingsService.load();
-        for (String fileToLoad : filesToLoad.getSettings().stream().map(KeyValueDTO::getKey).collect(Collectors.toList())) {
+        for (String fileToLoad : filesToLoad.getSettings().stream().map(KeyValueDTO::getKey).toList()) {
             allElements.addAll(LoadFromJsonService.load(fileToLoad));
         }
         return allElements;
     }
 
-    private void updateVisibilitySetting(LoadedElementDTO element, boolean newVal) {
-        HiddenElementSettingsService.updateVisibilitySetting(visibilitySettings, element, newVal);
+    private void updateVisibilitySetting(VisibilitySettingKey visibilitySettingKey, boolean newVal) {
+        HiddenElementSettingsService.updateVisibilitySetting(visibilitySettings, visibilitySettingKey, newVal);
     }
 
-    public static boolean isElementVisible(LoadedElementDTO element, SettingsDTO visibilitySettings) {
+    public static boolean isElementVisible(VisibilitySettingKey visibilitySettingKey, SettingsDTO visibilitySettings) {
         return visibilitySettings.getSettings().stream().noneMatch(
-                elem -> HiddenElementSettingsService.isMatchingSetting(elem, element));
+                elem -> HiddenElementSettingsService.isMatchingSetting(elem, visibilitySettingKey));
     }
 
 }

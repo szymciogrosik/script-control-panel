@@ -16,10 +16,13 @@ import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
-import org.codefromheaven.dto.data.LoadedElementDTO;
+import org.codefromheaven.dto.data.ButtonDTO;
+import org.codefromheaven.dto.data.SectionDTO;
 import org.codefromheaven.dto.Setting;
+import org.codefromheaven.dto.data.SubSectionDTO;
 import org.codefromheaven.dto.settings.KeyValueDTO;
 import org.codefromheaven.dto.settings.SettingsDTO;
+import org.codefromheaven.dto.settings.VisibilitySettingKey;
 import org.codefromheaven.service.LoadFromJsonService;
 import org.codefromheaven.service.animal.AnimalService;
 import org.codefromheaven.service.command.GitBashService;
@@ -111,43 +114,34 @@ public class MainWindowController implements Initializable {
     }
 
     private void addElementsToScene(String fileToLoad, SettingsDTO visibilitySettings) {
-        List<LoadedElementDTO> loadedElements = LoadFromJsonService.load(fileToLoad);
-        addSectionHeader(loadedElements.stream().findAny().get().getSectionName());
+        List<SectionDTO> loadedElements = LoadFromJsonService.load(fileToLoad);
+        addSectionHeader(loadedElements.stream().findFirst().get().sectionName());
         addElementsToScene(loadedElements, fileToLoad, visibilitySettings);
     }
 
     private void addElementsToScene(
-            List<LoadedElementDTO> loadedElements, String fileToLoad, SettingsDTO visibilitySettings
+            List<SectionDTO> sections, String fileToLoad, SettingsDTO visibilitySettings
     ) {
-        List<String> subSectionsList =
-                loadedElements.stream().map(LoadedElementDTO::getSubSectionName).collect(Collectors.toList());
-        List<String> uniqueSubSections = new ArrayList<>();
-        subSectionsList.forEach(elem -> {
-            if (!uniqueSubSections.contains(elem)) {
-                uniqueSubSections.add(elem);
-            }
-        });
-
-        for (String subSectionName : uniqueSubSections) {
-            if (!isAnyElementInSubSectionEnabled(fileToLoad, subSectionName, visibilitySettings)) {
-                continue;
-            }
-            primaryPage.getChildren().add(createHeaderForSection(subSectionName));
-            primaryPage.getStyleClass().add("background-primary");
-
-            HBox rows = new HBox();
-            rows.getStyleClass().add("hbox-spacing");
-
-            List<LoadedElementDTO> sectionElements = loadedElements.stream()
-                                                                   .filter(elem -> elem.getSubSectionName().equals(subSectionName))
-                                                                   .collect(Collectors.toList());
-            for (LoadedElementDTO loadedElement : sectionElements) {
-                if (!HiddenElementSettingsController.isElementVisible(loadedElement, visibilitySettings)) {
+        for (SectionDTO section : sections) {
+            for (SubSectionDTO subSection : section.subSections()) {
+                if (!isAnyElementInSubSectionEnabled(fileToLoad, section.sectionName(), subSection.subSectionName(), visibilitySettings)) {
                     continue;
                 }
-                rows.getChildren().add(createButton(loadedElement));
+                primaryPage.getChildren().add(createHeaderForSection(subSection.subSectionName()));
+                primaryPage.getStyleClass().add("background-primary");
+
+                HBox rows = new HBox();
+                rows.getStyleClass().add("hbox-spacing");
+
+                for (ButtonDTO command : subSection.commands()) {
+                    VisibilitySettingKey key = new VisibilitySettingKey(section.sectionName(), subSection.subSectionName(), command.buttonName());
+                    if (!HiddenElementSettingsController.isElementVisible(key, visibilitySettings)) {
+                        continue;
+                    }
+                    rows.getChildren().add(createButton(command));
+                }
+                primaryPage.getChildren().add(rows);
             }
-            primaryPage.getChildren().add(rows);
         }
     }
 
@@ -159,61 +153,61 @@ public class MainWindowController implements Initializable {
         return section;
     }
 
-    private Button createButton(LoadedElementDTO loadedElement) {
-        Button button = new Button(loadedElement.getButtonName());
+    private Button createButton(ButtonDTO buttonDTO) {
+        Button button = new Button(buttonDTO.buttonName());
         button.getStyleClass().add("button-default");
         button.setOnMouseEntered(e -> button.getStyleClass().add("button-selected"));
         button.setOnMouseExited(e -> button.getStyleClass().remove("button-selected"));
-        button.setTooltip(createTooltip(loadedElement.getDescription()));
-        switch (loadedElement.getElementType()) {
+        button.setTooltip(createTooltip(buttonDTO.description()));
+        switch (buttonDTO.elementType()) {
             case BASH:
             case POWERSHELL:
-                addButtonListenerForServiceCommands(button, loadedElement);
+                addButtonListenerForServiceCommands(button, buttonDTO);
                 break;
             case LINK:
-                button.setOnMouseClicked(event -> openPageInBrowser(loadedElement.getCommand()));
+                button.setOnMouseClicked(event -> openPageInBrowser(buttonDTO.command()));
                 break;
             default:
-                throw new RuntimeException("Unrecognised element type provided: " + loadedElement.getElementType());
+                throw new RuntimeException("Unrecognised element type provided: " + buttonDTO.elementType());
         }
         return button;
     }
 
-    private void addButtonListenerForServiceCommands(Button button, LoadedElementDTO loadedElement) {
-        switch (loadedElement.getElementType()) {
+    private void addButtonListenerForServiceCommands(Button button, ButtonDTO buttonDTO) {
+        switch (buttonDTO.elementType()) {
             case BASH:
-                addButtonListenerForBashCommand(button, loadedElement);
+                addButtonListenerForBashCommand(button, buttonDTO);
                 break;
             case POWERSHELL:
-                addButtonListenerForPowerShellCommand(button, loadedElement);
+                addButtonListenerForPowerShellCommand(button, buttonDTO);
                 break;
             default:
-                throw new RuntimeException("Not recognised console: " + loadedElement.getElementType());
+                throw new RuntimeException("Not recognised console: " + buttonDTO.elementType());
         }
     }
 
-    private void addButtonListenerForBashCommand(Button button, LoadedElementDTO loadedElement) {
+    private void addButtonListenerForBashCommand(Button button, ButtonDTO buttonDTO) {
         button.setOnMouseClicked(event -> {
-            if (loadedElement.isPopupInputDisplayed()) {
-                Optional<String> result = createTextInputDialog(loadedElement.getPopupInputMessage());
+            if (buttonDTO.popupInputDisplayed()) {
+                Optional<String> result = createTextInputDialog(buttonDTO.popupInputMessage());
                 result.ifPresent(name -> {
-                    GitBashService.runCommand(loadedElement.getScriptLocationParamName(), loadedElement.isAutoCloseConsole(), loadedElement.getCommand() + " " + name);
+                    GitBashService.runCommand(buttonDTO.scriptLocationParamName(), buttonDTO.autoCloseConsole(), buttonDTO.command() + " " + name);
                 });
             } else {
-                GitBashService.runCommand(loadedElement.getScriptLocationParamName(), loadedElement.isAutoCloseConsole(), loadedElement.getCommand());
+                GitBashService.runCommand(buttonDTO.scriptLocationParamName(), buttonDTO.autoCloseConsole(), buttonDTO.command());
             }
         });
     }
 
-    private void addButtonListenerForPowerShellCommand(Button button, LoadedElementDTO loadedElement) {
+    private void addButtonListenerForPowerShellCommand(Button button, ButtonDTO buttonDTO) {
         button.setOnMouseClicked(event -> {
-            if (loadedElement.isPopupInputDisplayed()) {
-                Optional<String> result = createTextInputDialog(loadedElement.getPopupInputMessage());
+            if (buttonDTO.popupInputDisplayed()) {
+                Optional<String> result = createTextInputDialog(buttonDTO.popupInputMessage());
                 result.ifPresent(name -> {
-                    PowerShellService.runCommand(loadedElement.getScriptLocationParamName(), loadedElement.isAutoCloseConsole(), loadedElement.getCommand() + " " + name);
+                    PowerShellService.runCommand(buttonDTO.scriptLocationParamName(), buttonDTO.autoCloseConsole(), buttonDTO.command() + " " + name);
                 });
             } else {
-                PowerShellService.runCommand(loadedElement.getScriptLocationParamName(), loadedElement.isAutoCloseConsole(), loadedElement.getCommand());
+                PowerShellService.runCommand(buttonDTO.scriptLocationParamName(), buttonDTO.autoCloseConsole(), buttonDTO.command());
             }
         });
     }
@@ -248,14 +242,40 @@ public class MainWindowController implements Initializable {
     }
 
     private boolean isAnyElementInSectionEnabled(String fileToLoad, SettingsDTO visibilitySettings) {
-        return LoadFromJsonService.load(fileToLoad)
-                                  .stream().anyMatch(elem -> HiddenElementSettingsController.isElementVisible(elem, visibilitySettings));
+        List<SectionDTO> sections = LoadFromJsonService.load(fileToLoad);
+        for (SectionDTO section : sections) {
+            for (SubSectionDTO subSection : section.subSections()) {
+                for (ButtonDTO command : subSection.commands()) {
+                    VisibilitySettingKey key = new VisibilitySettingKey(section.sectionName(), subSection.subSectionName(), command.buttonName());
+                    boolean visible = HiddenElementSettingsController.isElementVisible(key, visibilitySettings);
+                    if (visible) {
+                        return true;
+                    }
+                }
+            }
+        }
+        return false;
     }
 
-    private boolean isAnyElementInSubSectionEnabled(String fileName, String subsection, SettingsDTO visibilitySettings) {
-        return LoadFromJsonService.load(fileName)
-                                  .stream().filter(elem -> Objects.equals(elem.getSubSectionName(), subsection))
-                                  .anyMatch(elem -> HiddenElementSettingsController.isElementVisible(elem, visibilitySettings));
+    private boolean isAnyElementInSubSectionEnabled(String fileName, String sectionString, String subSectionString, SettingsDTO visibilitySettings) {
+        Optional<SectionDTO> sectionOptional = LoadFromJsonService
+                .load(fileName).stream().filter(sectionTmp -> sectionTmp.sectionName().equals(sectionString)).findFirst();
+        if (sectionOptional.isEmpty()) {
+            return false;
+        }
+        Optional<SubSectionDTO> subSectionOptional = sectionOptional
+                .get().subSections().stream().filter(subSection -> subSection.subSectionName().equals(subSectionString)).findFirst();
+        if (subSectionOptional.isEmpty()) {
+            return false;
+        }
+        for (ButtonDTO command : subSectionOptional.get().commands()) {
+            VisibilitySettingKey key = new VisibilitySettingKey(sectionString, subSectionString, command.buttonName());
+            boolean visible = HiddenElementSettingsController.isElementVisible(key, visibilitySettings);
+            if (visible) {
+                return true;
+            }
+        }
+        return false;
     }
 
     @FunctionalInterface

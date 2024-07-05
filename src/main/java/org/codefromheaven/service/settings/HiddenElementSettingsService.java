@@ -1,9 +1,9 @@
 package org.codefromheaven.service.settings;
 
 import org.codefromheaven.dto.FileType;
-import org.codefromheaven.dto.data.LoadedElementDTO;
 import org.codefromheaven.dto.settings.KeyValueDTO;
 import org.codefromheaven.dto.settings.SettingsDTO;
+import org.codefromheaven.dto.settings.VisibilitySettingKey;
 
 public class HiddenElementSettingsService extends SettingsServiceBase {
 
@@ -19,9 +19,9 @@ public class HiddenElementSettingsService extends SettingsServiceBase {
         return new SettingsDTO();
     }
 
-    public static void updateVisibilitySetting(SettingsDTO visibilitySettings, LoadedElementDTO loadedElement, boolean checked) {
+    public static void updateVisibilitySetting(SettingsDTO visibilitySettings, VisibilitySettingKey visibilitySettingKey, boolean checked) {
         boolean settingPresentInFile = visibilitySettings
-                .getSettings().stream().anyMatch(elem -> isMatchingSetting(elem, loadedElement));
+                .getSettings().stream().anyMatch(elem -> isMatchingSetting(elem, visibilitySettingKey));
 
         boolean settingPresentAndNotChecked = settingPresentInFile && !checked;
         boolean settingNotPresentAndChecked = !settingPresentInFile && checked;
@@ -34,11 +34,11 @@ public class HiddenElementSettingsService extends SettingsServiceBase {
         }
 
         if (settingPresentAndChecked) {
-            visibilitySettings.getSettings().removeIf(elem -> isMatchingSetting(elem, loadedElement));
+            visibilitySettings.getSettings().removeIf(elem -> isMatchingSetting(elem, visibilitySettingKey));
         }
 
         if (settingNotPresentAndNotChecked) {
-            visibilitySettings.getSettings().add(new KeyValueDTO(getKey(loadedElement), loadedElement.getButtonName(), ""));
+            visibilitySettings.getSettings().add(new KeyValueDTO(getKey(visibilitySettingKey), visibilitySettingKey.buttonName(), ""));
         }
     }
 
@@ -46,12 +46,12 @@ public class HiddenElementSettingsService extends SettingsServiceBase {
         saveSettings(FILE_TYPE, settings);
     }
 
-    public static boolean isMatchingSetting(KeyValueDTO keyValue, LoadedElementDTO loadedElement) {
-        return keyValue.getKey().equals(getKey(loadedElement)) && keyValue.getValue().equals(loadedElement.getButtonName());
+    public static boolean isMatchingSetting(KeyValueDTO keyValue, VisibilitySettingKey visibilitySettingKey) {
+        return keyValue.getKey().equals(getKey(visibilitySettingKey)) && keyValue.getValue().equals(visibilitySettingKey.buttonName());
     }
 
-    public static String getKey(LoadedElementDTO loadedElement) {
-        return loadedElement.getSectionName() + " - " + loadedElement.getSubSectionName() + " - " + loadedElement.getButtonName();
+    public static String getKey(VisibilitySettingKey visibilitySettingKey) {
+        return visibilitySettingKey.sectionName() + " - " + visibilitySettingKey.subSectionName() + " - " + visibilitySettingKey.buttonName();
     }
 
 }
