@@ -18,7 +18,7 @@ jobs:
         uses: actions/setup-java@v4
         with:
           java-version: '17'
-          distribution: 'temurin'
+          distribution: 'adopt'
 
       - name: Install Python
         uses: actions/setup-python@v5
@@ -36,7 +36,6 @@ jobs:
                               print(version)")
           echo "VERSION=$version" >> $GITHUB_ENV
           echo "Found version: $version"
-          echo "version=$version" >> $GITHUB_OUTPUT
 
       - name: Fetch all tags
         run: git fetch --tags
@@ -45,7 +44,6 @@ jobs:
         id: prepare_tag
         run: |
           echo "TAG_NAME=v${{ env.VERSION }}" >> $GITHUB_ENV
-          echo "Tag name: v${{ env.VERSION }}"
 
       - name: Check for existing tag
         id: check_tag
@@ -74,14 +72,6 @@ jobs:
         run: |
           echo "Tag was not created, interrupting the workflow."
           exit 1
-
-      - name: Install Xvfb
-        run: sudo apt-get install -y xvfb
-
-      - name: Start Xvfb
-        run: |
-          Xvfb :99 -screen 0 1024x768x24 &
-          echo "DISPLAY=:99" >> $GITHUB_ENV
 
       - name: Clean Maven repository
         run: mvn clean
