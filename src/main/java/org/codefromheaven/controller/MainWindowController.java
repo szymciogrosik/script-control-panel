@@ -31,6 +31,7 @@ import org.codefromheaven.service.command.PowerShellService;
 import org.codefromheaven.service.settings.FilesToLoadSettingsService;
 import org.codefromheaven.service.settings.HiddenElementSettingsService;
 import org.codefromheaven.service.settings.SettingsService;
+import org.codefromheaven.service.version.AppVersionService;
 
 public class MainWindowController implements Initializable {
 
@@ -73,6 +74,8 @@ public class MainWindowController implements Initializable {
     }
 
     private void loadContent() {
+        setupVisibilityOfDownloadAndInstallButton();
+
         primaryPage.getChildren().clear();
         setupScrollPane();
 
@@ -335,12 +338,18 @@ public class MainWindowController implements Initializable {
 
     @FXML
     private void handleCheckForUpdates() {
-
+        AppVersionService.checkForUpdates();
+        setupVisibilityOfDownloadAndInstallButton();
     }
 
     @FXML
     private void handleDownloadAndInstall() {
+        UpdateController controller = new UpdateController();
+        controller.setupPage();
+    }
 
+    private void setupVisibilityOfDownloadAndInstallButton() {
+        downloadAndInstall.setDisable(!AppVersionService.isNewVersionAvailable());
     }
 
 }

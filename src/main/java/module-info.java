@@ -26,4 +26,10 @@ module servicerunner {
     opens org.codefromheaven.dto.settings to com.fasterxml.jackson.databind;
     exports org.codefromheaven.dto.data;
     opens org.codefromheaven.dto.data to javafx.fxml;
+    exports org.codefromheaven.dto.release;
+    opens org.codefromheaven.dto.release to javafx.fxml;
+    exports org.codefromheaven.service.version;
+    opens org.codefromheaven.service.version to javafx.fxml;
+    exports org.codefromheaven.service.update;
+    opens org.codefromheaven.service.update to javafx.fxml;
 }
