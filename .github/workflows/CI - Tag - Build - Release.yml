@@ -3,7 +3,7 @@ name: Check, Tag, Build, and Release Version
 on:
   push:
     branches:
-      - *
+      - '**'
   workflow_dispatch:
 
 jobs:
