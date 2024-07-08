@@ -73,6 +73,15 @@ jobs:
           echo "Tag was not created, interrupting the workflow."
           exit 1
 
+      - name: Install Xvfb
+        run: sudo apt-get install -y xvfb
+
+      - name: Start Xvfb
+        run: Xvfb :99 &
+
+      - name: Set DISPLAY environment variable
+        run: echo "::set-env name=DISPLAY::99"
+
       - name: Clean Maven repository
         run: mvn clean
 
