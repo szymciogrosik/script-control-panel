@@ -36,7 +36,7 @@ jobs:
                               print(version)")
           echo "VERSION=$version" >> $GITHUB_ENV
           echo "Found version: $version"
-          echo "::set-output name=version::$version"
+          echo "version=$version" >> $GITHUB_OUTPUT
 
       - name: Fetch all tags
         run: git fetch --tags
