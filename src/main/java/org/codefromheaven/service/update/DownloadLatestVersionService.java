@@ -14,7 +14,7 @@ public class DownloadLatestVersionService {
     private DownloadLatestVersionService() {
     }
 
-    public static void downloadAndInstall() {
+    public static void download() {
         try {
             if (AppVersionService.isNewVersionAvailable()) {
                 DownloadLatestVersionService.download(AppVersionService.TMP_NAME);

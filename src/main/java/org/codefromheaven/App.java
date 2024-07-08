@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import org.codefromheaven.helpers.FileUtils;
 import org.codefromheaven.service.animal.AnimalService;
 import org.codefromheaven.service.settings.SettingsService;
 import org.codefromheaven.service.version.AppVersionService;
@@ -18,6 +19,7 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         AppVersionService.checkForUpdates();
+        FileUtils.copyFileFromResource("utils", "update_and_restart.sh");
         stage.setTitle(SettingsService.getAppName() + " - " + AppVersionService.getCurrentVersion());
         stage.setResizable(false);
         Image animalImage = AnimalService.getInstance().getCurrentAnimalImage();

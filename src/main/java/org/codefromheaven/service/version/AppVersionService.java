@@ -15,7 +15,7 @@ import java.util.Properties;
 
 public class AppVersionService {
 
-    private static final String APP_NAME = "script_control_panel.jar";
+    public static final String APP_NAME = "script_control_panel.jar";
     public static final String TMP_NAME = "tmp_" + APP_NAME;
 
     private static GitHubRelease gitHubRelease = null;

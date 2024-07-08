@@ -22,7 +22,13 @@ public class GitBashSetupService implements Runnable {
 
     private static void runCommand(String scriptPathVarName, boolean autoCloseConsole, String command) {
         try {
-            String finalCommand = getOpenDirectoryCommand(scriptPathVarName) + SEPARATOR + command;
+            String finalCommand = "";
+            if (!scriptPathVarName.isEmpty()) {
+                finalCommand += getOpenDirectoryCommand(scriptPathVarName) + SEPARATOR;
+            }
+            finalCommand += ("echo Current directory: $(pwd)" + SEPARATOR);
+            finalCommand += command;
+
             if (!autoCloseConsole) {
                 finalCommand += (SEPARATOR + getWaitingForButtonCommand());
             }
