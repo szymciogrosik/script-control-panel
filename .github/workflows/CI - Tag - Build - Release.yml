@@ -36,6 +36,7 @@ jobs:
                               print(version)")
           echo "VERSION=$version" >> $GITHUB_ENV
           echo "Found version: $version"
+          echo "::set-output name=version::$version"
 
       - name: Fetch all tags
         run: git fetch --tags
@@ -44,6 +45,7 @@ jobs:
         id: prepare_tag
         run: |
           echo "TAG_NAME=v${{ env.VERSION }}" >> $GITHUB_ENV
+          echo "Tag name: v${{ env.VERSION }}"
 
       - name: Check for existing tag
         id: check_tag
@@ -77,10 +79,9 @@ jobs:
         run: sudo apt-get install -y xvfb
 
       - name: Start Xvfb
-        run: Xvfb :99 &
-
-      - name: Set DISPLAY environment variable
-        run: echo "::set-env name=DISPLAY::99"
+        run: |
+          Xvfb :99 -screen 0 1024x768x24 &
+          echo "DISPLAY=:99" >> $GITHUB_ENV
 
       - name: Clean Maven repository
         run: mvn clean
