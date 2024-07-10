@@ -95,12 +95,6 @@ public class UpdateController {
 
     public void closeApplication() {
         Platform.exit();
-        // Optionally, add a delay to ensure the application exits before the bash script runs
-        try {
-            Thread.sleep(2000);
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
     }
 
 }
