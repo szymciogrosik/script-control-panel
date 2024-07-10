@@ -23,6 +23,7 @@ import org.codefromheaven.dto.data.SubSectionDTO;
 import org.codefromheaven.dto.settings.KeyValueDTO;
 import org.codefromheaven.dto.settings.SettingsDTO;
 import org.codefromheaven.dto.settings.VisibilitySettingKey;
+import org.codefromheaven.helpers.ImageLoader;
 import org.codefromheaven.helpers.LinkUtils;
 import org.codefromheaven.service.LoadFromJsonService;
 import org.codefromheaven.service.animal.AnimalService;
@@ -61,12 +62,15 @@ public class MainWindowController implements Initializable {
     private MenuItem githubAboutAuthor;
 
     @FXML
+    private ImageView updateNotification;
+    @FXML
     private MenuItem checkForUpdates;
     @FXML
     private MenuItem downloadAndInstall;
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        updateNotification.setImage(ImageLoader.getImage("/update/notification.png"));
         this.loadContent();
     }
 
@@ -353,6 +357,7 @@ public class MainWindowController implements Initializable {
     private void setupVisibilityOfDownloadAndInstallButton() {
         boolean newerVersionPresent = AppVersionService.isNewVersionAvailable();
         downloadAndInstall.setDisable(!newerVersionPresent);
+        updateNotification.setVisible(newerVersionPresent);
         String updateButtonText = DOWNLOAD_UPDATE_BUTTON_BASE_TEXT;
         if (newerVersionPresent) {
             updateButtonText += " " + AppVersionService.getLatestVersion();

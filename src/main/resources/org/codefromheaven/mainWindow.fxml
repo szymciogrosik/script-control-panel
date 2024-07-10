@@ -4,6 +4,9 @@
 <?import javafx.scene.layout.VBox?>
 <?import javafx.scene.control.ScrollPane?>
 <?import javafx.geometry.Insets?>
+<?import javafx.scene.layout.HBox?>
+<?import javafx.scene.image.ImageView?>
+<?import javafx.scene.control.Label?>
 
 <VBox xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.codefromheaven.controller.MainWindowController">
    <MenuBar>
@@ -19,7 +22,13 @@
          <MenuItem text="Documentation" fx:id="githubDocumentation" onAction="#handleGithubDocumentation"/>
          <MenuItem text="About author" fx:id="githubAboutAuthor" onAction="#handleGithubAboutAuthor"/>
       </Menu>
-      <Menu text="Update">
+      <Menu>
+         <graphic>
+            <HBox alignment="CENTER_LEFT" spacing="5">
+               <Label text="Update" />
+               <ImageView fx:id="updateNotification" fitHeight="15" fitWidth="15" visible="false" style="-fx-padding: 0 0 0 2px;"/>
+            </HBox>
+         </graphic>
          <MenuItem text="Check for updates" fx:id="checkForUpdates" onAction="#handleCheckForUpdates"/>
          <MenuItem fx:id="downloadAndInstall" onAction="#handleDownloadAndInstall"/>
       </Menu>
