@@ -21,7 +21,7 @@
       </Menu>
       <Menu text="Update">
          <MenuItem text="Check for updates" fx:id="checkForUpdates" onAction="#handleCheckForUpdates"/>
-         <MenuItem text="Download and install" fx:id="downloadAndInstall" onAction="#handleDownloadAndInstall"/>
+         <MenuItem fx:id="downloadAndInstall" onAction="#handleDownloadAndInstall"/>
       </Menu>
    </MenuBar>
    <ScrollPane fx:id="mainScrollPane" fitToWidth="true">

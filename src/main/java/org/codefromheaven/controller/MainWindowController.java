@@ -35,6 +35,8 @@ import org.codefromheaven.service.version.AppVersionService;
 
 public class MainWindowController implements Initializable {
 
+    private static final String DOWNLOAD_UPDATE_BUTTON_BASE_TEXT = "Download and install";
+
     @FXML
     public VBox primaryPage;
     @FXML
@@ -349,7 +351,13 @@ public class MainWindowController implements Initializable {
     }
 
     private void setupVisibilityOfDownloadAndInstallButton() {
-        downloadAndInstall.setDisable(!AppVersionService.isNewVersionAvailable());
+        boolean newerVersionPresent = AppVersionService.isNewVersionAvailable();
+        downloadAndInstall.setDisable(!newerVersionPresent);
+        String updateButtonText = DOWNLOAD_UPDATE_BUTTON_BASE_TEXT;
+        if (newerVersionPresent) {
+            updateButtonText += " " + AppVersionService.getLatestVersion();
+        }
+        downloadAndInstall.setText(updateButtonText);
     }
 
 }

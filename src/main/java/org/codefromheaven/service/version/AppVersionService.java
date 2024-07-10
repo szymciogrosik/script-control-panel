@@ -30,7 +30,8 @@ public class AppVersionService {
                 throw new RuntimeException("Sorry, unable to find version.properties");
             }
             properties.load(input);
-            return properties.getProperty("version");
+            String versionString = properties.getProperty("version");
+            return "v" + versionString;
         } catch (IOException ex) {
             ex.printStackTrace();
             throw new RuntimeException(ex);

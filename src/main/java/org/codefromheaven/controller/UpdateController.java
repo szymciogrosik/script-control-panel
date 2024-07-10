@@ -24,7 +24,7 @@ public class UpdateController {
                 // Wait for 5 seconds to ensure the download is complete
                 Thread.sleep(5000);
                 // Run the bash script to replace the JAR and restart the application
-                GitBashService.runCommand("", false, "./update_and_restart.sh");
+                GitBashService.runCommand("", true, "./update_and_restart.sh");
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }
