@@ -19,7 +19,8 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         AppVersionService.checkForUpdates();
-        stage.setTitle(SettingsService.getAppName() + " - " + AppVersionService.getCurrentVersion());
+        String appName = SettingsService.getAppName() + " - " + AppVersionService.getCurrentVersion();
+        stage.setTitle(appName);
         stage.setResizable(false);
         Image animalImage = AnimalService.getInstance().getCurrentAnimalImage();
         stage.getIcons().add(animalImage);
