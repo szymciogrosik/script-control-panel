@@ -8,7 +8,7 @@ on:
 
 jobs:
   tag_version:
-    runs-on: ubuntu-latest
+    runs-on: windows-latest
 
     steps:
       - name: Checkout repository
@@ -28,44 +28,44 @@ jobs:
       - name: Extract version from pom.xml
         id: extract_version
         run: |
-          version=$(python -c "import xml.etree.ElementTree as ET; \
-                              tree = ET.parse('pom.xml'); \
-                              root = tree.getroot(); \
-                              ns = {'m': 'http://maven.apache.org/POM/4.0.0'}; \
-                              version = root.find('m:version', ns).text; \
-                              print(version)")
-          echo "VERSION=$version" >> $GITHUB_ENV
-          echo "Found version: $version"
+          python -c "import xml.etree.ElementTree as ET; \
+                     tree = ET.parse('pom.xml'); \
+                     root = tree.getroot(); \
+                     ns = {'m': 'http://maven.apache.org/POM/4.0.0'}; \
+                     version = root.find('m:version', ns).text; \
+                     print(f'::set-env name=VERSION::{version}')"
+          echo "Found version: $env:VERSION"
 
       - name: Fetch all tags
         run: git fetch --tags
 
       - name: Prepare tag name
         id: prepare_tag
-        run: |
-          echo "TAG_NAME=v${{ env.VERSION }}" >> $GITHUB_ENV
+        run: echo "TAG_NAME=v${{ env.VERSION }}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
       - name: Check for existing tag
         id: check_tag
         run: |
-          if git rev-parse "${{ env.TAG_NAME }}" >/dev/null 2>&1; then
-            echo "TAG_EXISTS=true" >> $GITHUB_ENV
-          else
-            echo "TAG_EXISTS=false" >> $GITHUB_ENV
-          fi
+          if (git rev-parse "${{ env.TAG_NAME }}" -ErrorAction SilentlyContinue) {
+            echo "TAG_EXISTS=true" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          }
+          else {
+            echo "TAG_EXISTS=false" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          }
 
       - name: Create tag if it does not exist
         id: create_tag
         run: |
-          if [ "${{ env.TAG_EXISTS }}" == "false" ]; then
+          if ($env:TAG_EXISTS -eq "false") {
             git config --global user.name "github-actions[bot]"
             git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
             git tag "${{ env.TAG_NAME }}"
             git push origin "${{ env.TAG_NAME }}"
-            echo "TAG_CREATED=true" >> $GITHUB_ENV
-          else
-            echo "TAG_CREATED=false" >> $GITHUB_ENV
-          fi
+            echo "TAG_CREATED=true" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          }
+          else {
+            echo "TAG_CREATED=false" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          }
 
       - name: Interrupt workflow if tag is not created
         if: env.TAG_CREATED == 'false'
@@ -80,12 +80,13 @@ jobs:
         run: mvn clean install -DskipTests -X
 
       - name: Rename default.gitignore to .gitignore
-        run: mv default.gitignore .gitignore
+        run: Rename-Item -Path default.gitignore -NewName .gitignore
 
       - name: Create ZIP of Default Files
         run: |
-          zip -r default_config.zip default* .gitignore
-        shell: bash
+          Add-Type -AssemblyName System.IO.Compression.FileSystem
+          [System.IO.Compression.ZipFile]::CreateFromDirectory('.', 'default_config.zip')
+        shell: pwsh
 
       - name: Upload Default Config Files Zip as Artifact
         uses: actions/upload-artifact@v3
