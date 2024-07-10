@@ -24,12 +24,15 @@ public class SettingsController {
 
     private final MainWindowController.ContentLoader loader;
     private final MainWindowController.ResizeWindow resizeMainWindow;
+    private final MainWindowController.CheckForUpdates checkForUpdates;
 
     public SettingsController(
-            MainWindowController.ContentLoader loader, MainWindowController.ResizeWindow resizeMainWindow
+            MainWindowController.ContentLoader loader, MainWindowController.ResizeWindow resizeMainWindow,
+            MainWindowController.CheckForUpdates checkForUpdates
     ) {
         this.loader = loader;
         this.resizeMainWindow = resizeMainWindow;
+        this.checkForUpdates = checkForUpdates;
     }
 
     public void setupPage() {
@@ -150,6 +153,7 @@ public class SettingsController {
         SettingsService.saveSettings(new SettingsDTO(settings));
         loader.loadContent();
         resizeMainWindow.resizeMainWindow();
+        checkForUpdates.checkForUpdates();
         settingsStage.close();
     }
 

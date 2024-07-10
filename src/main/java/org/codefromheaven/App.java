@@ -18,7 +18,6 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
-        AppVersionService.checkForUpdates();
         String appName = SettingsService.getAppName() + " - " + AppVersionService.getCurrentVersion();
         stage.setTitle(appName);
         stage.setResizable(false);

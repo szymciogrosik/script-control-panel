@@ -80,8 +80,7 @@ public class MainWindowController implements Initializable {
     }
 
     private void loadContent() {
-        setupVisibilityOfDownloadAndInstallButton();
-
+        checkForUpdates();
         primaryPage.getChildren().clear();
         setupScrollPane();
 
@@ -308,7 +307,7 @@ public class MainWindowController implements Initializable {
 
     @FXML
     private void handleChangeSettings() {
-        SettingsController controller = new SettingsController(this::loadContent, this::resizeMainWindow);
+        SettingsController controller = new SettingsController(this::loadContent, this::resizeMainWindow, this::checkForUpdates);
         controller.setupPage();
     }
 
@@ -344,8 +343,7 @@ public class MainWindowController implements Initializable {
 
     @FXML
     private void handleCheckForUpdates() {
-        AppVersionService.checkForUpdates();
-        setupVisibilityOfDownloadAndInstallButton();
+        checkForUpdates();
     }
 
     @FXML
@@ -354,7 +352,14 @@ public class MainWindowController implements Initializable {
         controller.setupPage();
     }
 
-    private void setupVisibilityOfDownloadAndInstallButton() {
+    @FunctionalInterface
+    public interface CheckForUpdates {
+        void checkForUpdates();
+    }
+
+    private void checkForUpdates() {
+        AppVersionService.checkForUpdates();
+
         boolean newerVersionPresent = AppVersionService.isNewVersionAvailable();
         downloadAndInstall.setDisable(!newerVersionPresent);
         updateNotification.setVisible(newerVersionPresent);
