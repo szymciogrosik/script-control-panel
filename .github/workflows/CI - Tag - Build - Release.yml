@@ -73,9 +73,6 @@ jobs:
           echo "Tag was not created, interrupting the workflow."
           exit 1
 
-      - name: Clean Maven repository
-        run: mvn clean
-
       - name: Build with Maven
         run: mvn clean install -DskipTests -X
 
