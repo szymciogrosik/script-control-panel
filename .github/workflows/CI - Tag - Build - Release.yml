@@ -89,6 +89,13 @@ jobs:
       - name: Rename default.gitignore to .gitignore
         run: Rename-Item -Path default.gitignore -NewName .gitignore
 
+      - name: Remove existing default_config.zip if it exists
+        run: |
+          if (Test-Path -Path default_config.zip) {
+            Remove-Item -Path default_config.zip -Force
+          }
+        shell: pwsh
+
       - name: Create ZIP of Default Files
         run: |
           Add-Type -AssemblyName System.IO.Compression.FileSystem
