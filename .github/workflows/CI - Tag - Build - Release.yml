@@ -96,6 +96,10 @@ jobs:
           }
         shell: pwsh
 
+      - name: Wait for a while before creating ZIP
+        run: Start-Sleep -Seconds 5
+        shell: pwsh
+
       - name: Create ZIP of Default Files
         run: |
           Add-Type -AssemblyName System.IO.Compression.FileSystem
