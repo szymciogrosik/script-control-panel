@@ -15,6 +15,7 @@ import org.codefromheaven.resources.AnimalNamesProvider;
 import org.codefromheaven.service.animal.AnimalService;
 import org.codefromheaven.service.settings.SettingsService;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -79,9 +80,16 @@ public class SettingsController {
 
     private FieldOnPageDTO loadElementsToPage(List<KeyValueDTO> settings, GridPane gridPane) {
         List<KeyValueDTO> comboSettings = getComboSettings(settings);
-        List<KeyValueDTO> textSettings = getTextSettings(settings, comboSettings);
+        List<KeyValueDTO> checkBoxSettings = getCheckBoxSettings(settings);
+
+        List<KeyValueDTO> alreadyUsedSettings = new ArrayList<>();
+        alreadyUsedSettings.addAll(comboSettings);
+        alreadyUsedSettings.addAll(checkBoxSettings);
+
+        List<KeyValueDTO> textSettings = getTextSettings(settings, alreadyUsedSettings);
 
         TextField[] textValueFields = new TextField[textSettings.size()];
+        CheckBox[] checkBoxFields = new CheckBox[checkBoxSettings.size()];
         ComboBox<String>[] comboValueFields = new ComboBox[comboSettings.size()];
 
         int globalPosition = 0;
@@ -89,6 +97,14 @@ public class SettingsController {
             KeyValueDTO setting = textSettings.get(i);
             Label label = new Label(getLabel(setting) + ":");
             TextField field = createTextField(setting.getValue(), textValueFields, i);
+            gridPane.add(label, 0, globalPosition);
+            gridPane.add(field, 1, globalPosition);
+        }
+
+        for (int i = 0; i < checkBoxSettings.size(); i++, globalPosition++) {
+            KeyValueDTO setting = checkBoxSettings.get(i);
+            Label label = new Label(getLabel(setting) + ":");
+            CheckBox field = createCheckBox(setting.getValue(), checkBoxFields, i);
             gridPane.add(label, 0, globalPosition);
             gridPane.add(field, 1, globalPosition);
         }
@@ -101,12 +117,17 @@ public class SettingsController {
             gridPane.add(field, 1, globalPosition);
         }
 
-        return new FieldOnPageDTO(textValueFields, comboValueFields);
+        return new FieldOnPageDTO(textValueFields, comboValueFields, checkBoxFields);
     }
 
     private List<KeyValueDTO> getComboSettings(List<KeyValueDTO> settings) {
         return settings.stream().filter(elem -> elem.getKey().equals(Setting.IMAGE_NAME.getName()))
-                       .collect(Collectors.toList());
+                .collect(Collectors.toList());
+    }
+
+    private List<KeyValueDTO> getCheckBoxSettings(List<KeyValueDTO> settings) {
+        return settings.stream().filter(elem -> elem.getKey().equals(Setting.ALLOW_PRE_RELEASES.getName()))
+                .collect(Collectors.toList());
     }
 
     private List<KeyValueDTO> getTextSettings(List<KeyValueDTO> settings, List<KeyValueDTO> alreadyUsedSettings) {
@@ -135,9 +156,22 @@ public class SettingsController {
         return comboBox;
     }
 
+    private CheckBox createCheckBox(String value, CheckBox[] valueFields, int i) {
+        CheckBox checkBox = new CheckBox();
+        checkBox.setSelected(Boolean.parseBoolean(value));
+        valueFields[i] = checkBox;
+        return checkBox;
+    }
+
     private void doActionOnSave(List<KeyValueDTO> settings, FieldOnPageDTO valueFields, Stage settingsStage) {
         List<KeyValueDTO> comboSettings = getComboSettings(settings);
-        List<KeyValueDTO> textSettings = getTextSettings(settings, comboSettings);
+        List<KeyValueDTO> checkBoxSettings = getCheckBoxSettings(settings);
+
+        List<KeyValueDTO> alreadyUsedSettings = new ArrayList<>();
+        alreadyUsedSettings.addAll(comboSettings);
+        alreadyUsedSettings.addAll(checkBoxSettings);
+
+        List<KeyValueDTO> textSettings = getTextSettings(settings, alreadyUsedSettings);
 
         for (int i = 0; i < textSettings.size(); i++) {
             KeyValueDTO setting = textSettings.get(i);
@@ -148,6 +182,12 @@ public class SettingsController {
         for (int i = 0; i < comboSettings.size(); i++) {
             KeyValueDTO setting = comboSettings.get(i);
             String newValue = valueFields.comboBoxes()[i].getValue();
+            setting.setValue(newValue);
+        }
+
+        for (int i = 0; i < checkBoxSettings.size(); i++) {
+            KeyValueDTO setting = checkBoxSettings.get(i);
+            String newValue = String.valueOf(valueFields.checkBoxes()[i].isSelected());
             setting.setValue(newValue);
         }
 
