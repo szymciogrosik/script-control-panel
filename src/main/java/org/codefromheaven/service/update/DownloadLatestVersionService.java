@@ -20,7 +20,7 @@ public class DownloadLatestVersionService {
     public static Task<Void> createDownloadTask() {
         try {
             if (AppVersionService.isNewVersionAvailable()) {
-                return DownloadLatestVersionService.createDownloadTask(TMP_FILE_LOCATION);
+                return createDownloadTask(TMP_FILE_LOCATION, AppVersionService.getLatestJarDownloadUrl());
             } else {
                 throw new RuntimeException("Download update should not be invoked when it is not present");
             }
@@ -30,13 +30,13 @@ public class DownloadLatestVersionService {
         }
     }
 
-    private static Task<Void> createDownloadTask(String savePath) {
+    private static Task<Void> createDownloadTask(String savePath, String downloadUrl) {
         return new Task<>() {
             @Override
             protected Void call() throws Exception {
                 updateProgress(0, 100);
 
-                URL url = new URL(AppVersionService.getLatestJarDownloadUrl());
+                URL url = new URL(downloadUrl);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
 
