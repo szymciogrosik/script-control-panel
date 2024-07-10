@@ -61,6 +61,12 @@ public class UpdateController {
         Task<Void> downloadTask = DownloadLatestVersionService.createDownloadTask();
 
         downloadTask.setOnSucceeded(event -> {
+            try {
+                // Wait few seconds to ensure that downloading was completed
+                Thread.sleep(2000);
+            } catch (InterruptedException e) {
+                throw new RuntimeException(e);
+            }
             label.setText("Download completed.");
             installButton.setVisible(true);
         });
@@ -83,14 +89,7 @@ public class UpdateController {
 
     public void runReplaceApplicationBashScriptInNewThread() {
         new Thread(() -> {
-            try {
-                // Wait for 5 seconds to ensure the download is complete
-                Thread.sleep(5000);
-                // Run the bash script to replace the JAR and restart the application
-                GitBashService.runCommand(Setting.TMP_DIRECTORY.getName(), true, "./update_and_restart.sh");
-            } catch (InterruptedException e) {
-                e.printStackTrace();
-            }
+            GitBashService.runCommand(Setting.TMP_DIRECTORY.getName(), true, "./update_and_restart.sh");
         }).start();
     }
 
