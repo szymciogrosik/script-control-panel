@@ -79,8 +79,15 @@ jobs:
       - name: Build with Maven
         run: mvn clean install -DskipTests -X
 
+      - name: Remove existing .gitignore if it exists
+        run: |
+          if (Test-Path -Path .gitignore) {
+            Remove-Item -Path .gitignore -Force
+          }
+        shell: pwsh
+
       - name: Rename default.gitignore to .gitignore
-        run: Rename-Item -Path default.gitignore -NewName .gitignore -Force
+        run: Rename-Item -Path default.gitignore -NewName .gitignore
 
       - name: Create ZIP of Default Files
         run: |
