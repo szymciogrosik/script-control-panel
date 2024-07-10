@@ -12,23 +12,30 @@ import java.net.URL;
 
 public class DownloadLatestVersionService {
 
+    private static final String TMP_FILE_LOCATION = FileUtils.TMP_DIR + "/" + AppVersionService.TMP_NAME;
+
     private DownloadLatestVersionService() {
     }
 
-    public static void download() {
+    public static Task<Void> createDownloadTask() {
         try {
             if (AppVersionService.isNewVersionAvailable()) {
-                DownloadLatestVersionService.download(FileUtils.TMP_DIR + "/" + AppVersionService.TMP_NAME);
+                return DownloadLatestVersionService.createDownloadTask(TMP_FILE_LOCATION);
+            } else {
+                throw new RuntimeException("Download update should not be invoked when it is not present");
             }
         } catch (Exception e) {
             e.printStackTrace();
+            throw e;
         }
     }
 
-    private static void download(String savePath) {
-        Task<Void> task = new Task<>() {
+    private static Task<Void> createDownloadTask(String savePath) {
+        return new Task<>() {
             @Override
             protected Void call() throws Exception {
+                updateProgress(0, 100);
+
                 URL url = new URL(AppVersionService.getLatestJarDownloadUrl());
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
@@ -51,12 +58,6 @@ public class DownloadLatestVersionService {
                 return null;
             }
         };
-
-        task.setOnSucceeded(event -> System.out.println("Download completed successfully."));
-        task.setOnFailed(event -> System.out.println("Download failed: " + task.getException()));
-
-        Thread thread = new Thread(task);
-        thread.start();
     }
 
 }
