@@ -19,7 +19,6 @@ public class App extends Application {
     @Override
     public void start(Stage stage) throws IOException {
         AppVersionService.checkForUpdates();
-        FileUtils.copyFileFromResource("utils", "update_and_restart.sh");
         stage.setTitle(SettingsService.getAppName() + " - " + AppVersionService.getCurrentVersion());
         stage.setResizable(false);
         Image animalImage = AnimalService.getInstance().getCurrentAnimalImage();

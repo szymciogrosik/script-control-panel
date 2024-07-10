@@ -3,6 +3,7 @@ package org.codefromheaven.controller;
 import javafx.application.Platform;
 import javafx.scene.control.ProgressBar;
 import org.codefromheaven.dto.Setting;
+import org.codefromheaven.helpers.FileUtils;
 import org.codefromheaven.service.command.GitBashService;
 import org.codefromheaven.service.update.DownloadLatestVersionService;
 
@@ -14,6 +15,7 @@ public class UpdateController {
     }
 
     public void setupPage() {
+        FileUtils.copyFileFromResourceToTmp("utils", "update_and_restart.sh");
         DownloadLatestVersionService.download();
         runReplaceApplicationBashScriptInNewThread();
         closeApplication();

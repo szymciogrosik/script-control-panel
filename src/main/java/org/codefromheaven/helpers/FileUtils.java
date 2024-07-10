@@ -13,7 +13,7 @@ public class FileUtils {
     private FileUtils() {
     }
 
-    public static void copyFileFromResource(String resourcePath, String fileName) {
+    public static void copyFileFromResourceToTmp(String resourcePath, String fileName) {
         String appDir = System.getProperty("user.dir") + "/" + TMP_DIR;
 
         createOrReplaceDirectory(appDir);
