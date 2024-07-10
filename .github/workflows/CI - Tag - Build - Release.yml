@@ -47,10 +47,10 @@ jobs:
       - name: Check for existing tag
         id: check_tag
         run: |
-          if (git rev-parse "${{ env.TAG_NAME }}" -ErrorAction SilentlyContinue) {
+          $tagExists = git tag -l "${{ env.TAG_NAME }}"
+          if ($tagExists) {
             echo "TAG_EXISTS=true" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-          }
-          else {
+          } else {
             echo "TAG_EXISTS=false" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           }
 
@@ -63,8 +63,7 @@ jobs:
             git tag "${{ env.TAG_NAME }}"
             git push origin "${{ env.TAG_NAME }}"
             echo "TAG_CREATED=true" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
-          }
-          else {
+          } else {
             echo "TAG_CREATED=false" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           }
 
