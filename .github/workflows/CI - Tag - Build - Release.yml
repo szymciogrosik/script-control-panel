@@ -80,7 +80,7 @@ jobs:
         run: mvn clean install -DskipTests -X
 
       - name: Rename default.gitignore to .gitignore
-        run: Rename-Item -Path default.gitignore -NewName .gitignore
+        run: Rename-Item -Path default.gitignore -NewName .gitignore -Force
 
       - name: Create ZIP of Default Files
         run: |
