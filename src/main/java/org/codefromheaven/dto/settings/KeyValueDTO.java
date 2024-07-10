@@ -5,9 +5,15 @@ import java.util.Objects;
 public class KeyValueDTO {
     private String key;
     private String value;
+    private boolean editable = true;
     private String description;
 
     public KeyValueDTO() {
+    }
+
+    public KeyValueDTO(String key, String value, boolean editable, String description) {
+        this(key, value, description);
+        this.editable = editable;
     }
 
     public KeyValueDTO(String key, String value, String description) {
@@ -28,6 +34,18 @@ public class KeyValueDTO {
         this.value = value;
     }
 
+    public void setKey(String key) {
+        this.key = key;
+    }
+
+    public boolean isEditable() {
+        return editable;
+    }
+
+    public void setEditable(boolean editable) {
+        this.editable = editable;
+    }
+
     public String getDescription() {
         return description;
     }
@@ -41,12 +59,12 @@ public class KeyValueDTO {
         if (this == o) {return true;}
         if (o == null || getClass() != o.getClass()) {return false;}
         KeyValueDTO that = (KeyValueDTO) o;
-        return Objects.equals(key, that.key) && Objects.equals(value, that.value) && Objects.equals(description, that.description);
+        return editable == that.editable && Objects.equals(key, that.key) && Objects.equals(value, that.value) && Objects.equals(description, that.description);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(key, value, description);
+        return Objects.hash(key, value, editable, description);
     }
 
 }

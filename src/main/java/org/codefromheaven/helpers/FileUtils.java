@@ -8,13 +8,30 @@ import java.nio.file.StandardCopyOption;
 
 public class FileUtils {
 
+    public static final String TMP_DIR = "tmp";
+
     private FileUtils() {
     }
 
     public static void copyFileFromResource(String resourcePath, String fileName) {
-        String appDir = System.getProperty("user.dir");
+        String appDir = System.getProperty("user.dir") + "/" + TMP_DIR;
 
-        // Destination file path
+        createOrReplaceDirectory(appDir);
+        createOrReplaceFile(appDir, resourcePath, fileName);
+    }
+
+    private static void createOrReplaceDirectory(String appDir) {
+        File tmpDir = new File(appDir);
+        if (!tmpDir.exists()) {
+            if (!tmpDir.mkdirs()) {
+                throw new IllegalStateException("Failed to create directory: " + appDir);
+            }
+        } else if (!tmpDir.isDirectory()) {
+            throw new IllegalStateException(appDir + " exists but is not a directory.");
+        }
+    }
+
+    private static void createOrReplaceFile(String appDir, String resourcePath, String fileName) {
         File destFile = new File(appDir, fileName);
         String fullPathToResource = "/" + resourcePath + "/" + fileName;
         try (InputStream resourceStream = FileUtils.class.getResourceAsStream(fullPathToResource)) {

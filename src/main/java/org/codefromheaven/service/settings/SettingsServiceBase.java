@@ -42,7 +42,7 @@ public abstract class SettingsServiceBase {
             Optional<KeyValueDTO> myOwn =
                     myOwnSettings.get().getSettings().stream()
                                  .filter(elem -> defaultSetting.getKey().equals(elem.getKey())).findFirst();
-            if (myOwn.isPresent()) {
+            if (myOwn.isPresent() && defaultSetting.isEditable()) {
                 // Override my own description with the newest one from default
                 myOwn.get().setDescription(defaultSetting.getDescription());
                 settingsToReturn.add(myOwn.get());
@@ -69,7 +69,7 @@ public abstract class SettingsServiceBase {
         // Add all default settings from class which does not present in the file
         DefaultSettings.ALL.getSettings().forEach(elem -> {
             if (defaultSettingsFromFile.getSettings().stream().noneMatch(elem2 -> elem2.getKey().equals(elem.getKey()))) {
-                keyValueList.add(new KeyValueDTO(elem.getKey(), elem.getValue(), elem.getDescription()));
+                keyValueList.add(new KeyValueDTO(elem.getKey(), elem.getValue(), elem.isEditable(), elem.getDescription()));
             }
         });
         // Add all default settings from file

@@ -2,6 +2,7 @@ package org.codefromheaven.controller;
 
 import javafx.application.Platform;
 import javafx.scene.control.ProgressBar;
+import org.codefromheaven.dto.Setting;
 import org.codefromheaven.service.command.GitBashService;
 import org.codefromheaven.service.update.DownloadLatestVersionService;
 
@@ -24,7 +25,7 @@ public class UpdateController {
                 // Wait for 5 seconds to ensure the download is complete
                 Thread.sleep(5000);
                 // Run the bash script to replace the JAR and restart the application
-                GitBashService.runCommand("", true, "./update_and_restart.sh");
+                GitBashService.runCommand(Setting.TMP_DIRECTORY.getName(), true, "./update_and_restart.sh");
             } catch (InterruptedException e) {
                 e.printStackTrace();
             }

@@ -44,7 +44,7 @@ public class SettingsController {
         gridPane.setHgap(10);
 
         SettingsDTO configSettings = SettingsService.load();
-        List<KeyValueDTO> settings = configSettings.getSettings();
+        List<KeyValueDTO> settings = configSettings.getSettings().stream().filter(KeyValueDTO::isEditable).toList();
 
         FieldOnPageDTO valueFields = loadElementsToPage(settings, gridPane);
 

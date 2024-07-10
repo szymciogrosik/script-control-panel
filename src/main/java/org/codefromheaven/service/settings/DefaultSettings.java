@@ -10,6 +10,12 @@ public class DefaultSettings {
 
     public static final SettingsDTO ALL = new SettingsDTO(Arrays.asList(
             new KeyValueDTO(
+                    Setting.TMP_DIRECTORY.getName(),
+                    "tmp",
+                    false,
+                    "Location of temporary files f.e. for updating application"
+            ),
+            new KeyValueDTO(
                     Setting.BASH_PATH.getName(),
                     "C:/Program Files/Git/git-bash.exe",
                     "Location of Git bash"

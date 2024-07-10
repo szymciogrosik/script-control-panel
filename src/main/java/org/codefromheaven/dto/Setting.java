@@ -4,6 +4,7 @@ import org.codefromheaven.dto.settings.BaseSetting;
 import org.codefromheaven.service.settings.SettingsServiceBase;
 
 public enum Setting implements BaseSetting {
+    TMP_DIRECTORY,
     BASH_PATH,
     MAX_WINDOW_HEIGHT,
     IMAGE_NAME,

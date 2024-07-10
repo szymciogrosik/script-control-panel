@@ -62,30 +62,41 @@ function wait_for_pressing_key() {
   read
 }
 
-# Check if tmp_script_control_panel.jar exists
-if [ ! -f tmp_script_control_panel.jar ]; then
-    echo "Error: tmp_script_control_panel.jar not found!"
-    print_error_image
-    wait_for_pressing_key
-    exit 1
+# Define directories and filenames
+CURRENT_DIR="$(pwd)"
+OLD_APP_NAME="script_control_panel.jar"
+NEW_APP_NAME="new_script_control_panel.jar"
+
+# Check if $NEW_APP_NAME exists in the current directory
+if [ ! -f "$CURRENT_DIR/$NEW_APP_NAME" ]; then
+ echo "Error: $CURRENT_DIR/$NEW_APP_NAME not found!"
+ print_error_image
+ wait_for_pressing_key
+ exit 1
 fi
 
+# Move one level up from the current directory
+cd ..
+
+# Define the target directory after moving up
+TARGET_DIR="$(pwd)"
+
 # Replace the old JAR with the new one
-mv -f tmp_script_control_panel.jar script_control_panel.jar
+mv -f "$CURRENT_DIR/$NEW_APP_NAME" "$TARGET_DIR/$OLD_APP_NAME"
 if [ $? -ne 0 ]; then
-    echo "Error: Failed to move tmp_script_control_panel.jar to script_control_panel.jar!"
-    print_error_image
-    wait_for_pressing_key
-    exit 1
+ echo "Error: Failed to move $CURRENT_DIR/$NEW_APP_NAME to $TARGET_DIR/$OLD_APP_NAME!"
+ print_error_image
+ wait_for_pressing_key
+ exit 1
 fi
 
 # Restart the application
-nohup java -jar script_control_panel.jar > app.log 2>&1 &
+nohup java -jar "$TARGET_DIR/$OLD_APP_NAME" > "$TARGET_DIR/tmp/app_update.log" 2>&1 &
 if [ $? -ne 0 ]; then
-    echo "Error: Failed to start the application!"
-    print_error_image
-    wait_for_pressing_key
-    exit 1
+ echo "Error: Failed to start the application!"
+ print_error_image
+ wait_for_pressing_key
+ exit 1
 fi
 
 echo "------------------------------------------------------"

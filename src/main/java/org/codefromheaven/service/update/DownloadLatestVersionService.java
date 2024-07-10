@@ -1,6 +1,7 @@
 package org.codefromheaven.service.update;
 
 import javafx.concurrent.Task;
+import org.codefromheaven.helpers.FileUtils;
 import org.codefromheaven.service.version.AppVersionService;
 
 import java.io.FileOutputStream;
@@ -17,7 +18,7 @@ public class DownloadLatestVersionService {
     public static void download() {
         try {
             if (AppVersionService.isNewVersionAvailable()) {
-                DownloadLatestVersionService.download(AppVersionService.TMP_NAME);
+                DownloadLatestVersionService.download(FileUtils.TMP_DIR + "/" + AppVersionService.TMP_NAME);
             }
         } catch (Exception e) {
             e.printStackTrace();
