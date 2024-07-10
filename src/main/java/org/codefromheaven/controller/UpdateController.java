@@ -20,8 +20,6 @@ import org.codefromheaven.service.update.DownloadLatestVersionService;
 
 public class UpdateController {
 
-    private ProgressBar progressBar;
-
     public UpdateController() {
     }
 
