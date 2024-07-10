@@ -40,6 +40,7 @@ public class SettingsController {
         settingsStage.initModality(APPLICATION_MODAL);
         settingsStage.getIcons().add(AnimalService.getInstance().getRandomAnimalImage());
         settingsStage.setTitle("Additional settings");
+        settingsStage.setResizable(false);
 
         GridPane gridPane = new GridPane();
         gridPane.setPadding(new Insets(20));

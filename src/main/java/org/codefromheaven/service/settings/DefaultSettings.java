@@ -18,7 +18,7 @@ public class DefaultSettings {
             new KeyValueDTO(
                     Setting.ALLOW_PRE_RELEASES.getName(),
                     "false",
-                    "Location of temporary files f.e. for updating application"
+                    "Allow for downloading pre-releases (can be unstable)"
             ),
             new KeyValueDTO(
                     Setting.BASH_PATH.getName(),

@@ -46,8 +46,9 @@ public class HiddenElementSettingsController {
         settingsStage.initModality(APPLICATION_MODAL);
         settingsStage.setTitle("Settings - Change visibility of elements");
         settingsStage.getIcons().add(AnimalService.getInstance().getRandomAnimalImage());
-        VBox settingsRoot = new VBox(10);
+        settingsStage.setResizable(false);
 
+        VBox settingsRoot = new VBox(10);
         ScrollPane scrollPane = new ScrollPane();
         VBox contentBox = new VBox(10);
         contentBox.setPadding(new Insets(10));
