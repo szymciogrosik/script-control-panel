@@ -1,5 +1,6 @@
 target/
 .idea/
-my_own*
 dependency-reduced-pom.xml
-update_and_restart.sh
+
+my_own*
+tmp/
