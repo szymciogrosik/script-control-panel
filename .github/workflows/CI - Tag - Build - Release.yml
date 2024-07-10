@@ -28,13 +28,14 @@ jobs:
       - name: Extract version from pom.xml
         id: extract_version
         run: |
-          python -c "import xml.etree.ElementTree as ET; \
+          $version = python -c "import xml.etree.ElementTree as ET; \
                      tree = ET.parse('pom.xml'); \
                      root = tree.getroot(); \
                      ns = {'m': 'http://maven.apache.org/POM/4.0.0'}; \
                      version = root.find('m:version', ns).text; \
-                     print(f'::set-env name=VERSION::{version}')"
-          echo "Found version: $env:VERSION"
+                     print(version)"
+          echo "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+          echo "Found version: $version"
 
       - name: Fetch all tags
         run: git fetch --tags
