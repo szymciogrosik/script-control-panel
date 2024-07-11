@@ -14,10 +14,14 @@ public class FileUtils {
     }
 
     public static void copyFileFromResourceToTmp(String resourcePath, String fileName) {
-        String appDir = System.getProperty("user.dir") + "/" + TMP_DIR;
-
-        createOrReplaceDirectory(appDir);
+        String appDir = createOrReplaceTmpDirectory();
         createOrReplaceFile(appDir, resourcePath, fileName);
+    }
+
+    public static String createOrReplaceTmpDirectory() {
+        String appDir = System.getProperty("user.dir") + File.separator + TMP_DIR;
+        createOrReplaceDirectory(appDir);
+        return appDir;
     }
 
     private static void createOrReplaceDirectory(String appDir) {

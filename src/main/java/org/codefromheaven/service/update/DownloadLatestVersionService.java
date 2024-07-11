@@ -20,6 +20,7 @@ public class DownloadLatestVersionService {
     public static Task<Void> createDownloadTask() {
         try {
             if (AppVersionService.isNewVersionAvailable()) {
+                FileUtils.createOrReplaceTmpDirectory();
                 return createDownloadTask(TMP_FILE_LOCATION, AppVersionService.getLatestJarDownloadUrl());
             } else {
                 throw new RuntimeException("Download update should not be invoked when it is not present");

@@ -69,8 +69,15 @@ function print_error_image() {
   echo "++++++++++++++++++++++++++++++++++++++++++++++"
 }
 
+function print_info_about_waiting_for_closing_application() {
+  for i in {3..1}; do
+   echo "Waiting for closing old application - $i seconds left"
+   sleep 1
+  done
+}
+
 function print_info_about_closing_window_soon() {
-  for i in {10..1}; do
+  for i in {5..1}; do
    echo "Window will be closed in $i seconds"
    sleep 1
   done
@@ -80,6 +87,9 @@ function wait_for_pressing_key() {
   echo "Press any button to exit..."
   read
 }
+
+# Wait few seconds
+print_info_about_waiting_for_closing_application
 
 # Define directories and filenames
 CURRENT_DIR="$(pwd)"
