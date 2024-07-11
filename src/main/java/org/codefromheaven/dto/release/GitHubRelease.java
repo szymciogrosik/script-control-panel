@@ -14,6 +14,12 @@ public class GitHubRelease {
     @JsonProperty("assets")
     private List<GitHubAsset> assets;
 
+    @JsonProperty("prerelease")
+    private boolean prerelease;
+
+    @JsonProperty("created_at")
+    private String createdAt;
+
     public String getTagName() {
         return tagName;
     }
@@ -28,6 +34,22 @@ public class GitHubRelease {
 
     public void setAssets(List<GitHubAsset> assets) {
         this.assets = assets;
+    }
+
+    public boolean isPrerelease() {
+        return prerelease;
+    }
+
+    public void setPrerelease(boolean prerelease) {
+        this.prerelease = prerelease;
+    }
+
+    public String getCreatedAt() {
+        return createdAt;
+    }
+
+    public void setCreatedAt(String createdAt) {
+        this.createdAt = createdAt;
     }
 
     @JsonIgnoreProperties(ignoreUnknown = true)
