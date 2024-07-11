@@ -108,28 +108,14 @@ jobs:
           Remove-Item -Path "${{ github.workspace }}/temp_zip_folder" -Recurse -Force
         shell: pwsh
 
-      - name: Check if file exists
-        id: check_file
-        run: |
-          if Test-Path "releasenotes/release-note-${{ env.TAG_NAME }}" ; then
-            echo "File exists"
-            echo "file_exists=true" >> $GITHUB_ENV
-          else
-            echo "File does not exist"
-            echo "file_exists=false" >> $GITHUB_ENV
-          fi
-        shell: bash
-
       - name: Create Release
         id: create_release
-        if: steps.check_file.outputs.file_exists == 'true'
         uses: actions/create-release@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           tag_name: ${{ env.TAG_NAME }}
           release_name: Release ${{ env.TAG_NAME }}
-          body_path: releasenotes/release-note-${{ env.TAG_NAME }}
           draft: true
           prerelease: false
 

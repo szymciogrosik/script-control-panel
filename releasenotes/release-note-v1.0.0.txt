@@ -4,3 +4,5 @@ Improvements:
 * Added first release of script-control-panel.
 Fixes:
 * NONE.
+
+Instruction what needs to be installed to run script_control_panel.jar and more useful info you can find [here](https://github.com/szymciogrosik/script-control-panel/wiki).
