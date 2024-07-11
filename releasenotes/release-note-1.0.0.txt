@@ -1,0 +1,6 @@
+**Release notes:**
+
+Improvements:
+* Added first release of script-control-panel.
+Fixes:
+* NONE.
