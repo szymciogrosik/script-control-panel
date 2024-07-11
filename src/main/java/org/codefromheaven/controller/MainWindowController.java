@@ -346,6 +346,16 @@ public class MainWindowController implements Initializable {
     @FXML
     private void handleCheckForUpdates() {
         checkForUpdates();
+        if (AppVersionService.isNewVersionAvailable()) {
+            handleDownloadAndInstall();
+//            ConfirmationPopupController confirmationPopupController =
+//                    new ConfirmationPopupController("Everything up to date!");
+//            confirmationPopupController.setupPage();
+        } else {
+            ConfirmationPopupController confirmationPopupController =
+                    new ConfirmationPopupController("Everything up to date!");
+            confirmationPopupController.setupPage();
+        }
     }
 
     @FXML
