@@ -1,6 +1,6 @@
 #!/bin/bash
 
-function print_success_image() {
+function print_deg() {
   echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
   echo ""
   echo "        .-\".'.                      .--.            _..._    "
@@ -38,6 +38,25 @@ function print_success_image() {
   echo "                      '..__L.:-'                          "
   echo ""
   echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+}
+
+function print_batman() {
+  echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++"
+  echo "           _                         _"
+  echo "       _==/          i     i          \=="
+  echo "     /XX/            |\___/|            \XX\\"
+  echo "   /XXXX\            |XXXXX|            /XXXX\\"
+  echo "  |XXXXXX\_         _XXXXXXX_         _/XXXXXX|"
+  echo " XXXXXXXXXXXxxxxxxxXXXXXXXXXXXxxxxxxxXXXXXXXXXXX"
+  echo "|XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX|"
+  echo "XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX"
+  echo "|XXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXXX|"
+  echo " XXXXXX/^^^^\"\XXXXXXXXXXXXXXXXXXXXX/^^^^^\XXXXXX"
+  echo "  |XXX|       \XXX/^^\XXXXX/^^\XXX/       |XXX|"
+  echo "    \XX\       \X/    \XXX/    \X/       /XX/"
+  echo "       \"\       \"      \X/      \"       /\""
+  echo "      SJG               !"
+  echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++"
 }
 
 function print_error_image() {
@@ -102,5 +121,5 @@ fi
 echo "------------------------------------------------------"
 echo "Application updated successfully!"
 echo "------------------------------------------------------"
-print_success_image
+print_batman
 print_info_about_closing_window_soon
