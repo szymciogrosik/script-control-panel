@@ -1,8 +1,8 @@
-**Release notes:**
+### Release notes
 
-Improvements:
+#### Improvements:
 * NONE.
-Fixes:
+#### Fixes:
 * Changed default_config.zip name to example_config.zip.
 
 Instruction how and what needs to be installed to run script_control_panel.jar and more useful info you can find [here](https://github.com/szymciogrosik/script-control-panel/wiki).
