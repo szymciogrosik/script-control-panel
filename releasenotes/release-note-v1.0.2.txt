@@ -1,0 +1,8 @@
+## App overview
+Instruction how and what needs to be installed to run application and more useful information, you can find [here](https://github.com/szymciogrosik/script-control-panel/wiki).
+
+## Release notes
+#### Improvements:
+* NONE.
+#### Fixes:
+* Fixed creation of tmp directories before downloading update.
