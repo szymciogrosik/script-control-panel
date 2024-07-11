@@ -107,7 +107,7 @@ public class HiddenElementSettingsController {
         });
     }
 
-    private List<SectionDTO> loadAllElements() {
+    public static List<SectionDTO> loadAllElements() {
         List<SectionDTO> allElements = new ArrayList<>();
         SettingsDTO filesToLoad = FilesToLoadSettingsService.load();
         for (String fileToLoad : filesToLoad.getSettings().stream().map(KeyValueDTO::getKey).toList()) {

@@ -71,6 +71,8 @@ public class MainWindowController implements Initializable {
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         updateNotification.setImage(ImageLoader.getImage("/update/notification.png"));
+        boolean noSectionPresent = HiddenElementSettingsController.loadAllElements().isEmpty();
+        changeVisibleElements.setDisable(!noSectionPresent);
         this.loadContent();
     }
 
