@@ -60,4 +60,9 @@ public class SettingsService extends SettingsServiceBase {
     public static Optional<String> loadValue(BaseSetting setting) {
         return SettingsServiceBase.loadValue(setting.getName(), FILE_TYPE);
     }
+
+    public static boolean isAllowedToDownloadPreReleases() {
+        return "true".equals(loadValue(Setting.ALLOW_PRE_RELEASES).orElse(""));
+    }
+
 }
