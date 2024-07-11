@@ -86,10 +86,14 @@ jobs:
       - name: Rename default.gitignore to .gitignore
         run: Rename-Item -Path default.gitignore -NewName .gitignore
 
-      - name: Remove existing default_config.zip if it exists
+      - name: Ensure no process is locking the ZIP file
         run: |
-          if (Test-Path -Path default_config.zip) {
-            Remove-Item -Path default_config.zip -Force
+          $zipFilePath = "default_config.zip"
+          if (Test-Path -Path $zipFilePath) {
+            Remove-Item -Path $zipFilePath -Force
+            Write-Host "Removed existing ZIP file."
+          } else {
+            Write-Host "No existing ZIP file to remove."
           }
         shell: pwsh
 
