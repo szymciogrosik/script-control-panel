@@ -108,15 +108,9 @@ jobs:
           Remove-Item -Path "${{ github.workspace }}/temp_zip_folder" -Recurse -Force
         shell: pwsh
 
-      - name: Upload Default Config Files Zip as Artifact
-        uses: actions/upload-artifact@v3
-        with:
-          name: default-config
-          path: default_config.zip
-
       - name: Create Release
         id: create_release
-        uses: actions/create-release@v1
+        uses: actions/create-release@v3
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
