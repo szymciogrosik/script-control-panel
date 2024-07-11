@@ -89,7 +89,15 @@ jobs:
       - name: Create ZIP of Default Files
         run: |
           Add-Type -AssemblyName System.IO.Compression.FileSystem
-          [System.IO.Compression.ZipFile]::CreateFromDirectory('.', 'default_config.zip')
+          $filesToZip = Get-ChildItem -Path . -Filter "default_*" | ForEach-Object { $_.FullName }
+          $filesToZip += ".gitignore"
+          [System.IO.Compression.ZipFile]::CreateFromDirectory((Join-Path -Path $PWD -ChildPath 'temp_zip_folder'), 'default_config.zip', [System.IO.Compression.CompressionLevel]::Optimal, $false)
+          New-Item -ItemType Directory -Path 'temp_zip_folder'
+          foreach ($file in $filesToZip) {
+            Copy-Item -Path $file -Destination 'temp_zip_folder'
+          }
+          [System.IO.Compression.ZipFile]::CreateFromDirectory('temp_zip_folder', 'default_config.zip')
+          Remove-Item -Path 'temp_zip_folder' -Recurse -Force
         shell: pwsh
 
       - name: Upload Default Config Files Zip as Artifact
