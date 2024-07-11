@@ -89,23 +89,23 @@ jobs:
       - name: Create ZIP of Default Files
         run: |
           # Ensure temp directory exists
-          New-Item -ItemType Directory -Path "${{ env.BUILD_SOURCESDIRECTORY }}/temp_zip_folder" -Force
+          New-Item -ItemType Directory -Path "$(Build.SourcesDirectory)\temp_zip_folder" -Force
 
           # Gather files to zip
-          $filesToZip = Get-ChildItem -Path "${{ env.BUILD_SOURCESDIRECTORY }}" -Filter "default_*" | ForEach-Object { $_.FullName }
-          $filesToZip += "${{ env.BUILD_SOURCESDIRECTORY }}/.gitignore"
+          $filesToZip = Get-ChildItem -Path "$(Build.SourcesDirectory)" -Filter "default_*" | ForEach-Object { $_.FullName }
+          $filesToZip += "$(Build.SourcesDirectory)\.gitignore"
 
           # Copy files to temp directory
           foreach ($file in $filesToZip) {
-            Copy-Item -Path $file -Destination "${{ env.BUILD_SOURCESDIRECTORY }}/temp_zip_folder"
+            Copy-Item -Path $file -Destination "$(Build.SourcesDirectory)\temp_zip_folder"
           }
 
           # Create ZIP file
           Add-Type -AssemblyName System.IO.Compression.FileSystem
-          [System.IO.Compression.ZipFile]::CreateFromDirectory("${{ env.BUILD_SOURCESDIRECTORY }}/temp_zip_folder", "${{ env.BUILD_SOURCESDIRECTORY }}/default_config.zip")
+          [System.IO.Compression.ZipFile]::CreateFromDirectory("${{ env.BUILD_SOURCESDIRECTORY }}/temp_zip_folder", "$(Build.SourcesDirectory)\default_config.zip")
 
           # Clean up temp directory
-          Remove-Item -Path "${{ env.BUILD_SOURCESDIRECTORY }}/temp_zip_folder" -Recurse -Force
+          Remove-Item -Path "$(Build.SourcesDirectory)\temp_zip_folder" -Recurse -Force
         shell: pwsh
 
       - name: Upload Default Config Files Zip as Artifact
