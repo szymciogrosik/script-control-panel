@@ -111,13 +111,14 @@ jobs:
       - name: Check if file exists
         id: check_file
         run: |
-          if [ -f "releasenotes/release-note-${{ env.TAG_NAME }}" ]; then
+          if Test-Path "releasenotes/release-note-${{ env.TAG_NAME }}" ; then
             echo "File exists"
             echo "file_exists=true" >> $GITHUB_ENV
           else
             echo "File does not exist"
             echo "file_exists=false" >> $GITHUB_ENV
           fi
+        shell: bash
 
       - name: Create Release
         id: create_release
