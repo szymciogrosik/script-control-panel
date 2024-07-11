@@ -74,7 +74,7 @@ jobs:
           exit 1
 
       - name: Build with Maven
-        run: mvn clean install -DskipTests -X
+        run: mvn clean install -DskipTests
 
       - name: Remove existing .gitignore if it exists
         run: |
@@ -86,36 +86,10 @@ jobs:
       - name: Rename default.gitignore to .gitignore
         run: Rename-Item -Path default.gitignore -NewName .gitignore
 
-      - name: Ensure no process is locking the ZIP file
-        run: |
-          $zipFilePath = "default_config.zip"
-          if (Test-Path -Path $zipFilePath) {
-            Remove-Item -Path $zipFilePath -Force
-            Write-Host "Removed existing ZIP file."
-          } else {
-            Write-Host "No existing ZIP file to remove."
-          }
-        shell: pwsh
-
       - name: Create ZIP of Default Files
         run: |
-          $attempt = 0
-          $maxAttempts = 5
-          while ($attempt -lt $maxAttempts) {
-            try {
-              Add-Type -AssemblyName System.IO.Compression.FileSystem
-              [System.IO.Compression.ZipFile]::CreateFromDirectory('.', 'default_config.zip')
-              Write-Host "ZIP file created successfully."
-              break
-            } catch {
-              $attempt++
-              Write-Host "Failed to create ZIP file. Attempt $attempt of $maxAttempts."
-              Start-Sleep -Seconds 5
-              if ($attempt -eq $maxAttempts) {
-                throw "Failed to create ZIP file after $maxAttempts attempts."
-              }
-            }
-          }
+          Add-Type -AssemblyName System.IO.Compression.FileSystem
+          [System.IO.Compression.ZipFile]::CreateFromDirectory('.', 'default_config.zip')
         shell: pwsh
 
       - name: Upload Default Config Files Zip as Artifact
