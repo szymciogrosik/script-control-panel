@@ -45,11 +45,7 @@ public class ConfirmationPopupController {
         ButtonType buttonTypeYes = new ButtonType("OK", ButtonBar.ButtonData.YES);
         alert.getButtonTypes().setAll(buttonTypeYes);
 
-        alert.showAndWait().ifPresent(response -> {
-            if (response == buttonTypeYes) {
-                System.out.println("User chose Yes");
-            }
-        });
+        alert.showAndWait();
     }
 
 }
