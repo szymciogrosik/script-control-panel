@@ -23,7 +23,7 @@ public class ConfirmationPopupController {
 
     public void setupPage() {
         Alert alert = new Alert(Alert.AlertType.INFORMATION);
-        alert.setTitle("Confirmation");
+        alert.setTitle("Information");
         alert.setHeaderText(null);
         alert.setWidth(300);
 
