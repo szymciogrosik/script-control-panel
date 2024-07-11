@@ -93,17 +93,17 @@ jobs:
           }
         shell: pwsh
 
-#      - name: Create ZIP of Default Files
-#        run: |
-#          Add-Type -AssemblyName System.IO.Compression.FileSystem
-#          [System.IO.Compression.ZipFile]::CreateFromDirectory('.', 'default_config.zip')
-#        shell: pwsh
+      - name: Create ZIP of Default Files
+        run: |
+          Add-Type -AssemblyName System.IO.Compression.FileSystem
+          [System.IO.Compression.ZipFile]::CreateFromDirectory('.', 'default_config.zip')
+        shell: pwsh
 
-#      - name: Upload Default Config Files Zip as Artifact
-#        uses: actions/upload-artifact@v3
-#        with:
-#          name: default-config
-#          path: default_config.zip
+      - name: Upload Default Config Files Zip as Artifact
+        uses: actions/upload-artifact@v3
+        with:
+          name: default-config
+          path: default_config.zip
 
       - name: Create Release
         id: create_release
@@ -126,12 +126,12 @@ jobs:
           asset_name: script_control_panel.jar
           asset_content_type: application/java-archive
 
-#      - name: Upload Default Files Zip to Release
-#        uses: actions/upload-release-asset@v1
-#        env:
-#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
-#        with:
-#          upload_url: ${{ steps.create_release.outputs.upload_url }}
-#          asset_path: ./default_config.zip
-#          asset_name: default_config.zip
-#          asset_content_type: application/zip
+      - name: Upload Default Files Zip to Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./default_config.zip
+          asset_name: default_config.zip
+          asset_content_type: application/zip
