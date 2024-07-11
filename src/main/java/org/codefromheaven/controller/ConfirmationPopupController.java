@@ -1,15 +1,13 @@
 package org.codefromheaven.controller;
 
+import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
-import javafx.scene.image.Image;
-import javafx.scene.image.ImageView;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
-import javafx.scene.text.TextAlignment;
 import javafx.stage.Stage;
 import org.codefromheaven.service.animal.AnimalService;
 
@@ -34,6 +32,9 @@ public class ConfirmationPopupController {
 
         // Add the confirmation message text
         Text text = new Text(confirmationMessage);
+
+        // Add margin to the text
+        HBox.setMargin(text, new Insets(10, 0, 0, 0));
 
         // Add text and image to the HBox
         hbox.getChildren().addAll(text);
