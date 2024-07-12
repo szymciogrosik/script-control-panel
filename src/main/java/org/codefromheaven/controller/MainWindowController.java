@@ -72,7 +72,7 @@ public class MainWindowController implements Initializable {
     public void initialize(URL location, ResourceBundle resources) {
         updateNotification.setImage(ImageLoader.getImage("/update/notification.png"));
         boolean noSectionPresent = HiddenElementSettingsController.loadAllElements().isEmpty();
-        changeVisibleElements.setDisable(!noSectionPresent);
+        changeVisibleElements.setDisable(noSectionPresent);
         this.loadContent();
     }
 
@@ -348,9 +348,6 @@ public class MainWindowController implements Initializable {
         checkForUpdates();
         if (AppVersionService.isNewVersionAvailable()) {
             handleDownloadAndInstall();
-//            ConfirmationPopupController confirmationPopupController =
-//                    new ConfirmationPopupController("Everything up to date!");
-//            confirmationPopupController.setupPage();
         } else {
             ConfirmationPopupController confirmationPopupController =
                     new ConfirmationPopupController("Everything up to date!");
