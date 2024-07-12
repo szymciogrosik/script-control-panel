@@ -27,8 +27,6 @@ import org.codefromheaven.service.settings.HiddenElementSettingsService;
 import java.util.ArrayList;
 import java.util.List;
 
-import static javafx.stage.Modality.APPLICATION_MODAL;
-
 public class HiddenElementSettingsController {
 
     private final MainWindowController.ContentLoader loader;
