@@ -29,6 +29,7 @@ import org.codefromheaven.service.LoadFromJsonService;
 import org.codefromheaven.service.animal.AnimalService;
 import org.codefromheaven.service.command.GitBashService;
 import org.codefromheaven.service.command.PowerShellService;
+import org.codefromheaven.service.network.NetworkService;
 import org.codefromheaven.service.settings.FilesToLoadSettingsService;
 import org.codefromheaven.service.settings.HiddenElementSettingsService;
 import org.codefromheaven.service.settings.SettingsService;
@@ -342,10 +343,10 @@ public class MainWindowController implements Initializable {
         if (AppVersionService.isNewVersionAvailable()) {
             handleDownloadAndInstall();
         } else {
-            if (AppVersionService.isNetworkPresent()) {
+            if (NetworkService.isNetworkPresent()) {
                 PopupController.showPopup("Everything up to date!", Alert.AlertType.INFORMATION);
             } else {
-                AppVersionService.showPopupNetworkNotPresent();
+                NetworkService.showPopupNetworkNotPresent();
             }
         }
     }

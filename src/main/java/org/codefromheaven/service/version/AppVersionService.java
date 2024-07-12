@@ -3,11 +3,10 @@ package org.codefromheaven.service.version;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import javafx.scene.control.Alert;
-import org.codefromheaven.controller.PopupController;
 import org.codefromheaven.dto.Link;
 import org.codefromheaven.dto.release.GitHubRelease;
 import org.codefromheaven.resources.FileNamesLoader;
+import org.codefromheaven.service.network.NetworkService;
 import org.codefromheaven.service.settings.SettingsService;
 
 import java.io.BufferedReader;
@@ -26,7 +25,6 @@ public class AppVersionService {
     public static final String TMP_NAME = "new_" + APP_NAME;
 
     private static GitHubRelease gitHubRelease = null;
-    private static Boolean networkPresent = null;
 
     private AppVersionService() {
     }
@@ -102,14 +100,14 @@ public class AppVersionService {
 
             latestRelease = findLatestGitHubRelease(releases, latestReleaseDate, latestRelease, objectMapper);
 
-            networkPresent = true;
+            NetworkService.setNetworkPresent();
             return Optional.of(latestRelease);
         } catch (IOException e) {
             e.printStackTrace();
-            if (networkPresent == null) {
-                showPopupNetworkNotPresent();
+            if (NetworkService.isNetworkUnknown()) {
+                NetworkService.showPopupNetworkNotPresent();
             }
-            networkPresent = false;
+            NetworkService.setNetworkNotPresent();
             return Optional.empty();
         }
     }
@@ -130,15 +128,6 @@ public class AppVersionService {
             }
         }
         return latestRelease;
-    }
-
-    public static boolean isNetworkPresent() {
-        return networkPresent != null && networkPresent;
-    }
-
-    public static void showPopupNetworkNotPresent() {
-        PopupController.showPopup("Network not found, try check the updates later.",
-                                  Alert.AlertType.ERROR);
     }
 
 }
