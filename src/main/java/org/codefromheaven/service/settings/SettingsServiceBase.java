@@ -1,7 +1,7 @@
 package org.codefromheaven.service.settings;
 
-import org.codefromheaven.dto.settings.BaseSetting;
 import org.codefromheaven.dto.FileType;
+import org.codefromheaven.dto.Setting;
 import org.codefromheaven.dto.settings.KeyValueDTO;
 import org.codefromheaven.dto.settings.SettingsDTO;
 import org.codefromheaven.helpers.JsonUtils;
@@ -27,9 +27,12 @@ public abstract class SettingsServiceBase {
     private static final String MY_OWN_PREFIX = "my_own_";
     private static final String CONFIG_FILE_EXTENSION = ".json";
 
+    private static final String CONFIG_LOCATION = getConfigDir();
+    private static final String CONFIG_DIR = CONFIG_LOCATION.isEmpty() ? "" : CONFIG_LOCATION + "/";
+
     public static SettingsDTO loadSettingsFile(FileType fileType) {
-        Optional<SettingsDTO> myOwnSettings = loadSettingsFile(getMyOwnFileName(fileType.name()));
-        SettingsDTO defaultSettings = mergeDefaultSettings(loadSettingsFile(getDefaultFileName(fileType.name())).orElse(new SettingsDTO()), fileType);
+        Optional<SettingsDTO> myOwnSettings = loadSettingsFile(getMyOwnFileDir(fileType.name()));
+        SettingsDTO defaultSettings = mergeDefaultSettings(loadSettingsFile(getDefaultFileDir(fileType.name())).orElse(new SettingsDTO()), fileType);
 
         if (myOwnSettings.isEmpty()) {
             return defaultSettings;
@@ -61,6 +64,13 @@ public abstract class SettingsServiceBase {
         return new SettingsDTO(settingsToReturn);
     }
 
+    public static String getConfigDir() {
+        // Config dir cannot be editable
+        return DefaultSettings.ALL.getSettings().stream()
+                                  .filter(keyValue -> keyValue.getKey().equals(Setting.CONFIG_DIR.getName()))
+                                  .findFirst().get().getValue();
+    }
+
     private static SettingsDTO mergeDefaultSettings(SettingsDTO defaultSettingsFromFile, FileType fileType) {
         if (fileType != FileType.SETTINGS) {
             return defaultSettingsFromFile;
@@ -87,7 +97,7 @@ public abstract class SettingsServiceBase {
 
     public static void saveSettings(FileType fileType, SettingsDTO customSettings) {
         SettingsDTO settingsToSave = getCustomSettingsDifferentThanDefault(fileType, customSettings);
-        Path path = Paths.get(getMyOwnFileName(fileType.name()));
+        Path path = Paths.get(getMyOwnFileDir(fileType.name()));
         try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
             writer.write(JsonUtils.serialize(settingsToSave));
         } catch (IOException e) {
@@ -96,7 +106,7 @@ public abstract class SettingsServiceBase {
     }
 
     private static SettingsDTO getCustomSettingsDifferentThanDefault(FileType fileType, SettingsDTO customSettings) {
-        SettingsDTO defaultSettings = mergeDefaultSettings(loadSettingsFile(getDefaultFileName(fileType.name())).orElse(new SettingsDTO()), fileType);
+        SettingsDTO defaultSettings = mergeDefaultSettings(loadSettingsFile(getDefaultFileDir(fileType.name())).orElse(new SettingsDTO()), fileType);
         return new SettingsDTO(
                 customSettings.getSettings().stream()
                            .filter(setting -> defaultSettings.getSettings().stream().noneMatch(defaultSetting -> defaultSetting.equals(setting)))
@@ -111,19 +121,19 @@ public abstract class SettingsServiceBase {
     }
 
     protected static boolean isPresentMyOwnSettingFile(FileType fileType) {
-        try (BufferedReader ignored = new BufferedReader(new FileReader(getMyOwnFileName(fileType.name())))) {
+        try (BufferedReader ignored = new BufferedReader(new FileReader(getMyOwnFileDir(fileType.name())))) {
             return true;
         } catch (IOException e) {
             return false;
         }
     }
 
-    public static String getDefaultFileName(String fileName) {
-        return DEFAULT_PREFIX + getDefaultFileNameBase(fileName);
+    public static String getDefaultFileDir(String fileName) {
+        return CONFIG_DIR + DEFAULT_PREFIX + getDefaultFileNameBase(fileName);
     }
 
-    public static String getMyOwnFileName(String fileName) {
-        return MY_OWN_PREFIX + getDefaultFileNameBase(fileName);
+    public static String getMyOwnFileDir(String fileName) {
+        return CONFIG_DIR + MY_OWN_PREFIX + getDefaultFileNameBase(fileName);
     }
 
     private static String getDefaultFileNameBase(String fileName) {

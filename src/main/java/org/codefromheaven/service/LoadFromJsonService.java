@@ -20,8 +20,8 @@ public class LoadFromJsonService {
     private LoadFromJsonService() { }
 
     public static List<SectionDTO> load(String fileToLoad) {
-        Optional<List<SectionDTO>> commands = loadBase(SettingsServiceBase.getMyOwnFileName(fileToLoad));
-        return commands.orElseGet(() -> loadBase(SettingsServiceBase.getDefaultFileName(fileToLoad)).get());
+        Optional<List<SectionDTO>> commands = loadBase(SettingsServiceBase.getMyOwnFileDir(fileToLoad));
+        return commands.orElseGet(() -> loadBase(SettingsServiceBase.getDefaultFileDir(fileToLoad)).get());
     }
 
     public static Optional<List<SectionDTO>> loadBase(String configPath) {

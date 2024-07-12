@@ -16,6 +16,12 @@ public class DefaultSettings {
                     "Location of temporary files f.e. for updating application"
             ),
             new KeyValueDTO(
+                    Setting.CONFIG_DIR.getName(),
+                    "config",
+                    false,
+                    "Location of configuration files f.e. 'config' or empty when in the same location"
+            ),
+            new KeyValueDTO(
                     Setting.ALLOW_PRE_RELEASES.getName(),
                     "false",
                     "Allow for downloading pre-releases (can be unstable)"

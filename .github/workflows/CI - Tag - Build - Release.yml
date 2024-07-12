@@ -76,34 +76,28 @@ jobs:
       - name: Build with Maven
         run: mvn clean install -DskipTests
 
-      - name: Remove existing .gitignore if it exists
-        run: |
-          if (Test-Path -Path .gitignore) {
-            Remove-Item -Path .gitignore -Force
-          }
-        shell: pwsh
-
-      - name: Rename default.gitignore to .gitignore
-        run: Rename-Item -Path default.gitignore -NewName .gitignore
-
-      - name: Create ZIP of Default Files
+      - name: Create ZIP of Config Files
         run: |
           # Ensure temp directory exists
           New-Item -ItemType Directory -Path "${{ github.workspace }}/temp_zip_folder" -Force
-
-          # Gather files to zip
-          $filesToZip = Get-ChildItem -Path "${{ github.workspace }}" -Filter "default_*" | ForEach-Object { $_.FullName }
-          $filesToZip += "${{ github.workspace }}/.gitignore"
-
-          # Copy files to temp directory
-          foreach ($file in $filesToZip) {
-            Copy-Item -Path $file -Destination "${{ github.workspace }}/temp_zip_folder"
+          
+          # Gather files and directories to zip
+          $itemsToZip = Get-ChildItem -Path "${{ github.workspace }}/config" -Recurse | ForEach-Object { $_.FullName }
+          
+          # Copy files and directories to temp directory
+          foreach ($item in $itemsToZip) {
+          $destinationPath = (Join-Path -Path "${{ github.workspace }}/temp_zip_folder" -ChildPath (Resolve-Path -Path $item -Relative | ForEach-Object { $_.ToString().Substring(("${{ github.workspace }}/config").Length + 1) }))
+          if (Test-Path -Path $item -PathType Container) {
+           New-Item -ItemType Directory -Path $destinationPath -Force
+          } else {
+           Copy-Item -Path $item -Destination $destinationPath -Force
           }
-
+          }
+          
           # Create ZIP file
           Add-Type -AssemblyName System.IO.Compression.FileSystem
-          [System.IO.Compression.ZipFile]::CreateFromDirectory("${{ github.workspace }}/temp_zip_folder", "${{ github.workspace }}/example_config.zip")
-
+          [System.IO.Compression.ZipFile]::CreateFromDirectory("${{ github.workspace }}/temp_zip_folder", "${{ github.workspace }}/config_files.zip")
+          
           # Clean up temp directory
           Remove-Item -Path "${{ github.workspace }}/temp_zip_folder" -Recurse -Force
         shell: pwsh

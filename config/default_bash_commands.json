@@ -1,0 +1,42 @@
+[
+  {
+    "sectionName": "Bash",
+    "subSections": [
+      {
+        "subSectionName": "Example scripts",
+        "commands": [
+          {
+            "buttonName": "Bash",
+            "scriptLocationParamName": "ALL_EXAMPLE_SCRIPTS_PATH",
+            "command": "./example_bash.sh",
+            "elementType": "BASH",
+            "autoCloseConsole": false,
+            "popupInputDisplayed": false,
+            "popupInputMessage": "",
+            "description": "Example bash script"
+          },
+          {
+            "buttonName": "Bash with popup",
+            "scriptLocationParamName": "ALL_EXAMPLE_SCRIPTS_PATH",
+            "command": "./example_bash_with_param.sh",
+            "elementType": "BASH",
+            "autoCloseConsole": false,
+            "popupInputDisplayed": true,
+            "popupInputMessage": "Params",
+            "description": "Example bash script with popup (input is passed as script params)"
+          },
+          {
+            "buttonName": "Bash autoclose",
+            "scriptLocationParamName": "ALL_EXAMPLE_SCRIPTS_PATH",
+            "command": "./example_bash.sh",
+            "elementType": "BASH",
+            "autoCloseConsole": true,
+            "popupInputDisplayed": false,
+            "popupInputMessage": "",
+            "description": "Example bash script which will be autoclosed after invocation"
+          }
+        ]
+      }
+    ]
+  }
+]

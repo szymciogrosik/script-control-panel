@@ -1,0 +1,22 @@
+[
+  {
+    "sectionName": "Links",
+    "subSections": [
+      {
+        "subSectionName": "Example links",
+        "commands": [
+          {
+            "buttonName": "Latest release",
+            "scriptLocationParamName": "",
+            "command": "https://github.com/szymciogrosik/script-control-panel/releases/latest",
+            "elementType": "LINK",
+            "autoCloseConsole": false,
+            "popupInputDisplayed": false,
+            "popupInputMessage": "",
+            "description": "Open releases web page in default browser."
+          }
+        ]
+      }
+    ]
+  }
+]

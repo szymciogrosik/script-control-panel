@@ -1,0 +1,13 @@
+﻿{
+  "settings": [
+    {
+      "key": "BASH_COMMANDS"
+    },
+    {
+      "key": "POWERSHELL_COMMANDS"
+    },
+    {
+      "key": "LINKS"
+    }
+  ]
+}

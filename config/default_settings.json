@@ -1,0 +1,14 @@
+{
+  "settings": [
+    {
+      "key": "APP_NAME",
+      "value": "Buenos DIAS",
+      "description": "Override your app name"
+    },
+    {
+      "key": "ALL_EXAMPLE_SCRIPTS_PATH",
+      "value": "config/scripts",
+      "description": "Location of all example scripts"
+    }
+  ]
+}
