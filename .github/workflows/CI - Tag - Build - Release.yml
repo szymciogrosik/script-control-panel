@@ -82,19 +82,29 @@ jobs:
           $tempZipFolder = "${{ github.workspace }}/temp_zip_folder"
           New-Item -ItemType Directory -Path $tempZipFolder -Force
 
+          # Copy the .gitignore file to the temp directory
+          Copy-Item -Path "${{ github.workspace }}/config/.gitignore" -Destination $tempZipFolder -Force
+
+          # Create a subdirectory for the config files within the temp directory
+          $configTempFolder = Join-Path -Path $tempZipFolder -ChildPath "config"
+          New-Item -ItemType Directory -Path $configTempFolder -Force
+
           # Gather files and directories to zip
           $itemsToZip = Get-ChildItem -Path "${{ github.workspace }}/config" -Recurse | ForEach-Object { $_.FullName }
 
-          # Copy files and directories to temp directory
+          # Copy files and directories to the config subdirectory in the temp directory
           foreach ($item in $itemsToZip) {
             $relativePath = $item.Substring("${{ github.workspace }}/config".Length).TrimStart('\', '/')
-            $destinationPath = Join-Path -Path $tempZipFolder -ChildPath $relativePath
+            $destinationPath = Join-Path -Path $configTempFolder -ChildPath $relativePath
             if (Test-Path -Path $item -PathType Container) {
               New-Item -ItemType Directory -Path $destinationPath -Force
             } else {
               Copy-Item -Path $item -Destination $destinationPath -Force
             }
           }
+
+          # Remove the .gitignore file from the config subdirectory (if it was copied again)
+          Remove-Item -Path "$configTempFolder/.gitignore" -Force
 
           # Create ZIP file
           $zipFilePath = "${{ github.workspace }}/example_config.zip"
