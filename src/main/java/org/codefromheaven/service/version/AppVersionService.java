@@ -3,6 +3,8 @@ package org.codefromheaven.service.version;
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import javafx.scene.control.Alert;
+import org.codefromheaven.controller.PopupController;
 import org.codefromheaven.dto.Link;
 import org.codefromheaven.dto.release.GitHubRelease;
 import org.codefromheaven.resources.FileNamesLoader;
@@ -15,6 +17,7 @@ import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
 import java.time.Instant;
+import java.util.Optional;
 import java.util.Properties;
 
 public class AppVersionService {
@@ -23,6 +26,7 @@ public class AppVersionService {
     public static final String TMP_NAME = "new_" + APP_NAME;
 
     private static GitHubRelease gitHubRelease = null;
+    private static Boolean networkPresent = null;
 
     private AppVersionService() {
     }
@@ -47,15 +51,20 @@ public class AppVersionService {
     }
 
     public static String getLatestVersion() {
-        return getLatestRelease().getTagName();
+        Optional<GitHubRelease> release = getLatestRelease();
+        if (release.isPresent()) {
+            return release.get().getTagName();
+        } else {
+            return getCurrentVersion();
+        }
     }
 
     public static void checkForUpdates() {
-        gitHubRelease = fetchLatestReleaseOrPreRelease();
+        gitHubRelease = fetchLatestReleaseOrPreRelease().orElse(null);
     }
 
     public static String getLatestJarDownloadUrl() {
-        for (GitHubRelease.GitHubAsset asset : getLatestRelease().getAssets()) {
+        for (GitHubRelease.GitHubAsset asset : getLatestRelease().get().getAssets()) {
             if (asset.getName().equals(APP_NAME)) {
                 return asset.getBrowserDownloadUrl();
             }
@@ -63,14 +72,14 @@ public class AppVersionService {
         throw new RuntimeException("No " + APP_NAME + " file found in the latest release");
     }
 
-    private static GitHubRelease getLatestRelease() {
+    private static Optional<GitHubRelease> getLatestRelease() {
         if (gitHubRelease == null) {
             checkForUpdates();
         }
-        return gitHubRelease;
+        return Optional.ofNullable(gitHubRelease);
     }
 
-    public static GitHubRelease fetchLatestReleaseOrPreRelease() {
+    public static Optional<GitHubRelease> fetchLatestReleaseOrPreRelease() {
         HttpURLConnection connection = null;
         try {
             connection = (HttpURLConnection) new URL(Link.API_ALL_RELEASES.getUrl()).openConnection();
@@ -93,9 +102,15 @@ public class AppVersionService {
 
             latestRelease = findLatestGitHubRelease(releases, latestReleaseDate, latestRelease, objectMapper);
 
-            return latestRelease;
+            networkPresent = true;
+            return Optional.of(latestRelease);
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            e.printStackTrace();
+            if (networkPresent == null) {
+                showPopupNetworkNotPresent();
+            }
+            networkPresent = false;
+            return Optional.empty();
         }
     }
 
@@ -115,6 +130,15 @@ public class AppVersionService {
             }
         }
         return latestRelease;
+    }
+
+    public static boolean isNetworkPresent() {
+        return networkPresent != null && networkPresent;
+    }
+
+    public static void showPopupNetworkNotPresent() {
+        PopupController.showPopup("Network not found, try check the updates later.",
+                                  Alert.AlertType.ERROR);
     }
 
 }

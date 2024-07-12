@@ -20,7 +20,6 @@
          <MenuItem text="Report issues" fx:id="reportIssues" onAction="#handleReportIssues"/>
          <MenuItem text="GitHub project" fx:id="githubProject" onAction="#handleGithubProject"/>
          <MenuItem text="Documentation" fx:id="githubDocumentation" onAction="#handleGithubDocumentation"/>
-         <MenuItem text="About author" fx:id="githubAboutAuthor" onAction="#handleGithubAboutAuthor"/>
       </Menu>
       <Menu>
          <graphic>

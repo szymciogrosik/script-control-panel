@@ -58,8 +58,6 @@ public class MainWindowController implements Initializable {
     private MenuItem githubProject;
     @FXML
     private MenuItem githubDocumentation;
-    @FXML
-    private MenuItem githubAboutAuthor;
 
     @FXML
     private ImageView updateNotification;
@@ -339,19 +337,16 @@ public class MainWindowController implements Initializable {
     }
 
     @FXML
-    private void handleGithubAboutAuthor() {
-        LinkUtils.openPageInBrowser(Link.ABOUT_AUTHOR.getUrl());
-    }
-
-    @FXML
     private void handleCheckForUpdates() {
         checkForUpdates();
         if (AppVersionService.isNewVersionAvailable()) {
             handleDownloadAndInstall();
         } else {
-            ConfirmationPopupController confirmationPopupController =
-                    new ConfirmationPopupController("Everything up to date!");
-            confirmationPopupController.setupPage();
+            if (AppVersionService.isNetworkPresent()) {
+                PopupController.showPopup("Everything up to date!", Alert.AlertType.INFORMATION);
+            } else {
+                AppVersionService.showPopupNetworkNotPresent();
+            }
         }
     }
 

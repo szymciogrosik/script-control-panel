@@ -11,19 +11,18 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.codefromheaven.service.animal.AnimalService;
 
-public class ConfirmationPopupController {
+public class PopupController {
 
-    private final String confirmationMessage;
-
-    public ConfirmationPopupController(String confirmationMessage) {
-        this.confirmationMessage = confirmationMessage;
+    private PopupController() {
     }
 
-    public void setupPage() {
-        Alert alert = new Alert(Alert.AlertType.INFORMATION);
+    public static void showPopup(
+            String message,
+            Alert.AlertType alertType
+    ) {
+        Alert alert = new Alert(alertType);
         alert.setTitle("Information");
         alert.setHeaderText(null);
-        alert.setWidth(300);
 
         // Create an HBox to hold the image and text side by side
         HBox hbox = new HBox();
@@ -31,10 +30,10 @@ public class ConfirmationPopupController {
         hbox.setSpacing(10);
 
         // Add the confirmation message text
-        Text text = new Text(confirmationMessage);
+        Text text = new Text(message);
 
         // Add margin to the text
-        HBox.setMargin(text, new Insets(10, 0, 0, 0));
+        HBox.setMargin(text, new Insets(10, 20, 0, 0));
 
         // Add text and image to the HBox
         hbox.getChildren().addAll(text);
