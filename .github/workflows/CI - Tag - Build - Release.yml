@@ -79,7 +79,8 @@ jobs:
       - name: Create ZIP of Config Files
         run: |
           # Ensure temp directory exists
-          New-Item -ItemType Directory -Path "${{ github.workspace }}/temp_zip_folder" -Force
+          $tempZipFolder = "${{ github.workspace }}/temp_zip_folder"
+          New-Item -ItemType Directory -Path $tempZipFolder -Force
 
           # Gather files and directories to zip
           $itemsToZip = Get-ChildItem -Path "${{ github.workspace }}/config" -Recurse | ForEach-Object { $_.FullName }
@@ -87,7 +88,7 @@ jobs:
           # Copy files and directories to temp directory
           foreach ($item in $itemsToZip) {
             $relativePath = $item.Substring("${{ github.workspace }}/config".Length).TrimStart('\', '/')
-            $destinationPath = Join-Path -Path "${{ github.workspace }}/temp_zip_folder" -ChildPath $relativePath
+            $destinationPath = Join-Path -Path $tempZipFolder -ChildPath $relativePath
             if (Test-Path -Path $item -PathType Container) {
               New-Item -ItemType Directory -Path $destinationPath -Force
             } else {
@@ -96,11 +97,12 @@ jobs:
           }
 
           # Create ZIP file
+          $zipFilePath = "${{ github.workspace }}/example_config.zip"
           Add-Type -AssemblyName System.IO.Compression.FileSystem
-          [System.IO.Compression.ZipFile]::CreateFromDirectory("${{ github.workspace }}/temp_zip_folder", "${{ github.workspace }}/config_files.zip")
+          [System.IO.Compression.ZipFile]::CreateFromDirectory($tempZipFolder, $zipFilePath)
 
           # Clean up temp directory
-          Remove-Item -Path "${{ github.workspace }}/temp_zip_folder" -Recurse -Force
+          Remove-Item -Path $tempZipFolder -Recurse -Force
         shell: pwsh
 
       - name: Create Release
