@@ -25,6 +25,7 @@ import org.codefromheaven.dto.settings.SettingsDTO;
 import org.codefromheaven.dto.settings.VisibilitySettingKey;
 import org.codefromheaven.helpers.ImageLoader;
 import org.codefromheaven.helpers.LinkUtils;
+import org.codefromheaven.helpers.MaxHighUtils;
 import org.codefromheaven.service.LoadFromJsonService;
 import org.codefromheaven.service.animal.AnimalService;
 import org.codefromheaven.service.command.GitBashService;
@@ -32,7 +33,6 @@ import org.codefromheaven.service.command.PowerShellService;
 import org.codefromheaven.service.network.NetworkService;
 import org.codefromheaven.service.settings.FilesToLoadSettingsService;
 import org.codefromheaven.service.settings.HiddenElementSettingsService;
-import org.codefromheaven.service.settings.SettingsService;
 import org.codefromheaven.service.version.AppVersionService;
 
 public class MainWindowController implements Initializable {
@@ -96,19 +96,9 @@ public class MainWindowController implements Initializable {
     }
 
     private void setupScrollPane() {
-        mainScrollPane.setMaxHeight(getMaxHeight());
+        mainScrollPane.setMaxHeight(MaxHighUtils.getMaxHeight());
         mainScrollPane.setFitToHeight(true);
         mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
-    }
-
-    private double getMaxHeight() {
-        Optional<String> maxWindowHeightString = SettingsService.loadValue(Setting.MAX_WINDOW_HEIGHT);
-        if (maxWindowHeightString.isPresent() && !maxWindowHeightString.get().isEmpty()) {
-            return Integer.parseInt(maxWindowHeightString.get());
-        }
-        // Calculate size based on screen height
-        double screenHeight = Screen.getPrimary().getVisualBounds().getHeight();
-        return screenHeight - 65;
     }
 
     private void addSectionHeader(String headerName) {

@@ -12,11 +12,13 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.codefromheaven.dto.data.SectionDTO;
 import org.codefromheaven.dto.settings.KeyValueDTO;
 import org.codefromheaven.dto.settings.SettingsDTO;
 import org.codefromheaven.dto.settings.VisibilitySettingKey;
+import org.codefromheaven.helpers.MaxHighUtils;
 import org.codefromheaven.service.LoadFromJsonService;
 import org.codefromheaven.service.animal.AnimalService;
 import org.codefromheaven.service.settings.FilesToLoadSettingsService;
@@ -43,7 +45,7 @@ public class HiddenElementSettingsController {
 
     public void setupPage() {
         Stage settingsStage = new Stage();
-        settingsStage.initModality(APPLICATION_MODAL);
+        settingsStage.initModality(Modality.APPLICATION_MODAL);
         settingsStage.setTitle("Settings - Change visibility of elements");
         settingsStage.getIcons().add(AnimalService.getInstance().getRandomAnimalImage());
         settingsStage.setResizable(false);
@@ -56,6 +58,9 @@ public class HiddenElementSettingsController {
         loadPageContent(contentBox);
 
         scrollPane.setContent(contentBox);
+        scrollPane.setFitToWidth(true);
+        scrollPane.setMaxHeight(MaxHighUtils.getMaxHeight());
+
         settingsRoot.getChildren().add(scrollPane);
 
         Button btnSave = new Button("Save");
@@ -76,8 +81,15 @@ public class HiddenElementSettingsController {
 
         settingsRoot.getChildren().add(buttonContainer);
 
-        Scene scene = new Scene(settingsRoot, 400, 600);
+        // Scene height will be adjusted dynamically
+        Scene scene = new Scene(settingsRoot, 400, 100);
         settingsStage.setScene(scene);
+
+        // Add a listener to adjust the height dynamically as elements are added
+        contentBox.heightProperty().addListener((observable, oldValue, newValue) -> {
+            double newHeight = Math.min(newValue.doubleValue() + 90, MaxHighUtils.getMaxHeight());
+            settingsStage.setHeight(newHeight);
+        });
 
         settingsStage.showAndWait();
     }
