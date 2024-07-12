@@ -6,6 +6,7 @@ import org.codefromheaven.service.settings.SettingsServiceBase;
 public enum Setting implements BaseSetting {
     TMP_DIRECTORY,
     CONFIG_DIR,
+    ADD_TO_WINDOWS_STARTUP,
     ALLOW_PRE_RELEASES,
     BASH_PATH,
     MAX_WINDOW_HEIGHT,

@@ -1,5 +1,7 @@
 package org.codefromheaven.controller;
 
+import com.sun.jna.platform.win32.Advapi32Util;
+import com.sun.jna.platform.win32.WinReg;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -11,10 +13,13 @@ import org.codefromheaven.dto.Setting;
 import org.codefromheaven.dto.settings.FieldOnPageDTO;
 import org.codefromheaven.dto.settings.KeyValueDTO;
 import org.codefromheaven.dto.settings.SettingsDTO;
+import org.codefromheaven.helpers.SystemUtils;
 import org.codefromheaven.resources.AnimalNamesProvider;
 import org.codefromheaven.service.animal.AnimalService;
 import org.codefromheaven.service.settings.SettingsService;
+import org.codefromheaven.service.version.AppVersionService;
 
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -126,7 +131,8 @@ public class SettingsController {
     }
 
     private List<KeyValueDTO> getCheckBoxSettings(List<KeyValueDTO> settings) {
-        return settings.stream().filter(elem -> elem.getKey().equals(Setting.ALLOW_PRE_RELEASES.getName()))
+        return settings.stream().filter(elem -> elem.getKey().equals(Setting.ALLOW_PRE_RELEASES.getName()) ||
+                               elem.getKey().equals(Setting.ADD_TO_WINDOWS_STARTUP.getName()))
                 .collect(Collectors.toList());
     }
 
@@ -191,6 +197,19 @@ public class SettingsController {
             setting.setValue(newValue);
         }
 
+        boolean addToWindowsStartupOld = "true".equals(SettingsService.loadValue(Setting.ADD_TO_WINDOWS_STARTUP).get());
+        boolean addToWindowsStartupNew =
+                "true".equals(settings.stream().filter(setting -> setting.getKey().equals(Setting.ADD_TO_WINDOWS_STARTUP.getName()))
+                        .findFirst().orElse(new KeyValueDTO("", "", "")).getValue());
+
+        if (!addToWindowsStartupOld && addToWindowsStartupNew) {
+            // If previously was not added and now is added then add it
+            addAppToStartup();
+        } else if (addToWindowsStartupOld && !addToWindowsStartupNew) {
+            // If previously was added, and now it is not, then remove from windows startup
+            removeAppFromStartup();
+        }
+
         SettingsService.saveSettings(new SettingsDTO(settings));
         loader.loadContent();
         resizeMainWindow.resizeMainWindow();
@@ -203,6 +222,47 @@ public class SettingsController {
             return keyValueDTO.getDescription();
         } else {
             return keyValueDTO.getKey();
+        }
+    }
+
+    public static void addAppToStartup() {
+        if (!SystemUtils.isWindows()) {
+            return;
+        }
+        try {
+            String currentPath = Paths.get(".").toAbsolutePath().normalize().toString();
+            String appPath = "\"" + currentPath + "\\" + AppVersionService.JAR_NAME + "\"";
+            System.out.println("Application path to be added to startup: " + appPath);
+
+            // Add the application to the startup registry key
+            Advapi32Util.registrySetStringValue(
+                    WinReg.HKEY_CURRENT_USER,
+                    "Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+                    AppVersionService.APP_NAME,
+                    appPath
+            );
+
+            System.out.println("Application added to startup successfully.");
+        } catch (Exception e) {
+            System.err.println("Failed to add application to startup.");
+            e.printStackTrace();
+        }
+    }
+
+    public static void removeAppFromStartup() {
+        if (!SystemUtils.isWindows()) {
+            return;
+        }
+        try {
+            // Remove the application from the startup registry key
+            Advapi32Util.registryDeleteValue(
+                    WinReg.HKEY_CURRENT_USER,
+                    "Software\\Microsoft\\Windows\\CurrentVersion\\Run",
+                    AppVersionService.APP_NAME
+            );
+            System.out.println("Application removed from startup successfully.");
+        } catch (Exception e) {
+            e.printStackTrace();
         }
     }
 

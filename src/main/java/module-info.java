@@ -4,6 +4,8 @@ module servicerunner {
     requires javafx.fxml;
     requires java.desktop;
     requires com.fasterxml.jackson.databind;
+    requires com.sun.jna.platform;
+    requires org.apache.commons.io;
 
     opens org.codefromheaven to javafx.fxml;
     exports org.codefromheaven;
