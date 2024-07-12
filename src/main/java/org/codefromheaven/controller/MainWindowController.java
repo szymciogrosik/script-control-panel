@@ -93,7 +93,7 @@ public class MainWindowController implements Initializable {
                 addElementsToScene(fileToLoad, visibilitySettings);
             }
         }
-        addAuthorNote("Made with love by Szymon Gross");
+        addAuthorNote("Made with love by SJG");
     }
 
     private void setupScrollPane() {
