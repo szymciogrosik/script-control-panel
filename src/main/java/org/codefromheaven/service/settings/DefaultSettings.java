@@ -24,7 +24,7 @@ public class DefaultSettings {
             new KeyValueDTO(
                     Setting.ADD_TO_WINDOWS_STARTUP.getName(),
                     "false",
-                    true,
+                    false,
                     "Start application automatically with Windows"
             ),
             new KeyValueDTO(
