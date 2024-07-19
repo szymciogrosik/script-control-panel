@@ -53,8 +53,8 @@ print_info_about_waiting_for_closing_application
 
 # Define directories and filenames
 CURRENT_DIR="$(pwd)"
-OLD_APP_NAME="script_control_panel.jar"
-NEW_APP_NAME="new_script_control_panel.jar"
+OLD_APP_NAME="script-control-panel.jar"
+NEW_APP_NAME="new_script-control-panel.jar"
 
 # Check if $NEW_APP_NAME exists in the current directory
 if [ ! -f "$CURRENT_DIR/$NEW_APP_NAME" ]; then

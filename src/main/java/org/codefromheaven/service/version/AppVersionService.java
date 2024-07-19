@@ -21,7 +21,7 @@ import java.util.Properties;
 
 public class AppVersionService {
 
-    public static final String APP_NAME = "script_control_panel";
+    public static final String APP_NAME = "script-control-panel";
     public static final String JAR_NAME = APP_NAME + ".jar";
     public static final String TMP_NAME = "new_" + JAR_NAME;
 

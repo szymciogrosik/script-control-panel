@@ -132,8 +132,8 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./target/script_control_panel-${{ env.VERSION }}.jar
-          asset_name: script_control_panel.jar
+          asset_path: ./target/script-control-panel-${{ env.VERSION }}.jar
+          asset_name: script-control-panel.jar
           asset_content_type: application/java-archive
 
       - name: Upload Default Files Zip to Release

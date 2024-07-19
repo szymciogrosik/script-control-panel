@@ -5,4 +5,4 @@ Improvements:
 Fixes:
 * NONE.
 
-Instruction what needs to be installed to run script_control_panel.jar and more useful info you can find [here](https://github.com/szymciogrosik/script-control-panel/wiki).
+Instruction what needs to be installed to run script-control-panel.jar and more useful info you can find [here](https://github.com/szymciogrosik/script-control-panel/wiki).

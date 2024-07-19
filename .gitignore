@@ -2,6 +2,6 @@ target/
 .idea/
 dependency-reduced-pom.xml
 
-script_control_panel.jar
+script-control-panel.jar
 my_own*
 tmp/
