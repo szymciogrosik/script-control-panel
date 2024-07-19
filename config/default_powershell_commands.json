@@ -3,7 +3,7 @@
     "sectionName": "Powershell",
     "subSections": [
       {
-        "subSectionName": "Example scripts",
+        "subSectionName": "Example bat scripts",
         "commands": [
           {
             "buttonName": "Bat",
@@ -34,7 +34,12 @@
             "popupInputDisplayed": false,
             "popupInputMessage": "",
             "description": "Example ps1 script which will be autoclosed after invocation"
-          },
+          }
+        ]
+      },
+      {
+        "subSectionName": "Example ps1 scripts",
+        "commands": [
           {
             "buttonName": "Ps1",
             "scriptLocationParamName": "ALL_EXAMPLE_SCRIPTS_PATH",
