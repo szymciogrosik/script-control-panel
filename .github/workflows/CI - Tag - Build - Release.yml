@@ -107,7 +107,7 @@ jobs:
           Remove-Item -Path "$configTempFolder/.gitignore" -Force
 
           # Create ZIP file
-          $zipFilePath = "${{ github.workspace }}/example_config.zip"
+          $zipFilePath = "${{ github.workspace }}/example-config.zip"
           Add-Type -AssemblyName System.IO.Compression.FileSystem
           [System.IO.Compression.ZipFile]::CreateFromDirectory($tempZipFolder, $zipFilePath)
 
@@ -142,6 +142,6 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./example_config.zip
-          asset_name: example_config.zip
+          asset_path: ./example-config.zip
+          asset_name: example-config.zip
           asset_content_type: application/zip

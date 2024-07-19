@@ -5,4 +5,4 @@ Instruction how and what needs to be installed to run application and more usefu
 #### Improvements:
 * NONE.
 #### Fixes:
-* Changed default_config.zip name to example_config.zip.
+* Changed default_config.zip name to example-config.zip.
