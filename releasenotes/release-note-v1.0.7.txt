@@ -1,0 +1,8 @@
+## App overview
+Instruction how and what needs to be installed to run application and more useful information, you can find [here](https://github.com/szymciogrosik/script-control-panel/wiki).
+
+## Release notes
+#### Improvements:
+* Added script for verifying and downloading latest version of the application.
+#### Fixes:
+* Fixed min width of application.
