@@ -13,6 +13,7 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import org.codefromheaven.App;
 import org.codefromheaven.dto.ElementType;
 import org.codefromheaven.dto.Link;
 import org.codefromheaven.dto.data.ButtonDTO;
@@ -103,6 +104,8 @@ public class MainWindowController implements Initializable {
     private void setupScrollPane() {
         mainScrollPane.setMaxHeight(MaxHighUtils.getMaxHeight());
         mainScrollPane.setFitToHeight(true);
+        mainScrollPane.setMinWidth(App.MIN_WIDTH);
+        mainScrollPane.setFitToWidth(true);
         mainScrollPane.setHbarPolicy(ScrollPane.ScrollBarPolicy.AS_NEEDED);
     }
 
@@ -146,6 +149,7 @@ public class MainWindowController implements Initializable {
         for (SectionDTO section : sections) {
             for (SubSectionDTO subSection : section.subSections()) {
                 primaryPage.getChildren().add(createHeaderForSection(subSection.subSectionName()));
+                primaryPage.setMinWidth(App.MIN_WIDTH);
                 primaryPage.getStyleClass().add("background-primary");
 
                 HBox rows = new HBox();
