@@ -1,11 +1,31 @@
 #!/bin/bash
 
-print_error() {
+print_error_ascii() {
   echo " _____   ____    ____     ___    ____    _   _   _ "
   echo "| ____| |  _ \  |  _ \   / _ \  |  _ \  | | | | | |"
   echo "|  _|   | |_) | | |_) | | | | | | |_) | | | | | | |"
   echo "| |___  |  _ <  |  _ <  | |_| | |  _ <  |_| |_| |_|"
   echo "|_____| |_| \_\ |_| \_\  \___/  |_| \_\ (_) (_) (_)"
+}
+
+print_line_separator() {
+  echo "----------------------------------------------------"
+}
+
+print_find_more_info() {
+  echo "More information about required installed software you can find under link:"
+  echo "https://github.com/szymciogrosik/script-control-panel/wiki"
+}
+
+print_error_message() {
+  errorMessage="$1"
+  print_error_ascii
+  print_line_separator
+  echo "Original error:"
+  echo "$errorMessage"
+  print_line_separator
+  print_find_more_info
+  print_line_separator
 }
 
 # Function to check if Java 17+ is installed
@@ -17,8 +37,7 @@ check_java() {
    echo "Java executable found in JAVA_HOME."
    _java="$JAVA_HOME/bin/java"
  else
-   print_error
-   echo "Java is not installed."
+   print_error_message "Java is not installed."
    return 1
  fi
 
@@ -27,8 +46,7 @@ check_java() {
    echo "Java version is $version which is 17 or higher."
    return 0
  else
-   print_error
-   echo "Java version is $version which is less than 17."
+   print_error_message "Java version is $version which is less than 17."
    return 1
  fi
 }
@@ -39,8 +57,7 @@ check_git_bash() {
    echo "Git Bash is installed."
    return 0
  else
-   print_error
-   echo "Git Bash is not installed."
+   print_error_message "Git Bash is not installed."
    return 1
  fi
 }
@@ -56,13 +73,11 @@ download_latest_release() {
      echo "Downloaded script-control-panel.jar successfully."
      return 0
    else
-     print_error
-     echo "Failed to download script-control-panel.jar."
+     print_error_message "Failed to download script-control-panel.jar."
      return 1
    fi
  else
-   print_error
-   echo "Could not find the latest release tag."
+   print_error_message "Could not find the latest release tag."
    return 1
  fi
 }
