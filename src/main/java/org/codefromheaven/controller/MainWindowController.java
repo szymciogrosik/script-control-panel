@@ -2,7 +2,6 @@ package org.codefromheaven.controller;
 
 import java.net.URL;
 import java.util.*;
-import java.util.stream.Collectors;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
@@ -12,13 +11,12 @@ import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
-import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import org.codefromheaven.dto.ElementType;
 import org.codefromheaven.dto.Link;
 import org.codefromheaven.dto.data.ButtonDTO;
 import org.codefromheaven.dto.data.SectionDTO;
-import org.codefromheaven.dto.Setting;
 import org.codefromheaven.dto.data.SubSectionDTO;
 import org.codefromheaven.dto.settings.KeyValueDTO;
 import org.codefromheaven.dto.settings.SettingsDTO;
@@ -87,11 +85,18 @@ public class MainWindowController implements Initializable {
 
         SettingsDTO visibilitySettings = HiddenElementSettingsService.loadVisibilitySettings();
         SettingsDTO filesToLoad = FilesToLoadSettingsService.load();
-        for (String fileToLoad : filesToLoad.getSettings().stream().map(KeyValueDTO::getKey).collect(Collectors.toList())) {
+
+        boolean anyElementEnabled = false;
+        for (String fileToLoad : filesToLoad.getSettings().stream().map(KeyValueDTO::getKey).toList()) {
             if (isAnyElementInSectionEnabled(fileToLoad, visibilitySettings)) {
                 addElementsToScene(fileToLoad, visibilitySettings);
+                anyElementEnabled = true;
             }
         }
+        if (!anyElementEnabled) {
+            addInformationAboutBuildingConfiguration(visibilitySettings);
+        }
+
         addAuthorNote("Made with love by SJG");
     }
 
@@ -127,17 +132,19 @@ public class MainWindowController implements Initializable {
     private void addElementsToScene(String fileToLoad, SettingsDTO visibilitySettings) {
         List<SectionDTO> loadedElements = LoadFromJsonService.load(fileToLoad);
         addSectionHeader(loadedElements.stream().findFirst().get().sectionName());
-        addElementsToScene(loadedElements, fileToLoad, visibilitySettings);
+        addElementsToSceneBase(loadedElements, visibilitySettings);
     }
 
-    private void addElementsToScene(
-            List<SectionDTO> sections, String fileToLoad, SettingsDTO visibilitySettings
+    private void addElementsToScene(List<SectionDTO> loadedElements, SettingsDTO visibilitySettings) {
+        addSectionHeader(loadedElements.stream().findFirst().get().sectionName());
+        addElementsToSceneBase(loadedElements, visibilitySettings);
+    }
+
+    private void addElementsToSceneBase(
+            List<SectionDTO> sections, SettingsDTO visibilitySettings
     ) {
         for (SectionDTO section : sections) {
             for (SubSectionDTO subSection : section.subSections()) {
-                if (!isAnyElementInSubSectionEnabled(fileToLoad, section.sectionName(), subSection.subSectionName(), visibilitySettings)) {
-                    continue;
-                }
                 primaryPage.getChildren().add(createHeaderForSection(subSection.subSectionName()));
                 primaryPage.getStyleClass().add("background-primary");
 
@@ -324,7 +331,7 @@ public class MainWindowController implements Initializable {
 
     @FXML
     private void handleGithubDocumentation() {
-        LinkUtils.openPageInBrowser(Link.DOCUMENTATION.getUrl());
+        LinkUtils.openPageInBrowser(Link.WIKI.getUrl());
     }
 
     @FXML
@@ -363,6 +370,18 @@ public class MainWindowController implements Initializable {
             updateButtonText += " " + AppVersionService.getLatestVersion();
         }
         downloadAndInstall.setText(updateButtonText);
+    }
+
+    private void addInformationAboutBuildingConfiguration(SettingsDTO visibilitySettings) {
+        ButtonDTO exampleConfig = new ButtonDTO("Example configuration", "", Link.WIKI.getUrl(),
+                                                ElementType.LINK, true, false, "",
+                                                "Open link in default browser");
+        ButtonDTO buildYourOwnConfig = new ButtonDTO("Build your own configuration", "", Link.WIKI_CONFIGURATION.getUrl(),
+                                                     ElementType.LINK, true, false, "",
+                                                     "Open link in default browser");
+        SubSectionDTO subSection = new SubSectionDTO("Read about configuration", Arrays.asList(exampleConfig, buildYourOwnConfig));
+        SectionDTO section = new SectionDTO("Looks like there is nothing to show", Collections.singletonList(subSection));
+        addElementsToScene(Collections.singletonList(section), visibilitySettings);
     }
 
 }

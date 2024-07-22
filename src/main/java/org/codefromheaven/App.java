@@ -21,7 +21,6 @@ public class App extends Application {
         String appName = SettingsService.getAppName() + " - " + AppVersionService.getCurrentVersion();
         stage.setTitle(appName);
         stage.setResizable(false);
-        stage.setMinWidth(400);
         Image animalImage = AnimalService.getInstance().getCurrentAnimalImage();
         stage.getIcons().add(animalImage);
         Scene scene = new Scene(loadFXML("mainWindow"));
