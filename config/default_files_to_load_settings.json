@@ -1,13 +1,13 @@
 ﻿{
   "settings": [
     {
-      "key": "BASH_COMMANDS"
+      "key": "bash_commands"
     },
     {
-      "key": "POWERSHELL_COMMANDS"
+      "key": "powershell_commands"
     },
     {
-      "key": "LINKS"
+      "key": "links"
     }
   ]
 }
