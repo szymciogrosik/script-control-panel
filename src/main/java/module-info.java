@@ -35,4 +35,6 @@ module servicerunner {
     opens org.codefromheaven.service.version to javafx.fxml;
     exports org.codefromheaven.service.update;
     opens org.codefromheaven.service.update to javafx.fxml;
+    exports org.codefromheaven.service.gh;
+    opens org.codefromheaven.service.gh to javafx.fxml;
 }

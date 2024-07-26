@@ -2,6 +2,7 @@ package org.codefromheaven.service.update;
 
 import javafx.concurrent.Task;
 import org.codefromheaven.helpers.FileUtils;
+import org.codefromheaven.service.gh.GithubService;
 import org.codefromheaven.service.version.AppVersionService;
 
 import java.io.FileOutputStream;
@@ -9,6 +10,7 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import java.util.Optional;
 
 public class DownloadLatestVersionService {
 
@@ -40,6 +42,10 @@ public class DownloadLatestVersionService {
                 URL url = new URL(downloadUrl);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
+                Optional<String> ghDownloadToken = GithubService.getGhDownloadToken();
+                if (ghDownloadToken.isPresent()) {
+                    connection.setRequestProperty("Authorization", "token " + ghDownloadToken.get());
+                }
 
                 int contentLength = connection.getContentLength();
                 try (InputStream in = connection.getInputStream(); FileOutputStream out = new FileOutputStream(savePath)) {

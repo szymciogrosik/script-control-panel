@@ -6,6 +6,7 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import org.codefromheaven.dto.Link;
 import org.codefromheaven.dto.release.GitHubRelease;
 import org.codefromheaven.resources.FileNamesLoader;
+import org.codefromheaven.service.gh.GithubService;
 import org.codefromheaven.service.network.NetworkService;
 import org.codefromheaven.service.settings.SettingsService;
 
@@ -81,9 +82,14 @@ public class AppVersionService {
     public static Optional<GitHubRelease> fetchLatestReleaseOrPreRelease() {
         HttpURLConnection connection = null;
         try {
-            connection = (HttpURLConnection) new URL(Link.API_ALL_RELEASES.getUrl()).openConnection();
+            URL url = new URL(Link.API_ALL_RELEASES.getUrl());
+            connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
             connection.setRequestProperty("Accept", "application/vnd.github.v3+json");
+            Optional<String> ghCheckReleasesToken = GithubService.getGhGetReleases();
+            if (ghCheckReleasesToken.isPresent()) {
+                connection.setRequestProperty("Authorization", "token " + ghCheckReleasesToken.get());
+            }
 
             BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
             String inputLine;
