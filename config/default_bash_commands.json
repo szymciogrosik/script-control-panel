@@ -8,7 +8,7 @@
           {
             "buttonName": "Bash",
             "scriptLocationParamName": "ALL_EXAMPLE_SCRIPTS_PATH",
-            "command": "./example_bash.sh",
+            "command": "example_bash.sh",
             "elementType": "BASH",
             "autoCloseConsole": false,
             "popupInputDisplayed": false,
@@ -18,7 +18,7 @@
           {
             "buttonName": "Bash with popup",
             "scriptLocationParamName": "ALL_EXAMPLE_SCRIPTS_PATH",
-            "command": "./example_bash_with_param.sh",
+            "command": "example_bash_with_param.sh",
             "elementType": "BASH",
             "autoCloseConsole": false,
             "popupInputDisplayed": true,
@@ -28,7 +28,7 @@
           {
             "buttonName": "Bash autoclose",
             "scriptLocationParamName": "ALL_EXAMPLE_SCRIPTS_PATH",
-            "command": "./example_bash.sh",
+            "command": "example_bash.sh",
             "elementType": "BASH",
             "autoCloseConsole": true,
             "popupInputDisplayed": false,

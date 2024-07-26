@@ -8,7 +8,7 @@
           {
             "buttonName": "Bat",
             "scriptLocationParamName": "ALL_EXAMPLE_SCRIPTS_PATH",
-            "command": ".\\example_bat.bat",
+            "command": "example_bat.bat",
             "elementType": "POWERSHELL",
             "autoCloseConsole": false,
             "popupInputDisplayed": false,
@@ -18,7 +18,7 @@
           {
             "buttonName": "Bat with popup",
             "scriptLocationParamName": "ALL_EXAMPLE_SCRIPTS_PATH",
-            "command": ".\\example_bat_with_param.bat",
+            "command": "example_bat_with_param.bat",
             "elementType": "POWERSHELL",
             "autoCloseConsole": false,
             "popupInputDisplayed": true,
@@ -28,7 +28,7 @@
           {
             "buttonName": "Bat autoclose",
             "scriptLocationParamName": "ALL_EXAMPLE_SCRIPTS_PATH",
-            "command": ".\\example_bat_with_param.bat",
+            "command": "example_bat_with_param.bat",
             "elementType": "POWERSHELL",
             "autoCloseConsole": true,
             "popupInputDisplayed": false,
@@ -43,7 +43,7 @@
           {
             "buttonName": "Ps1",
             "scriptLocationParamName": "ALL_EXAMPLE_SCRIPTS_PATH",
-            "command": ".\\example_pwsh.ps1",
+            "command": "example_pwsh.ps1",
             "elementType": "POWERSHELL",
             "autoCloseConsole": false,
             "popupInputDisplayed": false,
@@ -53,7 +53,7 @@
           {
             "buttonName": "Ps1 with popup",
             "scriptLocationParamName": "ALL_EXAMPLE_SCRIPTS_PATH",
-            "command": ".\\example_pwsh_with_param.ps1",
+            "command": "example_pwsh_with_param.ps1",
             "elementType": "POWERSHELL",
             "autoCloseConsole": false,
             "popupInputDisplayed": true,
@@ -63,7 +63,7 @@
           {
             "buttonName": "Ps1 autoclose",
             "scriptLocationParamName": "ALL_EXAMPLE_SCRIPTS_PATH",
-            "command": ".\\example_pwsh.ps1",
+            "command": "example_pwsh.ps1",
             "elementType": "POWERSHELL",
             "autoCloseConsole": true,
             "popupInputDisplayed": false,

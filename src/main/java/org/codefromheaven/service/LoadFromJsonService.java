@@ -39,11 +39,14 @@ public class LoadFromJsonService {
                     SubSectionDTO subSection = getOrCreateSubSection(section.subSections(), subSectionName);
 
                     for (JsonNode commandNode : subSectionNode.get("commands")) {
+                        ElementType elementType = ElementType.getEnumType(commandNode.get("elementType").asText());
+                        String command = commandNode.get("command").asText();
+
                         subSection.commands().add(new ButtonDTO(
                                 commandNode.get("buttonName").asText(),
                                 commandNode.get("scriptLocationParamName").asText(),
-                                commandNode.get("command").asText(),
-                                ElementType.getEnumType(commandNode.get("elementType").asText()),
+                                addPrefixToCommand(command, elementType),
+                                elementType,
                                 commandNode.get("autoCloseConsole").asBoolean(),
                                 commandNode.get("popupInputDisplayed").asBoolean(),
                                 commandNode.get("popupInputMessage").asText(),
@@ -56,6 +59,14 @@ public class LoadFromJsonService {
             return Optional.empty();
         }
         return allSections.isEmpty() ? Optional.empty() : Optional.of(allSections);
+    }
+
+    private static String addPrefixToCommand(String command, ElementType elementType) {
+        return switch (elementType) {
+            case BASH -> "./" + command;
+            case POWERSHELL -> ".\\" + command;
+            default -> command;
+        };
     }
 
     private static SectionDTO getOrCreateSection(List<SectionDTO> allSections, String sectionName) {
