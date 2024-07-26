@@ -37,6 +37,17 @@ jobs:
           echo "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           echo "Found version: $version"
 
+      - name: Update gh.token.properties with secrets
+        run: |
+          $filePath = "src/main/resources/gh.token.properties"
+          $content = Get-Content -Path $filePath
+          $content = $content -replace "ghReleaseDownloadToken=.*", "ghReleaseDownloadToken=$env:ghReleaseDownloadToken"
+          $content = $content -replace "ghReleaseFetchReleasesToken=.*", "ghReleaseFetchReleasesToken=$env:ghReleaseFetchReleasesToken"
+          Set-Content -Path $filePath -Value $content
+        env:
+          ghReleaseDownloadToken: ${{ secrets.ghReleaseDownloadToken }}
+          ghReleaseFetchReleasesToken: ${{ secrets.ghReleaseFetchReleasesToken }}
+
       - name: Fetch all tags
         run: git fetch --tags
 
