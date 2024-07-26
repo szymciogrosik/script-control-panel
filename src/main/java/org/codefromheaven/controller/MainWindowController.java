@@ -148,6 +148,9 @@ public class MainWindowController implements Initializable {
     ) {
         for (SectionDTO section : sections) {
             for (SubSectionDTO subSection : section.subSections()) {
+                if (!isAnyElementInSubSectionEnabled(subSection, section.sectionName(), visibilitySettings)) {
+                    continue;
+                }
                 primaryPage.getChildren().add(createHeaderForSection(subSection.subSectionName()));
                 primaryPage.setMinWidth(App.MIN_WIDTH);
                 primaryPage.getStyleClass().add("background-primary");
@@ -258,31 +261,18 @@ public class MainWindowController implements Initializable {
         List<SectionDTO> sections = LoadFromJsonService.load(fileToLoad);
         for (SectionDTO section : sections) {
             for (SubSectionDTO subSection : section.subSections()) {
-                for (ButtonDTO command : subSection.commands()) {
-                    VisibilitySettingKey key = new VisibilitySettingKey(section.sectionName(), subSection.subSectionName(), command.buttonName());
-                    boolean visible = HiddenElementSettingsController.isElementVisible(key, visibilitySettings);
-                    if (visible) {
-                        return true;
-                    }
+                boolean anyElementInSubSectionEnabled = isAnyElementInSubSectionEnabled(subSection, section.sectionName(), visibilitySettings);
+                if (anyElementInSubSectionEnabled) {
+                    return true;
                 }
             }
         }
         return false;
     }
 
-    private boolean isAnyElementInSubSectionEnabled(String fileName, String sectionString, String subSectionString, SettingsDTO visibilitySettings) {
-        Optional<SectionDTO> sectionOptional = LoadFromJsonService
-                .load(fileName).stream().filter(sectionTmp -> sectionTmp.sectionName().equals(sectionString)).findFirst();
-        if (sectionOptional.isEmpty()) {
-            return false;
-        }
-        Optional<SubSectionDTO> subSectionOptional = sectionOptional
-                .get().subSections().stream().filter(subSection -> subSection.subSectionName().equals(subSectionString)).findFirst();
-        if (subSectionOptional.isEmpty()) {
-            return false;
-        }
-        for (ButtonDTO command : subSectionOptional.get().commands()) {
-            VisibilitySettingKey key = new VisibilitySettingKey(sectionString, subSectionString, command.buttonName());
+    private boolean isAnyElementInSubSectionEnabled(SubSectionDTO subSection, String sectionName, SettingsDTO visibilitySettings) {
+        for (ButtonDTO command : subSection.commands()) {
+            VisibilitySettingKey key = new VisibilitySettingKey(sectionName, subSection.subSectionName(), command.buttonName());
             boolean visible = HiddenElementSettingsController.isElementVisible(key, visibilitySettings);
             if (visible) {
                 return true;
