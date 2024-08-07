@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.codefromheaven</groupId>
     <artifactId>script-control-panel</artifactId>
-    <version>1.0.12-rc</version>
+    <version>1.0.12-rc.1</version>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>17</maven.compiler.release>
@@ -51,6 +51,7 @@
         </repository>
     </distributionManagement>
     <build>
+        <finalName>script-control-panel</finalName>
         <resources>
             <resource>
                 <directory>src/main/resources</directory>
