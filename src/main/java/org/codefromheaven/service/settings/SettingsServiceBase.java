@@ -4,6 +4,7 @@ import org.codefromheaven.dto.FileType;
 import org.codefromheaven.dto.Setting;
 import org.codefromheaven.dto.settings.KeyValueDTO;
 import org.codefromheaven.dto.settings.SettingsDTO;
+import org.codefromheaven.helpers.FileUtils;
 import org.codefromheaven.helpers.JsonUtils;
 
 import java.io.BufferedReader;
@@ -96,6 +97,7 @@ public abstract class SettingsServiceBase {
     }
 
     public static void saveSettings(FileType fileType, SettingsDTO customSettings) {
+        FileUtils.createOrReplaceConfigDirectory();
         SettingsDTO settingsToSave = getCustomSettingsDifferentThanDefault(fileType, customSettings);
         Path path = Paths.get(getMyOwnFileDir(fileType.name()));
         try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {

@@ -10,6 +10,7 @@ import java.nio.file.StandardCopyOption;
 public class FileUtils {
 
     public static final String TMP_DIR = "tmp";
+    public static final String CONFIG_DIR = "config";
 
     private FileUtils() {
     }
@@ -23,6 +24,11 @@ public class FileUtils {
         String appDir = System.getProperty("user.dir") + File.separator + TMP_DIR;
         createOrReplaceDirectory(appDir);
         return appDir;
+    }
+
+    public static void createOrReplaceConfigDirectory() {
+        String appDir = System.getProperty("user.dir") + File.separator + CONFIG_DIR;
+        createOrReplaceDirectory(appDir);
     }
 
     private static void createOrReplaceDirectory(String appDir) {
