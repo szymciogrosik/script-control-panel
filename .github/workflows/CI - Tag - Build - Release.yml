@@ -3,7 +3,7 @@ name: Check, Tag, Build, and Release Version
 on:
   push:
     branches:
-      - 'master'
+      - '*'
   workflow_dispatch:
 
 jobs:
@@ -166,3 +166,8 @@ jobs:
           asset_path: ./verify-and-download.sh
           asset_name: verify-and-download.sh
           asset_content_type: application/x-sh
+
+      - name: Publish JAR to GitHub Packages
+        run: mvn deploy -s settings.xml
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
