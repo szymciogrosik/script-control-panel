@@ -86,7 +86,7 @@ public class AppVersionService {
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
             connection.setRequestProperty("Accept", "application/vnd.github.v3+json");
-            Optional<String> ghCheckReleasesToken = GithubService.getGhGetReleases();
+            Optional<String> ghCheckReleasesToken = GithubService.getGhGetReleasesToken();
             if (ghCheckReleasesToken.isPresent()) {
                 connection.setRequestProperty("Authorization", "token " + ghCheckReleasesToken.get());
             }
@@ -123,6 +123,10 @@ public class AppVersionService {
         boolean preReleaseEnabled = SettingsService.isAllowedToDownloadPreReleases();
         for (JsonNode release : releases) {
             GitHubRelease tmpRelease = objectMapper.treeToValue(release, GitHubRelease.class);
+
+            if (tmpRelease.isDraft()) {
+                continue;
+            }
 
             if (!preReleaseEnabled && tmpRelease.isPrerelease()) {
                 continue;

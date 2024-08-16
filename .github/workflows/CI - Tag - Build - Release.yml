@@ -167,7 +167,7 @@ jobs:
           asset_name: verify-and-download.sh
           asset_content_type: application/x-sh
 
-      - name: Publish JAR to GitHub Packages
-        run: mvn deploy -s settings.xml
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+#      - name: Publish JAR to GitHub Packages
+#        run: mvn deploy -s settings.xml
+#        env:
+#          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}

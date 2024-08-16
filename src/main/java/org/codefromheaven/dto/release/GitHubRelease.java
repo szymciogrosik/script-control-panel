@@ -14,6 +14,9 @@ public class GitHubRelease {
     @JsonProperty("assets")
     private List<GitHubAsset> assets;
 
+    @JsonProperty("draft")
+    private boolean draft;
+
     @JsonProperty("prerelease")
     private boolean prerelease;
 
@@ -34,6 +37,14 @@ public class GitHubRelease {
 
     public void setAssets(List<GitHubAsset> assets) {
         this.assets = assets;
+    }
+
+    public boolean isDraft() {
+        return draft;
+    }
+
+    public void setDraft(boolean draft) {
+        this.draft = draft;
     }
 
     public boolean isPrerelease() {

@@ -17,7 +17,7 @@ public class GithubService {
     private GithubService() {
     }
 
-    public static Optional<String> getGhGetReleases() {
+    public static Optional<String> getGhGetReleasesToken() {
         Optional<String> localToken = getLocalToken(PROPERTIES_FILE_NAME, GH_RELEASE_FETCH_RELEASES_TOKEN_NAME);
         if (localToken.isPresent()) {
             return localToken;
