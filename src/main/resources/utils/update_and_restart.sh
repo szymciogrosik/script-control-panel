@@ -100,18 +100,54 @@ get_java_path_variable() {
   echo "$java_path"
 }
 
+# Function to get the value of JAVA_PATH from a specified JSON file
+get_java_path_variable_for_file() {
+  local json_file="$1"
+  local java_path=$(awk '
+        BEGIN { RS="{"; FS="," }
+        /"key": "JAVA_PATH"/ {
+          for (i = 1; i <= NF; i++) {
+            if ($i ~ /"value":/) {
+              gsub(/.*"value": *"/, "", $i)
+              gsub(/".*/, "", $i)
+              print $i
+              exit 0
+            }
+          }
+        }
+        ' "$json_file")
+  echo "$java_path"
+}
+
+# Function to get the value of JAVA_PATH, checking multiple files
+get_java_path_variable() {
+  local my_own_settings_file="../config/my_own_settings.json"
+  local settings_file="../config/default_settings.json"
+
+  local java_path=$(get_java_path_variable_for_file "$my_own_settings_file")
+
+  if [ -z "$java_path" ]; then
+    java_path=$(get_java_path_variable_for_file "$settings_file")
+  fi
+
+  echo "$java_path"
+}
+
 # Function to run script-control-panel.jar
 run_script_control_panel() {
-  local java_path=$(get_java_path_variable)
+  local java_path="$(get_java_path_variable)"
   if [ -n "$java_path" ]; then
-    "$java_path/bin/java" -jar "$TARGET_DIR/$OLD_APP_NAME" &
+    local java_dir_path="$java_path\\java"
+    echo "Executing JAR with custom Java path: '$java_dir_path'"
+    nohup "$java_path" -jar "$TARGET_DIR/$OLD_APP_NAME" > "$TARGET_DIR/tmp/app_update.log" 2>&1 &
   else
-    java -jar "$SCRIPT_CONTROL_PANEL_JAR_FILE" &
+    echo "Executing JAR with standard JAVA_HOME path: '$JAVA_HOME'"
+    nohup java -jar "$TARGET_DIR/$OLD_APP_NAME" > "$TARGET_DIR/tmp/app_update.log" 2>&1 &
   fi
 }
 
 # Restart the application
-nohup java -jar "$TARGET_DIR/$OLD_APP_NAME" > "$TARGET_DIR/tmp/app_update.log" 2>&1 &
+run_script_control_panel
 if [ $? -ne 0 ]; then
   echo "Error: Failed to start the application!"
   print_error_image
