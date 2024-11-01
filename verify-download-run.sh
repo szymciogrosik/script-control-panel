@@ -118,6 +118,7 @@ download_latest_release() {
     fi
   else
     print_error_message "Could not find the latest release tag."
+    print_error_message "It looks like too many people trying to download this app, please try again after 1 hour."
     return 1
   fi
 }
