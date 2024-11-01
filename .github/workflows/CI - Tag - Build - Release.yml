@@ -157,14 +157,14 @@ jobs:
           asset_name: example-config.zip
           asset_content_type: application/zip
 
-      - name: Upload verify-and-download.sh to Release
+      - name: Upload verify-download-run.sh to Release
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./verify-and-download.sh
-          asset_name: verify-and-download.sh
+          asset_path: ./verify-download-run.sh
+          asset_name: verify-download-run.sh
           asset_content_type: application/x-sh
 
 #      - name: Publish JAR to GitHub Packages
