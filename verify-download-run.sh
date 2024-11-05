@@ -141,9 +141,9 @@ get_java_path_variable() {
 run_script_control_panel() {
   local java_path="$(get_java_path_variable)"
   if [ -n "$java_path" ]; then
-    local java_dir_path="$java_path\\java"
+    local java_dir_path="$java_path\\java.exe"
     echo "Executing JAR with custom Java path: '$java_dir_path'"
-    "$java_path" -jar "$SCRIPT_CONTROL_PANEL_JAR_FILE" &
+    "$java_dir_path" -jar "$SCRIPT_CONTROL_PANEL_JAR_FILE" &
   else
     echo "Executing JAR with standard JAVA_HOME path: '$JAVA_HOME'"
     java -jar "$SCRIPT_CONTROL_PANEL_JAR_FILE" &
