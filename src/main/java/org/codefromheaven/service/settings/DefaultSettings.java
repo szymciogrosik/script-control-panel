@@ -22,12 +22,6 @@ public class DefaultSettings {
                     "Location of configuration files f.e. 'config' or empty when in the same location"
             ),
             new KeyValueDTO(
-                    Setting.ADD_TO_WINDOWS_STARTUP.getName(),
-                    "false",
-                    false,
-                    "Start application automatically with Windows"
-            ),
-            new KeyValueDTO(
                     Setting.ALLOW_PRE_RELEASES.getName(),
                     "false",
                     "Allow for downloading pre-releases (can be unstable)"
