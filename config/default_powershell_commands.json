@@ -8,32 +8,51 @@
           {
             "buttonName": "Bat",
             "scriptLocationParamName": "ALL_EXAMPLE_SCRIPTS_PATH",
-            "command": "example_bat.bat",
+            "commands": [
+              "example_bat.bat"
+            ],
             "elementType": "POWERSHELL",
             "autoCloseConsole": false,
             "popupInputDisplayed": false,
             "popupInputMessage": "",
-            "description": "Example ps1 script"
+            "description": "Example bat script"
           },
           {
             "buttonName": "Bat with popup",
             "scriptLocationParamName": "ALL_EXAMPLE_SCRIPTS_PATH",
-            "command": "example_bat_with_param.bat",
+            "commands": [
+              "example_bat_with_param.bat"
+            ],
             "elementType": "POWERSHELL",
             "autoCloseConsole": false,
             "popupInputDisplayed": true,
             "popupInputMessage": "Params",
-            "description": "Example ps1 script with popup (input is passed as script params)"
+            "description": "Example bat script with popup (input is passed as script params)"
           },
           {
             "buttonName": "Bat autoclose",
             "scriptLocationParamName": "ALL_EXAMPLE_SCRIPTS_PATH",
-            "command": "example_bat_with_param.bat",
+            "commands": [
+              "example_bat_with_param.bat"
+            ],
             "elementType": "POWERSHELL",
             "autoCloseConsole": true,
             "popupInputDisplayed": false,
             "popupInputMessage": "",
-            "description": "Example ps1 script which will be autoclosed after invocation"
+            "description": "Example bat script which will be autoclosed after invocation"
+          },
+          {
+            "buttonName": "Bat multiple scrips",
+            "scriptLocationParamName": "ALL_EXAMPLE_SCRIPTS_PATH",
+            "commands": [
+              "example_bat.bat",
+              "example_bat.bat"
+            ],
+            "elementType": "POWERSHELL",
+            "autoCloseConsole": false,
+            "popupInputDisplayed": false,
+            "popupInputMessage": "",
+            "description": "Example multiple bat scripts in multiple windows"
           }
         ]
       },
@@ -43,7 +62,9 @@
           {
             "buttonName": "Ps1",
             "scriptLocationParamName": "ALL_EXAMPLE_SCRIPTS_PATH",
-            "command": "example_pwsh.ps1",
+            "commands": [
+              "example_pwsh.ps1"
+            ],
             "elementType": "POWERSHELL",
             "autoCloseConsole": false,
             "popupInputDisplayed": false,
@@ -53,7 +74,9 @@
           {
             "buttonName": "Ps1 with popup",
             "scriptLocationParamName": "ALL_EXAMPLE_SCRIPTS_PATH",
-            "command": "example_pwsh_with_param.ps1",
+            "commands": [
+              "example_pwsh_with_param.ps1"
+            ],
             "elementType": "POWERSHELL",
             "autoCloseConsole": false,
             "popupInputDisplayed": true,
@@ -63,12 +86,27 @@
           {
             "buttonName": "Ps1 autoclose",
             "scriptLocationParamName": "ALL_EXAMPLE_SCRIPTS_PATH",
-            "command": "example_pwsh.ps1",
+            "commands": [
+              "example_pwsh.ps1"
+            ],
             "elementType": "POWERSHELL",
             "autoCloseConsole": true,
             "popupInputDisplayed": false,
             "popupInputMessage": "",
             "description": "Example ps1 script which will be autoclosed after invocation"
+          },
+          {
+            "buttonName": "Ps1 multiple scripts",
+            "scriptLocationParamName": "ALL_EXAMPLE_SCRIPTS_PATH",
+            "commands": [
+              "example_pwsh.ps1",
+              "example_pwsh.ps1"
+            ],
+            "elementType": "POWERSHELL",
+            "autoCloseConsole": false,
+            "popupInputDisplayed": false,
+            "popupInputMessage": "",
+            "description": "Example multiple ps1 scripts in separate windows"
           }
         ]
       }

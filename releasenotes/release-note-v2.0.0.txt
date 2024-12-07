@@ -1,0 +1,12 @@
+## App overview
+Instruction how and what needs to be installed to run application and more useful information, you can find [here](https://github.com/szymciogrosik/script-control-panel/wiki).
+
+## Release notes
+#### Improvements:
+* Changed a way of recommended way of opening application - from double click Jar to running "verify-download-run.sh" script.
+* Added option to specify Java path in configuration file "config/default_settings.json", read more [here](https://github.com/szymciogrosik/script-control-panel/wiki/Configuration) and "JAVA_PATH" variable.
+* Added instruction how to pin verify-download-run.sh script to the Windows startup.
+* Added instruction how to run application on Windows startup.
+* Added option to run multiple Bash, Powershell or Links by one click in separate windows. - It requires a change in the structure, so configuration needs to be updated and "command" String variable replaced by "commands" String array in Json configuration files.
+#### Fixes:
+* Fixed verify-download-run.sh script with proper custom Java path.

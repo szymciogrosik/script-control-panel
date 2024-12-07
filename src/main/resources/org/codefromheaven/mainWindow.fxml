@@ -13,7 +13,8 @@
       <Menu text="Settings">
          <MenuItem text="Change visible elements" fx:id="changeVisibleElements" onAction="#handleChangeVisibleElements"/>
          <MenuItem text="Change additional settings" fx:id="changeSettings" onAction="#handleChangeSettings"/>
-         <MenuItem text="Pin application to task bar or start menu" fx:id="pinJarFileToTaskBar" onAction="#handlePinJarFileToTaskBar"/>
+         <MenuItem text="Pin bash script to task bar or start menu" fx:id="pinBashFileToTaskBar" onAction="#handlePinBashFileToTaskBar"/>
+         <MenuItem text="Run app with Windows startup" fx:id="runAppWithWindowsStartup" onAction="#handleRunAppWithWindowsStartup"/>
       </Menu>
       <Menu text="About">
          <MenuItem text="What's new" fx:id="news" onAction="#handleNews"/>

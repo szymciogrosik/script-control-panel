@@ -48,7 +48,9 @@ public class MainWindowController implements Initializable {
     @FXML
     private MenuItem changeSettings;
     @FXML
-    private MenuItem pinJarFileToTaskBar;
+    private MenuItem pinBashFileToTaskBar;
+    @FXML
+    private MenuItem runAppWithWindowsStartup;
 
     @FXML
     private MenuItem news;
@@ -190,7 +192,11 @@ public class MainWindowController implements Initializable {
                 addButtonListenerForServiceCommands(button, buttonDTO);
                 break;
             case LINK:
-                button.setOnMouseClicked(event -> LinkUtils.openPageInBrowser(buttonDTO.command()));
+                button.setOnMouseClicked(event -> {
+                    for (String link : buttonDTO.commands()) {
+                        LinkUtils.openPageInBrowser(link);
+                    }
+                });
                 break;
             default:
                 throw new RuntimeException("Unrecognised element type provided: " + buttonDTO.elementType());
@@ -216,10 +222,14 @@ public class MainWindowController implements Initializable {
             if (buttonDTO.popupInputDisplayed()) {
                 Optional<String> result = createTextInputDialog(buttonDTO.popupInputMessage());
                 result.ifPresent(name -> {
-                    GitBashService.runCommand(buttonDTO.scriptLocationParamName(), buttonDTO.autoCloseConsole(), buttonDTO.command() + " " + name);
+                    for (String command : buttonDTO.commands()) {
+                        GitBashService.runCommand(buttonDTO.scriptLocationParamName(), buttonDTO.autoCloseConsole(), command + " " + name);
+                    }
                 });
             } else {
-                GitBashService.runCommand(buttonDTO.scriptLocationParamName(), buttonDTO.autoCloseConsole(), buttonDTO.command());
+                for (String command : buttonDTO.commands()) {
+                    GitBashService.runCommand(buttonDTO.scriptLocationParamName(), buttonDTO.autoCloseConsole(), command);
+                }
             }
         });
     }
@@ -229,10 +239,14 @@ public class MainWindowController implements Initializable {
             if (buttonDTO.popupInputDisplayed()) {
                 Optional<String> result = createTextInputDialog(buttonDTO.popupInputMessage());
                 result.ifPresent(name -> {
-                    PowerShellService.runCommand(buttonDTO.scriptLocationParamName(), buttonDTO.autoCloseConsole(), buttonDTO.command() + " " + name);
+                    for (String command : buttonDTO.commands()) {
+                        PowerShellService.runCommand(buttonDTO.scriptLocationParamName(), buttonDTO.autoCloseConsole(), command + " " + name);
+                    }
                 });
             } else {
-                PowerShellService.runCommand(buttonDTO.scriptLocationParamName(), buttonDTO.autoCloseConsole(), buttonDTO.command());
+                for (String command : buttonDTO.commands()) {
+                    PowerShellService.runCommand(buttonDTO.scriptLocationParamName(), buttonDTO.autoCloseConsole(), command);
+                }
             }
         });
     }
@@ -304,8 +318,13 @@ public class MainWindowController implements Initializable {
     }
 
     @FXML
-    private void handlePinJarFileToTaskBar() {
-        LinkUtils.openPageInBrowser(Link.PIN_JAR_TO_TASKBAR.getUrl());
+    private void handlePinBashFileToTaskBar() {
+        LinkUtils.openPageInBrowser(Link.PIN_BASH_TO_TASKBAR.getUrl());
+    }
+
+    @FXML
+    private void handleRunAppWithWindowsStartup() {
+        LinkUtils.openPageInBrowser(Link.RUN_BASH_ON_WINDOWS_STARTUP.getUrl());
     }
 
     @FXML
@@ -367,10 +386,10 @@ public class MainWindowController implements Initializable {
     }
 
     private void addInformationAboutBuildingConfiguration(SettingsDTO visibilitySettings) {
-        ButtonDTO exampleConfig = new ButtonDTO("Example configuration", "", Link.WIKI.getUrl(),
+        ButtonDTO exampleConfig = new ButtonDTO("Example configuration", "", Collections.singletonList(Link.WIKI.getUrl()),
                                                 ElementType.LINK, true, false, "",
                                                 "Open link in default browser");
-        ButtonDTO buildYourOwnConfig = new ButtonDTO("Build your own configuration", "", Link.WIKI_CONFIGURATION.getUrl(),
+        ButtonDTO buildYourOwnConfig = new ButtonDTO("Build your own configuration", "", Collections.singletonList(Link.WIKI_CONFIGURATION.getUrl()),
                                                      ElementType.LINK, true, false, "",
                                                      "Open link in default browser");
         SubSectionDTO subSection = new SubSectionDTO("Read about configuration", Arrays.asList(exampleConfig, buildYourOwnConfig));

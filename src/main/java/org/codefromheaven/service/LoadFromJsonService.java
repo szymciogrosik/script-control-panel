@@ -40,12 +40,12 @@ public class LoadFromJsonService {
 
                     for (JsonNode commandNode : subSectionNode.get("commands")) {
                         ElementType elementType = ElementType.getEnumType(commandNode.get("elementType").asText());
-                        String command = commandNode.get("command").asText();
+                        JsonNode commandsArray = commandNode.get("commands");
 
                         subSection.commands().add(new ButtonDTO(
                                 commandNode.get("buttonName").asText(),
                                 commandNode.get("scriptLocationParamName").asText(),
-                                addPrefixToCommand(command, elementType),
+                                fetchCommandsWithPrefix(commandsArray, elementType),
                                 elementType,
                                 commandNode.get("autoCloseConsole").asBoolean(),
                                 commandNode.get("popupInputDisplayed").asBoolean(),
@@ -59,6 +59,17 @@ public class LoadFromJsonService {
             return Optional.empty();
         }
         return allSections.isEmpty() ? Optional.empty() : Optional.of(allSections);
+    }
+
+    private static List<String> fetchCommandsWithPrefix(JsonNode commandsArray, ElementType elementType) {
+        List<String> commands = new ArrayList<>();
+        if (commandsArray.isArray()) {
+            for (JsonNode commandElement : commandsArray) {
+                String command = addPrefixToCommand(commandElement.asText(), elementType);
+                commands.add(command);
+            }
+        }
+        return commands;
     }
 
     private static String addPrefixToCommand(String command, ElementType elementType) {
