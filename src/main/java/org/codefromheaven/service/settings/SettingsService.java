@@ -65,4 +65,8 @@ public class SettingsService extends SettingsServiceBase {
         return "true".equals(loadValue(Setting.ALLOW_PRE_RELEASES).orElse(""));
     }
 
+    public static boolean isAllowedToUpdate() {
+        return "true".equals(loadValue(Setting.ALLOW_FOR_UPGRADES).orElse(""));
+    }
+
 }

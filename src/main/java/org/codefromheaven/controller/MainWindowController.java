@@ -32,6 +32,7 @@ import org.codefromheaven.service.command.PowerShellService;
 import org.codefromheaven.service.network.NetworkService;
 import org.codefromheaven.service.settings.FilesToLoadSettingsService;
 import org.codefromheaven.service.settings.HiddenElementSettingsService;
+import org.codefromheaven.service.settings.SettingsService;
 import org.codefromheaven.service.version.AppVersionService;
 
 public class MainWindowController implements Initializable {
@@ -42,6 +43,9 @@ public class MainWindowController implements Initializable {
     public VBox primaryPage;
     @FXML
     private ScrollPane mainScrollPane;
+
+    @FXML
+    private Menu menuUpdateButton;
 
     @FXML
     private MenuItem changeVisibleElements;
@@ -73,6 +77,8 @@ public class MainWindowController implements Initializable {
         updateNotification.setImage(ImageLoader.getImage("/update/notification.png"));
         boolean noSectionPresent = HiddenElementSettingsController.loadAllElements().isEmpty();
         changeVisibleElements.setDisable(noSectionPresent);
+        boolean allowedToUpdate = SettingsService.isAllowedToUpdate();
+        menuUpdateButton.setVisible(allowedToUpdate);
         this.loadContent();
     }
 

@@ -10,7 +10,8 @@ public enum Setting implements BaseSetting {
     BASH_PATH,
     MAX_WINDOW_HEIGHT,
     IMAGE_NAME,
-    APP_NAME;
+    APP_NAME,
+    ALLOW_FOR_UPGRADES;
 
     @Override
     public String getName() {

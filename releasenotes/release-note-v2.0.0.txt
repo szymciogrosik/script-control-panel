@@ -8,5 +8,6 @@ Instruction how and what needs to be installed to run application and more usefu
 * Added instruction how to pin verify-download-run.sh script to the Windows startup.
 * Added instruction how to run application on Windows startup.
 * Added option to run multiple Bash, Powershell or Links by one click in separate windows. - It requires a change in the structure, so configuration needs to be updated and "command" String variable replaced by "commands" String array in Json configuration files.
+* Added option for disabling updates, if project managing of the script-control-panel version.
 #### Fixes:
 * Fixed verify-download-run.sh script with proper custom Java path.

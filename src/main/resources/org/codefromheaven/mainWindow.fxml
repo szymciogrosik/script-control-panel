@@ -22,7 +22,7 @@
          <MenuItem text="GitHub project" fx:id="githubProject" onAction="#handleGithubProject"/>
          <MenuItem text="Documentation" fx:id="githubDocumentation" onAction="#handleGithubDocumentation"/>
       </Menu>
-      <Menu>
+      <Menu fx:id="menuUpdateButton">
          <graphic>
             <HBox alignment="CENTER_LEFT" spacing="5">
                <Label text="Update" />

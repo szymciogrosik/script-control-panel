@@ -45,6 +45,11 @@ public class DefaultSettings {
                     Setting.APP_NAME.getName(),
                     "Script control panel",
                     "Override your app name"
+            ),
+            new KeyValueDTO(
+                    Setting.ALLOW_FOR_UPGRADES.getName(),
+                    "true",
+                    "Allow for manual upgrades by user"
             )
     ));
 
