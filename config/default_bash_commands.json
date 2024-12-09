@@ -8,7 +8,9 @@
           {
             "buttonName": "Bash",
             "scriptLocationParamName": "ALL_EXAMPLE_SCRIPTS_PATH",
-            "command": "example_bash.sh",
+            "commands": [
+              "example_bash.sh"
+            ],
             "elementType": "BASH",
             "autoCloseConsole": false,
             "popupInputDisplayed": false,
@@ -18,7 +20,9 @@
           {
             "buttonName": "Bash with popup",
             "scriptLocationParamName": "ALL_EXAMPLE_SCRIPTS_PATH",
-            "command": "example_bash_with_param.sh",
+            "commands": [
+              "example_bash_with_param.sh"
+            ],
             "elementType": "BASH",
             "autoCloseConsole": false,
             "popupInputDisplayed": true,
@@ -28,12 +32,27 @@
           {
             "buttonName": "Bash autoclose",
             "scriptLocationParamName": "ALL_EXAMPLE_SCRIPTS_PATH",
-            "command": "example_bash.sh",
+            "commands": [
+              "example_bash.sh"
+            ],
             "elementType": "BASH",
             "autoCloseConsole": true,
             "popupInputDisplayed": false,
             "popupInputMessage": "",
             "description": "Example bash script which will be autoclosed after invocation"
+          },
+          {
+            "buttonName": "Bash multiple scripts",
+            "scriptLocationParamName": "ALL_EXAMPLE_SCRIPTS_PATH",
+            "commands": [
+              "example_bash.sh",
+              "example_bash.sh"
+            ],
+            "elementType": "BASH",
+            "autoCloseConsole": false,
+            "popupInputDisplayed": false,
+            "popupInputMessage": "",
+            "description": "Example multiple bash scripts, each in separate window"
           }
         ]
       }
