@@ -143,10 +143,10 @@ run_script_control_panel() {
   if [ -n "$java_path" ]; then
     local java_dir_path="$java_path\\java.exe"
     echo "Executing JAR with custom Java path: '$java_dir_path'"
-    "$java_dir_path" -jar "$SCRIPT_CONTROL_PANEL_JAR_FILE" &
+    nohup "$java_dir_path" -jar "$SCRIPT_CONTROL_PANEL_JAR_FILE" > start_logs.log 2>&1 &
   else
     echo "Executing JAR with standard JAVA_HOME path: '$JAVA_HOME'"
-    java -jar "$SCRIPT_CONTROL_PANEL_JAR_FILE" &
+    nohup java -jar "$SCRIPT_CONTROL_PANEL_JAR_FILE" > start_logs.log 2>&1 &
   fi
 }
 

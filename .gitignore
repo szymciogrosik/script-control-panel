@@ -5,6 +5,7 @@ dependency-reduced-pom.xml
 script-control-panel.jar
 my_own*
 tmp/
+*.log
 
 # Local config
 local*.properties

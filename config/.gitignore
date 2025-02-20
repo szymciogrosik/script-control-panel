@@ -1,3 +1,4 @@
 script-control-panel.jar
 config/my_own*
 tmp/
+*.log
