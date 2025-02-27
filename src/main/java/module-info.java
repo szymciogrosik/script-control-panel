@@ -2,10 +2,11 @@ module servicerunner {
     requires javafx.controls;
     requires javafx.graphics;
     requires javafx.fxml;
-    requires java.desktop;
     requires com.fasterxml.jackson.databind;
     requires com.sun.jna.platform;
     requires org.apache.commons.io;
+    requires org.apache.commons.lang3;
+    requires java.desktop;
 
     opens org.codefromheaven to javafx.fxml;
     exports org.codefromheaven;
@@ -24,7 +25,6 @@ module servicerunner {
     exports org.codefromheaven.service.animal;
     opens org.codefromheaven.service.animal to javafx.fxml;
     exports org.codefromheaven.service.settings;
-    opens org.codefromheaven.service.settings to javafx.fxml;
     exports org.codefromheaven.dto.settings;
     opens org.codefromheaven.dto.settings to com.fasterxml.jackson.databind;
     exports org.codefromheaven.dto.data;
@@ -37,4 +37,5 @@ module servicerunner {
     opens org.codefromheaven.service.update to javafx.fxml;
     exports org.codefromheaven.service.gh;
     opens org.codefromheaven.service.gh to javafx.fxml;
+    opens org.codefromheaven.service.settings to com.fasterxml.jackson.databind, javafx.fxml;
 }

@@ -18,6 +18,19 @@
             "description": "Example bash script"
           },
           {
+            "buttonName": "Bash - hidden as default",
+            "scriptLocationParamName": "ALL_EXAMPLE_SCRIPTS_PATH",
+            "commands": [
+              "example_bash.sh"
+            ],
+            "elementType": "BASH",
+            "autoCloseConsole": false,
+            "popupInputDisplayed": false,
+            "popupInputMessage": "",
+            "description": "Example bash script",
+            "visibleAsDefault": false
+          },
+          {
             "buttonName": "Bash with popup",
             "scriptLocationParamName": "ALL_EXAMPLE_SCRIPTS_PATH",
             "commands": [

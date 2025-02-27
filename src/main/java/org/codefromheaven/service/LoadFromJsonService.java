@@ -42,7 +42,11 @@ public class LoadFromJsonService {
                         ElementType elementType = ElementType.getEnumType(commandNode.get("elementType").asText());
                         JsonNode commandsArray = commandNode.get("commands");
 
-                        subSection.commands().add(new ButtonDTO(
+                        String visibleAsDefaultPropertyName = "visibleAsDefault";
+                        boolean visibleAsDefault =
+                                commandNode.get(visibleAsDefaultPropertyName) == null ||
+                                        commandNode.get(visibleAsDefaultPropertyName).asBoolean();
+                        subSection.buttons().add(new ButtonDTO(
                                 commandNode.get("buttonName").asText(),
                                 commandNode.get("scriptLocationParamName").asText(),
                                 fetchCommandsWithPrefix(commandsArray, elementType),
@@ -50,7 +54,10 @@ public class LoadFromJsonService {
                                 commandNode.get("autoCloseConsole").asBoolean(),
                                 commandNode.get("popupInputDisplayed").asBoolean(),
                                 commandNode.get("popupInputMessage").asText(),
-                                commandNode.get("description").asText()
+                                commandNode.get("description").asText(),
+                                visibleAsDefault,
+                                sectionName,
+                                subSectionName
                         ));
                     }
                 }

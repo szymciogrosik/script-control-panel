@@ -17,12 +17,11 @@ import javafx.stage.Stage;
 import org.codefromheaven.dto.data.SectionDTO;
 import org.codefromheaven.dto.settings.KeyValueDTO;
 import org.codefromheaven.dto.settings.SettingsDTO;
-import org.codefromheaven.dto.settings.VisibilitySettingKey;
+import org.codefromheaven.service.settings.VisibilitySettings;
 import org.codefromheaven.helpers.MaxHighUtils;
 import org.codefromheaven.service.LoadFromJsonService;
 import org.codefromheaven.service.animal.AnimalService;
 import org.codefromheaven.service.settings.FilesToLoadSettingsService;
-import org.codefromheaven.service.settings.HiddenElementSettingsService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -31,14 +30,13 @@ public class HiddenElementSettingsController {
 
     private final MainWindowController.ContentLoader loader;
     private final MainWindowController.ResizeWindow resizeMainWindow;
-    private final SettingsDTO visibilitySettings;
+    private final VisibilitySettings visibilitySettings = new VisibilitySettings();
 
     public HiddenElementSettingsController(
             MainWindowController.ContentLoader loader, MainWindowController.ResizeWindow resizeMainWindow
     ) {
         this.loader = loader;
         this.resizeMainWindow = resizeMainWindow;
-        this.visibilitySettings = HiddenElementSettingsService.loadVisibilitySettings();
     }
 
     public void setupPage() {
@@ -71,7 +69,7 @@ public class HiddenElementSettingsController {
         HBox.setHgrow(btnSave, Priority.ALWAYS);
 
         btnSave.setOnAction(event -> {
-            HiddenElementSettingsService.saveSettings(visibilitySettings);
+            visibilitySettings.saveSettings();
             loader.loadContent();
             resizeMainWindow.resizeMainWindow();
             settingsStage.close();
@@ -102,13 +100,12 @@ public class HiddenElementSettingsController {
             sectionBox.getChildren().add(sectionLabel);
             section.subSections().forEach(subSection -> {
                 sectionBox.getChildren().add(new Label(subSection.subSectionName()));
-                subSection.commands().forEach(command -> {
-                    VisibilitySettingKey key = new VisibilitySettingKey(section.sectionName(), subSection.subSectionName(), command.buttonName());
-                    CheckBox checkBox = new CheckBox(command.buttonName());
-                    boolean isChecked = isElementVisible(key, visibilitySettings);
+                subSection.buttons().forEach(button -> {
+                    CheckBox checkBox = new CheckBox(button.getName());
+                    boolean isChecked = visibilitySettings.isVisible(button);
                     checkBox.setSelected(isChecked);
                     checkBox.selectedProperty().addListener((obs, oldVal, newVal) -> {
-                        updateVisibilitySetting(key, newVal);
+                        visibilitySettings.updateVisibilitySetting(button, newVal);
                     });
                     sectionBox.getChildren().add(checkBox);
                 });
@@ -124,15 +121,6 @@ public class HiddenElementSettingsController {
             allElements.addAll(LoadFromJsonService.load(fileToLoad));
         }
         return allElements;
-    }
-
-    private void updateVisibilitySetting(VisibilitySettingKey visibilitySettingKey, boolean newVal) {
-        HiddenElementSettingsService.updateVisibilitySetting(visibilitySettings, visibilitySettingKey, newVal);
-    }
-
-    public static boolean isElementVisible(VisibilitySettingKey visibilitySettingKey, SettingsDTO visibilitySettings) {
-        return visibilitySettings.getSettings().stream().noneMatch(
-                elem -> HiddenElementSettingsService.isMatchingSetting(elem, visibilitySettingKey));
     }
 
 }

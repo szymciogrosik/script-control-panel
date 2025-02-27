@@ -4,8 +4,6 @@ import org.codefromheaven.dto.Command;
 
 public class GitBashService {
 
-    private static final String SEPARATOR = " ; ";
-
     private GitBashService() { }
 
     public static void runCommand(String scriptPathVarName, boolean autoCloseConsole, String command) {

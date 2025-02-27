@@ -107,7 +107,7 @@ public abstract class SettingsServiceBase {
         }
     }
 
-    private static SettingsDTO getCustomSettingsDifferentThanDefault(FileType fileType, SettingsDTO customSettings) {
+    public static SettingsDTO getCustomSettingsDifferentThanDefault(FileType fileType, SettingsDTO customSettings) {
         SettingsDTO defaultSettings = mergeDefaultSettings(loadSettingsFile(getDefaultFileDir(fileType.name())).orElse(new SettingsDTO()), fileType);
         return new SettingsDTO(
                 customSettings.getSettings().stream()
@@ -122,7 +122,7 @@ public abstract class SettingsServiceBase {
                            .map(KeyValueDTO::getValue).findFirst();
     }
 
-    protected static boolean isPresentMyOwnSettingFile(FileType fileType) {
+    public static boolean isPresentMyOwnSettingFile(FileType fileType) {
         try (BufferedReader ignored = new BufferedReader(new FileReader(getMyOwnFileDir(fileType.name())))) {
             return true;
         } catch (IOException e) {

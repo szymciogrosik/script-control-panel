@@ -7,6 +7,7 @@ public enum FileType {
     * */
     SETTINGS,
     HIDDEN_ELEMENTS_SETTINGS,
+    VISIBLE_ELEMENTS_SETTINGS,
     FILES_TO_LOAD_SETTINGS;
 
 }
