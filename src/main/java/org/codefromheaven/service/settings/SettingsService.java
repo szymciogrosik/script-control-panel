@@ -2,6 +2,7 @@ package org.codefromheaven.service.settings;
 
 import org.codefromheaven.dto.FileType;
 import org.codefromheaven.dto.Setting;
+import org.codefromheaven.dto.Style;
 import org.codefromheaven.dto.settings.BaseSetting;
 import org.codefromheaven.dto.settings.KeyValueDTO;
 import org.codefromheaven.dto.settings.SettingsDTO;
@@ -67,6 +68,10 @@ public class SettingsService extends SettingsServiceBase {
 
     public static boolean isAllowedToUpdate() {
         return "true".equals(loadValue(Setting.ALLOW_FOR_UPGRADES).orElse(""));
+    }
+
+    public static Style getStyle() {
+        return Style.valueOf(loadValue(Setting.STYLE_NAME).get());
     }
 
 }

@@ -10,6 +10,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
 import org.codefromheaven.dto.Setting;
+import org.codefromheaven.dto.Style;
 import org.codefromheaven.dto.settings.FieldOnPageDTO;
 import org.codefromheaven.dto.settings.KeyValueDTO;
 import org.codefromheaven.dto.settings.SettingsDTO;
@@ -21,7 +22,10 @@ import org.codefromheaven.service.version.AppVersionService;
 
 import java.nio.file.Paths;
 import java.util.ArrayList;
+import java.util.Arrays;
+import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.stream.Collectors;
 
 import static javafx.stage.Modality.APPLICATION_MODAL;
@@ -86,12 +90,7 @@ public class SettingsController {
     private FieldOnPageDTO loadElementsToPage(List<KeyValueDTO> settings, GridPane gridPane) {
         List<KeyValueDTO> comboSettings = getComboSettings(settings);
         List<KeyValueDTO> checkBoxSettings = getCheckBoxSettings(settings);
-
-        List<KeyValueDTO> alreadyUsedSettings = new ArrayList<>();
-        alreadyUsedSettings.addAll(comboSettings);
-        alreadyUsedSettings.addAll(checkBoxSettings);
-
-        List<KeyValueDTO> textSettings = getTextSettings(settings, alreadyUsedSettings);
+        List<KeyValueDTO> textSettings = getTextSettings(settings);
 
         TextField[] textValueFields = new TextField[textSettings.size()];
         CheckBox[] checkBoxFields = new CheckBox[checkBoxSettings.size()];
@@ -117,7 +116,7 @@ public class SettingsController {
         for (int i = 0; i < comboSettings.size(); i++, globalPosition++) {
             KeyValueDTO setting = comboSettings.get(i);
             Label label = new Label(getLabel(setting) + ":");
-            ComboBox<String> field = createComboBox(setting.getValue(), comboValueFields, i);
+            ComboBox<String> field = createComboBox(setting.getKey(), setting.getValue(), comboValueFields, i);
             gridPane.add(label, 0, globalPosition);
             gridPane.add(field, 1, globalPosition);
         }
@@ -126,17 +125,18 @@ public class SettingsController {
     }
 
     private List<KeyValueDTO> getComboSettings(List<KeyValueDTO> settings) {
-        return settings.stream().filter(elem -> elem.getKey().equals(Setting.IMAGE_NAME.getName()))
+        return settings.stream().filter(elem -> Setting.isComboSetting(elem.getKey()))
                 .collect(Collectors.toList());
     }
 
     private List<KeyValueDTO> getCheckBoxSettings(List<KeyValueDTO> settings) {
-        return settings.stream().filter(elem -> elem.getKey().equals(Setting.ALLOW_PRE_RELEASES.getName()))
-                .collect(Collectors.toList());
+        return settings.stream().filter(elem -> Setting.isCheckboxSetting(elem.getKey()))
+                       .collect(Collectors.toList());
     }
 
-    private List<KeyValueDTO> getTextSettings(List<KeyValueDTO> settings, List<KeyValueDTO> alreadyUsedSettings) {
-        return settings.stream().filter(elem -> !alreadyUsedSettings.contains(elem)).collect(Collectors.toList());
+    private List<KeyValueDTO> getTextSettings(List<KeyValueDTO> settings) {
+        return settings.stream().filter(elem -> Setting.isTextSetting(elem.getKey()))
+                       .collect(Collectors.toList());
     }
 
     private TextField createTextField(String value, TextField[] valueFields, int i) {
@@ -146,15 +146,21 @@ public class SettingsController {
         return textField;
     }
 
-    private ComboBox<String> createComboBox(String value, ComboBox<String>[] valueFields, int i) {
+    private ComboBox<String> createComboBox(String settingKey, String settingValue, ComboBox<String>[] valueFields, int i) {
         ComboBox<String> comboBox = new ComboBox<>();
         comboBox.setPrefWidth(500);
 
-        String[] options = AnimalNamesProvider.ALL.toArray(new String[0]);
+        String[] options = Collections.emptyList().toArray(new String[0]);
+        if (Objects.equals(settingKey, Setting.IMAGE_NAME.getName())) {
+            options = AnimalNamesProvider.ALL.toArray(new String[0]);
+        } else if (Objects.equals(settingKey, Setting.STYLE_NAME.getName())) {
+            options = Arrays.stream(Style.values()).map(Style::name).toList().toArray(new String[0]);
+        }
+
         comboBox.getItems().addAll(options);
 
         if (options.length > 0) {
-            comboBox.setValue(value);
+            comboBox.setValue(settingValue);
         }
 
         valueFields[i] = comboBox;
@@ -171,12 +177,7 @@ public class SettingsController {
     private void doActionOnSave(List<KeyValueDTO> settings, FieldOnPageDTO valueFields, Stage settingsStage) {
         List<KeyValueDTO> comboSettings = getComboSettings(settings);
         List<KeyValueDTO> checkBoxSettings = getCheckBoxSettings(settings);
-
-        List<KeyValueDTO> alreadyUsedSettings = new ArrayList<>();
-        alreadyUsedSettings.addAll(comboSettings);
-        alreadyUsedSettings.addAll(checkBoxSettings);
-
-        List<KeyValueDTO> textSettings = getTextSettings(settings, alreadyUsedSettings);
+        List<KeyValueDTO> textSettings = getTextSettings(settings);
 
         for (int i = 0; i < textSettings.size(); i++) {
             KeyValueDTO setting = textSettings.get(i);

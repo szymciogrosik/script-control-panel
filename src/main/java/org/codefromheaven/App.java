@@ -26,7 +26,7 @@ public class App extends Application {
         Image animalImage = AnimalService.getInstance().getCurrentAnimalImage();
         stage.getIcons().add(animalImage);
         Scene scene = new Scene(loadFXML("mainWindow"));
-        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource(SettingsService.getStyle().getFileName())).toExternalForm());
         stage.setScene(scene);
         stage.show();
     }

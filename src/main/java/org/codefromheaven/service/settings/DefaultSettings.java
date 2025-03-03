@@ -1,6 +1,7 @@
 package org.codefromheaven.service.settings;
 
 import org.codefromheaven.dto.Setting;
+import org.codefromheaven.dto.Style;
 import org.codefromheaven.dto.settings.KeyValueDTO;
 import org.codefromheaven.dto.settings.SettingsDTO;
 
@@ -50,6 +51,11 @@ public class DefaultSettings {
                     Setting.ALLOW_FOR_UPGRADES.getName(),
                     "true",
                     "Allow for manual upgrades by user"
+            ),
+            new KeyValueDTO(
+                    Setting.STYLE_NAME.getName(),
+                    Style.CLASSIC.name(),
+                    "Style of your application"
             )
     ));
 
