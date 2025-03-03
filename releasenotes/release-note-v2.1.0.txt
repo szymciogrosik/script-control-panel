@@ -3,6 +3,6 @@ Instruction how and what needs to be installed to run application and more usefu
 
 ## Release notes
 #### Improvements:
-* Added optional, new button property "visibleAsDefault", which is as default is true. This property making a button hidden as default.
+* Added optional, new button property "visibleAsDefault", which is as default is true. This property makes a button hidden as default.
 #### Fixes:
 * NONE.
