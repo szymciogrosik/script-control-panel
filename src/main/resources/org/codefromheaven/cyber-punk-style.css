@@ -1,0 +1,325 @@
+/* Cyberpunk Material Theme for JavaFX - Dark Yellow/Orange Edition */
+
+.root {
+    -fx-font-family: 'Roboto', sans-serif;
+    -fx-background-color: #121212; /* Material dark background */
+}
+
+.tooltip {
+    -fx-font-size: 12px;
+    -fx-font-family: 'Roboto', sans-serif;
+    -fx-text-fill: #FFFFFF;
+    -fx-background-color: #2D2D2D;
+    -fx-padding: 8px 16px;
+    -fx-background-radius: 4px;
+}
+
+.text-header {
+    -fx-fill: #FFC107; /* Material amber 500 */
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+    /* Reduced glow effect */
+    -fx-effect: dropshadow(gaussian, #FFC107, 2, 0.1, 0, 0);
+}
+
+.text-main-header {
+    -fx-fill: #FFD54F; /* Material amber 300 */
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+    /* Reduced glow effect */
+    -fx-effect: dropshadow(gaussian, #FFD54F, 3, 0.15, 0, 0);
+}
+
+.scroll-pane {
+    -fx-padding: 0;
+    -fx-border-width: 0;
+    -fx-background-color: #121212;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: #121212;
+}
+
+.scroll-pane .scroll-bar {
+    -fx-background-color: #1E1E1E;
+}
+
+.scroll-pane .scroll-bar .thumb {
+    -fx-background-color: #FFC107;
+    -fx-background-radius: 4px;
+}
+
+.mainStyle > * {
+    -fx-font: normal bold 12px 'Roboto', sans-serif;
+}
+
+.VBox {
+    -fx-spacing: 10px;
+    -fx-alignment: center;
+    -fx-background-color: #1E1E1E;
+    -fx-background-radius: 6px;
+    -fx-padding: 16px;
+}
+
+.HBox {
+    -fx-spacing: 10px;
+    -fx-alignment: center;
+    -fx-padding: 8px;
+}
+
+.label {
+    -fx-text-fill: #E0E0E0; /* Material grey 300 */
+    -fx-font-size: 14px;
+}
+
+/* Enhanced Material Design buttons with dark yellow/orange accent and more compact size */
+.button-default {
+    -fx-background-color: linear-gradient(to bottom right, #FFC107, #FF8F00);
+    -fx-text-fill: #121212;
+    -fx-font-size: 12px;
+    -fx-padding: 6px 12px; /* More compact */
+    -fx-background-radius: 4px; /* Less rounded */
+    -fx-effect: dropshadow(gaussian, rgba(255, 193, 7, 0.3), 4, 0, 0, 1);
+}
+
+.button-default:hover {
+    -fx-background-color: linear-gradient(to bottom right, #FFD54F, #FFC107);
+    -fx-effect: dropshadow(gaussian, rgba(255, 193, 7, 0.4), 6, 0, 0, 2);
+}
+
+.button-default:pressed {
+    -fx-background-color: linear-gradient(to bottom right, #FF8F00, #FF6F00);
+    -fx-effect: dropshadow(gaussian, rgba(255, 193, 7, 0.2), 2, 0, 0, 1);
+}
+
+.button-selected {
+    -fx-background-color: linear-gradient(to bottom right, #FF8F00, #FF6F00);
+    -fx-text-fill: #121212;
+    -fx-font-size: 12px;
+    -fx-padding: 6px 12px; /* More compact */
+    -fx-background-radius: 4px; /* Less rounded */
+    -fx-effect: dropshadow(gaussian, rgba(255, 193, 7, 0.3), 4, 0, 0, 1);
+}
+
+.button-selected:hover {
+    -fx-background-color: linear-gradient(to bottom right, #FFA000, #FF8F00);
+    -fx-effect: dropshadow(gaussian, rgba(255, 193, 7, 0.4), 6, 0, 0, 2);
+}
+
+.tooltip-custom {
+    -fx-text-fill: #FFD54F; /* Material amber 300 */
+}
+
+.author-image {
+    -fx-fit-height: 50px;
+    -fx-fit-width: 50px;
+    -fx-background-radius: 25px; /* Circular image for Material Design */
+    -fx-border-radius: 25px;
+    -fx-border-color: #FFC107;
+    -fx-border-width: 2px;
+}
+
+.background-primary {
+    -fx-background-color: #121212; /* Material dark background */
+}
+
+.hbox-spacing {
+    -fx-spacing: 5;
+}
+
+/* Material input fields with amber accent */
+.text-field, .text-area {
+    -fx-background-color: #1E1E1E;
+    -fx-background-radius: 4px;
+    -fx-border-color: #333333;
+    -fx-border-radius: 4px;
+    -fx-border-width: 1px;
+    -fx-text-fill: #E0E0E0;
+    -fx-prompt-text-fill: #9E9E9E; /* Material grey 500 */
+    -fx-padding: 8px;
+}
+
+.text-field:focused, .text-area:focused {
+    -fx-border-color: #FFC107;
+    -fx-effect: dropshadow(gaussian, rgba(255, 193, 7, 0.2), 4, 0, 0, 0);
+}
+
+/* Material cards with amber accent */
+.card {
+    -fx-background-color: #1E1E1E;
+    -fx-background-radius: 6px;
+    -fx-padding: 16px;
+    -fx-effect: dropshadow(gaussian, rgba(0, 0, 0, 0.3), 8, 0, 0, 3);
+    -fx-border-color: #FFC107;
+    -fx-border-width: 0 0 2px 0;
+    -fx-border-radius: 6px;
+}
+
+/* Material table with amber accent */
+.table-view {
+    -fx-background-color: #1E1E1E;
+    -fx-table-cell-border-color: transparent;
+    -fx-background-radius: 6px;
+    -fx-border-radius: 6px;
+}
+
+.table-view .column-header-background {
+    -fx-background-color: #1E1E1E;
+    -fx-border-color: #FFC107;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.table-view .column-header {
+    -fx-background-color: transparent;
+}
+
+.table-view .column-header-background .label {
+    -fx-text-fill: #FFC107;
+    -fx-font-weight: bold;
+}
+
+.table-row-cell {
+    -fx-background-color: #1E1E1E;
+    -fx-text-fill: #E0E0E0;
+    -fx-cell-size: 40px;
+}
+
+.table-row-cell:odd {
+    -fx-background-color: #222222;
+}
+
+.table-row-cell:selected {
+    -fx-background-color: rgba(255, 193, 7, 0.2);
+}
+
+/* Menu bar styling - more visible */
+.menu-bar {
+    -fx-background-color: #2D2D2D; /* Darker, more visible background */
+    -fx-border-color: #FFC107;
+    -fx-border-width: 0 0 1px 0;
+}
+
+.menu-bar .menu {
+    -fx-background-color: transparent;
+}
+
+.menu-bar .menu:hover {
+    -fx-background-color: rgba(255, 193, 7, 0.2);
+}
+
+.menu-bar .menu .label {
+    -fx-text-fill: #FFC107; /* Amber text for better visibility */
+    -fx-font-weight: bold;
+}
+
+.menu-item {
+    -fx-background-color: #2D2D2D;
+}
+
+.menu-item .label {
+    -fx-text-fill: #E0E0E0;
+}
+
+.menu-item:focused, .menu-item:hover {
+    -fx-background-color: rgba(255, 193, 7, 0.2);
+}
+
+.menu-item:focused .label, .menu-item:hover .label {
+    -fx-text-fill: #FFC107;
+}
+
+/* Material switches/toggles with amber accent */
+.toggle-button {
+    -fx-background-color: #424242;
+    -fx-text-fill: #E0E0E0;
+    -fx-padding: 6px 12px;
+    -fx-background-radius: 4px;
+}
+
+.toggle-button:selected {
+    -fx-background-color: #FFC107;
+    -fx-text-fill: #121212;
+}
+
+/* Material checkboxes with amber accent */
+.check-box {
+    -fx-text-fill: #E0E0E0;
+}
+
+.check-box .box {
+    -fx-background-color: transparent;
+    -fx-border-color: #9E9E9E;
+    -fx-border-width: 2px;
+    -fx-border-radius: 2px;
+}
+
+.check-box:selected .box {
+    -fx-background-color: #FFC107;
+    -fx-border-color: #FFC107;
+}
+
+.check-box:selected .mark {
+    -fx-background-color: #121212;
+}
+
+/* Progress bars with amber accent */
+.progress-bar > .track {
+    -fx-background-color: #1E1E1E;
+    -fx-background-radius: 4px;
+}
+
+.progress-bar > .bar {
+    -fx-background-color: linear-gradient(to right, #FFC107, #FF8F00);
+    -fx-background-radius: 4px;
+}
+
+/* Combo box with amber accent */
+.combo-box {
+    -fx-background-color: #1E1E1E;
+    -fx-background-radius: 4px;
+    -fx-border-radius: 4px;
+    -fx-border-color: #333333;
+    -fx-border-width: 1px;
+    -fx-padding: 2px;
+}
+
+.combo-box:focused {
+    -fx-border-color: #FFC107;
+}
+
+.combo-box .list-cell {
+    -fx-background-color: transparent;
+    -fx-text-fill: #E0E0E0;
+}
+
+.combo-box .arrow-button {
+    -fx-background-color: transparent;
+}
+
+.combo-box .arrow {
+    -fx-background-color: #FFC107;
+}
+
+/* List view styling */
+.list-view {
+    -fx-background-color: #1E1E1E;
+    -fx-background-radius: 4px;
+    -fx-border-radius: 4px;
+    -fx-border-color: #333333;
+    -fx-border-width: 1px;
+}
+
+.list-view .list-cell {
+    -fx-background-color: #1E1E1E;
+    -fx-text-fill: #E0E0E0;
+    -fx-padding: 8px;
+}
+
+.list-view .list-cell:odd {
+    -fx-background-color: #222222;
+}
+
+.list-view .list-cell:selected {
+    -fx-background-color: rgba(255, 193, 7, 0.2);
+    -fx-text-fill: #FFC107;
+}
