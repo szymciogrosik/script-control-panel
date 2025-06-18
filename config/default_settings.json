@@ -21,6 +21,11 @@
       "key": "ALL_EXAMPLE_SCRIPTS_PATH",
       "value": "config/scripts",
       "description": "Location of all example scripts"
+    },
+    {
+      "key": "PYTHON_SCRIPTS_PREFIX",
+      "value": "py",
+      "description": "Python script prefix"
     }
   ]
 }

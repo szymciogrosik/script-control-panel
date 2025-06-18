@@ -26,7 +26,6 @@ public class GitBashSetupService implements Runnable {
             if (!scriptPathVarName.isEmpty()) {
                 finalCommand += getOpenDirectoryCommand(scriptPathVarName) + SEPARATOR;
             }
-            finalCommand += ("echo Current directory: $(pwd)" + SEPARATOR);
             finalCommand += command;
 
             if (!autoCloseConsole) {

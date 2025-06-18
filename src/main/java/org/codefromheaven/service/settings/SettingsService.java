@@ -27,6 +27,10 @@ public class SettingsService extends SettingsServiceBase {
         return loadValue(Setting.APP_NAME).get();
     }
 
+    public static String getPythonScriptsPrefix() {
+        return loadValue(Setting.PYTHON_SCRIPTS_PREFIX).get();
+    }
+
     public static String getAnimalImageFromSettingsOrAddIfDoesNotExist() {
         Optional<String> currentAnimalOptional = loadValue(Setting.IMAGE_NAME);
         if (currentAnimalOptional.isPresent() && !currentAnimalOptional.get().isEmpty()) {

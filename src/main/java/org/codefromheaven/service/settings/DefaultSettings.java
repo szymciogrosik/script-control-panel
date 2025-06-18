@@ -50,6 +50,11 @@ public class DefaultSettings {
                     Setting.ALLOW_FOR_UPGRADES.getName(),
                     "true",
                     "Allow for manual upgrades by user"
+            ),
+            new KeyValueDTO(
+                    Setting.PYTHON_SCRIPTS_PREFIX.getName(),
+                    "py",
+                    "Provide your own python scripts prefix"
             )
     ));
 

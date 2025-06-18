@@ -193,6 +193,7 @@ public class MainWindowController implements Initializable {
         switch (buttonDTO.getElementType()) {
             case BASH:
             case POWERSHELL:
+            case PYTHON:
                 addButtonListenerForServiceCommands(button, buttonDTO);
                 break;
             case LINK:
@@ -215,6 +216,9 @@ public class MainWindowController implements Initializable {
                 break;
             case POWERSHELL:
                 addButtonListenerForPowerShellCommand(button, buttonDTO);
+                break;
+            case PYTHON:
+                addButtonListenerForPythonCommand(button, buttonDTO);
                 break;
             default:
                 throw new RuntimeException("Not recognised console: " + buttonDTO.getElementType());
@@ -250,6 +254,23 @@ public class MainWindowController implements Initializable {
             } else {
                 for (String command : buttonDTO.getCommands()) {
                     PowerShellService.runCommand(buttonDTO.getScriptLocationParamName(), buttonDTO.isAutoCloseConsole(), command);
+                }
+            }
+        });
+    }
+
+    private void addButtonListenerForPythonCommand(Button button, ButtonDTO buttonDTO) {
+        button.setOnMouseClicked(event -> {
+            if (buttonDTO.isPopupInputDisplayed()) {
+                Optional<String> result = createTextInputDialog(buttonDTO.getPopupInputMessage());
+                result.ifPresent(name -> {
+                    for (String command : buttonDTO.getCommands()) {
+                        GitBashService.runCommand(buttonDTO.getScriptLocationParamName(), buttonDTO.isAutoCloseConsole(), command + " " + name);
+                    }
+                });
+            } else {
+                for (String command : buttonDTO.getCommands()) {
+                    GitBashService.runCommand(buttonDTO.getScriptLocationParamName(), buttonDTO.isAutoCloseConsole(), command);
                 }
             }
         });

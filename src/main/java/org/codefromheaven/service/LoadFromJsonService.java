@@ -7,6 +7,7 @@ import org.codefromheaven.dto.ElementType;
 import org.codefromheaven.dto.data.ButtonDTO;
 import org.codefromheaven.dto.data.SectionDTO;
 import org.codefromheaven.dto.data.SubSectionDTO;
+import org.codefromheaven.service.settings.SettingsService;
 import org.codefromheaven.service.settings.SettingsServiceBase;
 
 import java.io.File;
@@ -83,6 +84,7 @@ public class LoadFromJsonService {
         return switch (elementType) {
             case BASH -> "./" + command;
             case POWERSHELL -> ".\\" + command;
+            case PYTHON -> SettingsService.getPythonScriptsPrefix() + " " + command;
             default -> command;
         };
     }

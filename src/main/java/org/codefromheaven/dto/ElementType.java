@@ -11,6 +11,7 @@ public enum ElementType {
      * */
     BASH("BASH"),
     POWERSHELL("POWERSHELL"),
+    PYTHON("PYTHON"),
     LINK("LINK");
 
     private final String paramName;

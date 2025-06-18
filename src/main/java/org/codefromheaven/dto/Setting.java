@@ -11,7 +11,8 @@ public enum Setting implements BaseSetting {
     MAX_WINDOW_HEIGHT,
     IMAGE_NAME,
     APP_NAME,
-    ALLOW_FOR_UPGRADES;
+    ALLOW_FOR_UPGRADES,
+    PYTHON_SCRIPTS_PREFIX;
 
     @Override
     public String getName() {

@@ -1,0 +1,74 @@
+[
+  {
+    "sectionName": "Python",
+    "subSections": [
+      {
+        "subSectionName": "Example scripts",
+        "commands": [
+          {
+            "buttonName": "Python",
+            "scriptLocationParamName": "ALL_EXAMPLE_SCRIPTS_PATH",
+            "commands": [
+              "example_python.py"
+            ],
+            "elementType": "PYTHON",
+            "autoCloseConsole": false,
+            "popupInputDisplayed": false,
+            "popupInputMessage": "",
+            "description": "Example python script"
+          },
+          {
+            "buttonName": "Python - hidden as default",
+            "scriptLocationParamName": "ALL_EXAMPLE_SCRIPTS_PATH",
+            "commands": [
+              "example_python.py"
+            ],
+            "elementType": "PYTHON",
+            "autoCloseConsole": false,
+            "popupInputDisplayed": false,
+            "popupInputMessage": "",
+            "description": "Example python script",
+            "visibleAsDefault": false
+          },
+          {
+            "buttonName": "Python with popup",
+            "scriptLocationParamName": "ALL_EXAMPLE_SCRIPTS_PATH",
+            "commands": [
+              "example_python_with_param.py"
+            ],
+            "elementType": "PYTHON",
+            "autoCloseConsole": false,
+            "popupInputDisplayed": true,
+            "popupInputMessage": "Params",
+            "description": "Example python script with popup (input is passed as script params)"
+          },
+          {
+            "buttonName": "Python autoclose",
+            "scriptLocationParamName": "ALL_EXAMPLE_SCRIPTS_PATH",
+            "commands": [
+              "example_python.py"
+            ],
+            "elementType": "PYTHON",
+            "autoCloseConsole": true,
+            "popupInputDisplayed": false,
+            "popupInputMessage": "",
+            "description": "Example python script which will be autoclosed after invocation"
+          },
+          {
+            "buttonName": "Python multiple scripts",
+            "scriptLocationParamName": "ALL_EXAMPLE_SCRIPTS_PATH",
+            "commands": [
+              "example_python.py",
+              "example_python.py"
+            ],
+            "elementType": "PYTHON",
+            "autoCloseConsole": false,
+            "popupInputDisplayed": false,
+            "popupInputMessage": "",
+            "description": "Example multiple python scripts, each in separate window"
+          }
+        ]
+      }
+    ]
+  }
+]
