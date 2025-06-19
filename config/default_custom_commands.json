@@ -1,0 +1,36 @@
+[
+  {
+    "sectionName": "Custom commands",
+    "subSections": [
+      {
+        "subSectionName": "Example scripts",
+        "commands": [
+          {
+            "buttonName": "Bash",
+            "scriptLocationParamName": "ALL_EXAMPLE_SCRIPTS_PATH",
+            "commands": [
+              "echo \\\"Print this text\\\""
+            ],
+            "elementType": "CUSTOM_COMMAND_BASH",
+            "autoCloseConsole": false,
+            "popupInputDisplayed": false,
+            "popupInputMessage": "",
+            "description": "Example bash script"
+          },
+          {
+            "buttonName": "Powershell",
+            "scriptLocationParamName": "ALL_EXAMPLE_SCRIPTS_PATH",
+            "commands": [
+              "echo \\\"Print this text\\\""
+            ],
+            "elementType": "CUSTOM_COMMAND_POWERSHELL",
+            "autoCloseConsole": false,
+            "popupInputDisplayed": false,
+            "popupInputMessage": "",
+            "description": "Example powershell script"
+          }
+        ]
+      }
+    ]
+  }
+]

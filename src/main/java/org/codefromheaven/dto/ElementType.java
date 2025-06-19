@@ -12,6 +12,8 @@ public enum ElementType {
     BASH("BASH"),
     POWERSHELL("POWERSHELL"),
     PYTHON("PYTHON"),
+    CUSTOM_COMMAND_BASH("CUSTOM_COMMAND_BASH"),
+    CUSTOM_COMMAND_POWERSHELL("CUSTOM_COMMAND_POWERSHELL"),
     LINK("LINK");
 
     private final String paramName;

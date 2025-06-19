@@ -194,6 +194,8 @@ public class MainWindowController implements Initializable {
             case BASH:
             case POWERSHELL:
             case PYTHON:
+            case CUSTOM_COMMAND_BASH:
+            case CUSTOM_COMMAND_POWERSHELL:
                 addButtonListenerForServiceCommands(button, buttonDTO);
                 break;
             case LINK:
@@ -212,13 +214,13 @@ public class MainWindowController implements Initializable {
     private void addButtonListenerForServiceCommands(Button button, ButtonDTO buttonDTO) {
         switch (buttonDTO.getElementType()) {
             case BASH:
+            case CUSTOM_COMMAND_BASH:
+            case PYTHON:
                 addButtonListenerForBashCommand(button, buttonDTO);
                 break;
             case POWERSHELL:
+            case CUSTOM_COMMAND_POWERSHELL:
                 addButtonListenerForPowerShellCommand(button, buttonDTO);
-                break;
-            case PYTHON:
-                addButtonListenerForPythonCommand(button, buttonDTO);
                 break;
             default:
                 throw new RuntimeException("Not recognised console: " + buttonDTO.getElementType());
@@ -254,23 +256,6 @@ public class MainWindowController implements Initializable {
             } else {
                 for (String command : buttonDTO.getCommands()) {
                     PowerShellService.runCommand(buttonDTO.getScriptLocationParamName(), buttonDTO.isAutoCloseConsole(), command);
-                }
-            }
-        });
-    }
-
-    private void addButtonListenerForPythonCommand(Button button, ButtonDTO buttonDTO) {
-        button.setOnMouseClicked(event -> {
-            if (buttonDTO.isPopupInputDisplayed()) {
-                Optional<String> result = createTextInputDialog(buttonDTO.getPopupInputMessage());
-                result.ifPresent(name -> {
-                    for (String command : buttonDTO.getCommands()) {
-                        GitBashService.runCommand(buttonDTO.getScriptLocationParamName(), buttonDTO.isAutoCloseConsole(), command + " " + name);
-                    }
-                });
-            } else {
-                for (String command : buttonDTO.getCommands()) {
-                    GitBashService.runCommand(buttonDTO.getScriptLocationParamName(), buttonDTO.isAutoCloseConsole(), command);
                 }
             }
         });
