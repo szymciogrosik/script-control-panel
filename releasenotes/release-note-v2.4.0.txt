@@ -1,0 +1,8 @@
+## App overview
+Released a Christmas style.
+
+## Release notes
+#### Improvements:
+* Added a Christmas animals to the application.
+#### Fixes:
+* NONE.

@@ -5,7 +5,7 @@ import org.codefromheaven.dto.Setting;
 import org.codefromheaven.dto.settings.BaseSetting;
 import org.codefromheaven.dto.settings.KeyValueDTO;
 import org.codefromheaven.dto.settings.SettingsDTO;
-import org.codefromheaven.resources.AnimalNamesProvider;
+import org.codefromheaven.resources.AnimalProvider;
 
 import java.util.Optional;
 
@@ -33,10 +33,11 @@ public class SettingsService extends SettingsServiceBase {
 
     public static String getAnimalImageFromSettingsOrAddIfDoesNotExist() {
         Optional<String> currentAnimalOptional = loadValue(Setting.IMAGE_NAME);
-        if (currentAnimalOptional.isPresent() && !currentAnimalOptional.get().isEmpty()) {
+        if (currentAnimalOptional.isPresent() && !currentAnimalOptional.get().isEmpty() &&
+                AnimalProvider.doesAnimalNameExist(currentAnimalOptional.get())) {
             return currentAnimalOptional.get();
         } else {
-            String animal = AnimalNamesProvider.getRandomAnimalName();
+            String animal = AnimalProvider.getRandomAnimal().getName();
             replaceOrCreateConfigVariable(Setting.IMAGE_NAME, animal);
             return animal;
         }

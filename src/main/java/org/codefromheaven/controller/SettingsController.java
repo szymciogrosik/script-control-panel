@@ -1,7 +1,5 @@
 package org.codefromheaven.controller;
 
-import com.sun.jna.platform.win32.Advapi32Util;
-import com.sun.jna.platform.win32.WinReg;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -13,13 +11,10 @@ import org.codefromheaven.dto.Setting;
 import org.codefromheaven.dto.settings.FieldOnPageDTO;
 import org.codefromheaven.dto.settings.KeyValueDTO;
 import org.codefromheaven.dto.settings.SettingsDTO;
-import org.codefromheaven.helpers.SystemUtils;
-import org.codefromheaven.resources.AnimalNamesProvider;
+import org.codefromheaven.resources.AnimalProvider;
 import org.codefromheaven.service.animal.AnimalService;
 import org.codefromheaven.service.settings.SettingsService;
-import org.codefromheaven.service.version.AppVersionService;
 
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
@@ -150,7 +145,7 @@ public class SettingsController {
         ComboBox<String> comboBox = new ComboBox<>();
         comboBox.setPrefWidth(500);
 
-        String[] options = AnimalNamesProvider.ALL.toArray(new String[0]);
+        String[] options = AnimalProvider.getDeterminateAnimals().toArray(new String[0]);
         comboBox.getItems().addAll(options);
 
         if (options.length > 0) {
