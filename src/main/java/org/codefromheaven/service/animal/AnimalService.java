@@ -4,22 +4,28 @@ import javafx.scene.image.Image;
 import org.codefromheaven.dto.Setting;
 import org.codefromheaven.dto.data.AnimalDTO;
 import org.codefromheaven.helpers.ImageLoader;
+import jakarta.annotation.PostConstruct;
+import org.codefromheaven.dto.Setting;
+import org.codefromheaven.dto.data.AnimalDTO;
+import org.codefromheaven.helpers.ImageLoader;
 import org.codefromheaven.resources.AnimalProvider;
 import org.codefromheaven.service.settings.SettingsService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
 
+@Service
 public class AnimalService {
 
-    public static AnimalService instance;
+    private final SettingsService settingsService;
 
-    private AnimalService() {
-        getCurrentAnimal();
+    @Autowired
+    public AnimalService(SettingsService settingsService) {
+        this.settingsService = settingsService;
     }
 
-    public static AnimalService getInstance() {
-        if (instance == null) {
-            instance = new AnimalService();
-        }
-        return instance;
+    @PostConstruct
+    public void init() {
+        getCurrentAnimal();
     }
 
     public Image getCurrentAnimalImage() {
@@ -27,7 +33,7 @@ public class AnimalService {
     }
 
     private AnimalDTO getCurrentAnimal() {
-        String name = SettingsService.getAnimalImageFromSettingsOrAddIfDoesNotExist();
+        String name = settingsService.getAnimalImageFromSettingsOrAddIfDoesNotExist();
         return AnimalProvider.findAnimalByNameOrReturnRandomIfNotPresent(name);
     }
 
@@ -41,7 +47,7 @@ public class AnimalService {
     }
 
     private void replaceCurrentAnimal(AnimalDTO newAnimal) {
-        SettingsService.replaceOrCreateConfigVariable(Setting.IMAGE_NAME, newAnimal.getName());
+        settingsService.replaceOrCreateConfigVariable(Setting.IMAGE_NAME, newAnimal.getName());
     }
 
     private String getAnimalPath(AnimalDTO animal) {

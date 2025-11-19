@@ -12,15 +12,25 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.codefromheaven.context.SpringContext;
 import org.codefromheaven.dto.Setting;
 import org.codefromheaven.helpers.FileUtils;
 import org.codefromheaven.service.animal.AnimalService;
 import org.codefromheaven.service.command.GitBashService;
 import org.codefromheaven.service.update.DownloadLatestVersionService;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Component;
 
+@Component
 public class UpdateController {
 
-    public UpdateController() {
+    private final AnimalService animalService;
+    private final DownloadLatestVersionService downloadLatestVersionService;
+
+    @Autowired
+    public UpdateController(AnimalService animalService, DownloadLatestVersionService downloadLatestVersionService) {
+        this.animalService = animalService;
+        this.downloadLatestVersionService = downloadLatestVersionService;
     }
 
     public void setupPage() {
@@ -30,7 +40,7 @@ public class UpdateController {
     private void showUpdatePopup() {
         Stage popupStage = new Stage();
         popupStage.initModality(Modality.APPLICATION_MODAL);
-        popupStage.getIcons().add(AnimalService.getInstance().getRandomAnimalImage());
+        popupStage.getIcons().add(animalService.getRandomAnimalImage());
         popupStage.setTitle("Downloading update");
         popupStage.setResizable(false);
 
@@ -56,7 +66,7 @@ public class UpdateController {
         Scene scene = new Scene(vbox, 300, 150);
         popupStage.setScene(scene);
 
-        Task<Void> downloadTask = DownloadLatestVersionService.createDownloadTask();
+        Task<Void> downloadTask = downloadLatestVersionService.createDownloadTask();
 
         downloadTask.setOnSucceeded(event -> {
             try {

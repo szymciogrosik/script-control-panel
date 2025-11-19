@@ -9,6 +9,7 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+import org.codefromheaven.context.SpringContext;
 import org.codefromheaven.service.animal.AnimalService;
 
 public class PopupController {
@@ -52,7 +53,7 @@ public class PopupController {
 
         // Set the window icon
         Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(AnimalService.getInstance().getRandomAnimalImage());
+        stage.getIcons().add(SpringContext.getBean(AnimalService.class).getRandomAnimalImage());
 
         alert.showAndWait();
     }

@@ -14,6 +14,7 @@ import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
+import org.codefromheaven.context.SpringContext;
 import org.codefromheaven.dto.data.SectionDTO;
 import org.codefromheaven.dto.settings.KeyValueDTO;
 import org.codefromheaven.dto.settings.SettingsDTO;
@@ -43,7 +44,7 @@ public class HiddenElementSettingsController {
         Stage settingsStage = new Stage();
         settingsStage.initModality(Modality.APPLICATION_MODAL);
         settingsStage.setTitle("Settings - Change visibility of elements");
-        settingsStage.getIcons().add(AnimalService.getInstance().getRandomAnimalImage());
+        settingsStage.getIcons().add(SpringContext.getBean(AnimalService.class).getRandomAnimalImage());
         settingsStage.setResizable(false);
 
         VBox settingsRoot = new VBox(10);
