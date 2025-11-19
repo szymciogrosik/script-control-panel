@@ -9,21 +9,28 @@ import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
 import java.net.HttpURLConnection;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.net.URL;
 import java.util.Optional;
 
+@Service
 public class DownloadLatestVersionService {
 
     private static final String TMP_FILE_LOCATION = FileUtils.TMP_DIR + "/" + AppVersionService.TMP_NAME;
+    private final AppVersionService appVersionService;
 
-    private DownloadLatestVersionService() {
+    @Autowired
+    public DownloadLatestVersionService(AppVersionService appVersionService) {
+        this.appVersionService = appVersionService;
     }
 
-    public static Task<Void> createDownloadTask() {
+    public Task<Void> createDownloadTask() {
         try {
-            if (AppVersionService.isNewVersionAvailable()) {
+            if (appVersionService.isNewVersionAvailable()) {
                 FileUtils.createOrReplaceTmpDirectory();
-                return createDownloadTask(TMP_FILE_LOCATION, AppVersionService.getLatestJarDownloadUrl());
+                return createDownloadTask(TMP_FILE_LOCATION, appVersionService.getLatestJarDownloadUrl());
             } else {
                 throw new RuntimeException("Download update should not be invoked when it is not present");
             }
@@ -33,7 +40,7 @@ public class DownloadLatestVersionService {
         }
     }
 
-    private static Task<Void> createDownloadTask(String savePath, String downloadUrl) {
+    private Task<Void> createDownloadTask(String savePath, String downloadUrl) {
         return new Task<>() {
             @Override
             protected Void call() throws Exception {

@@ -3,30 +3,30 @@ package org.codefromheaven.service.network;
 import javafx.scene.control.Alert;
 import org.codefromheaven.controller.PopupController;
 
+import org.springframework.stereotype.Service;
+
+@Service
 public class NetworkService {
 
-    private static Boolean networkPresent;
+    private Boolean networkPresent;
 
-    private NetworkService() {
-    }
-
-    public static void setNetworkPresent() {
+    public void setNetworkPresent() {
         networkPresent = true;
     }
 
-    public static void setNetworkNotPresent() {
+    public void setNetworkNotPresent() {
         networkPresent = false;
     }
 
-    public static boolean isNetworkUnknown() {
+    public boolean isNetworkUnknown() {
         return networkPresent == null;
     }
 
-    public static boolean isNetworkPresent() {
+    public boolean isNetworkPresent() {
         return networkPresent != null && networkPresent;
     }
 
-    public static void showPopupNetworkNotPresent() {
+    public void showPopupNetworkNotPresent() {
         PopupController.showPopup("Network not found, try check the updates later.",
                                   Alert.AlertType.ERROR);
     }

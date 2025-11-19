@@ -32,11 +32,28 @@ import org.codefromheaven.service.command.PowerShellService;
 import org.codefromheaven.service.network.NetworkService;
 import org.codefromheaven.service.settings.FilesToLoadSettingsService;
 import org.codefromheaven.service.settings.SettingsService;
+import org.codefromheaven.context.SpringContext;
 import org.codefromheaven.service.version.AppVersionService;
+import org.springframework.stereotype.Component;
 
+import org.springframework.beans.factory.annotation.Autowired;
+
+@Component
 public class MainWindowController implements Initializable {
 
     private static final String DOWNLOAD_UPDATE_BUTTON_BASE_TEXT = "Download and install";
+    private final AnimalService animalService;
+    private final SettingsService settingsService;
+    private final AppVersionService appVersionService;
+    private final NetworkService networkService;
+
+    @Autowired
+    public MainWindowController(AnimalService animalService, SettingsService settingsService, AppVersionService appVersionService, NetworkService networkService) {
+        this.animalService = animalService;
+        this.settingsService = settingsService;
+        this.appVersionService = appVersionService;
+        this.networkService = networkService;
+    }
 
     @FXML
     public VBox primaryPage;
@@ -76,7 +93,7 @@ public class MainWindowController implements Initializable {
         updateNotification.setImage(ImageLoader.getImage("/update/notification.png"));
         boolean noSectionPresent = HiddenElementSettingsController.loadAllElements().isEmpty();
         changeVisibleElements.setDisable(noSectionPresent);
-        boolean allowedToUpdate = SettingsService.isAllowedToUpdate();
+        boolean allowedToUpdate = settingsService.isAllowedToUpdate();
         menuUpdateButton.setVisible(allowedToUpdate);
         this.loadContent();
     }
@@ -127,12 +144,12 @@ public class MainWindowController implements Initializable {
     private void addAuthorNote(String authorNote) {
         VBox section = new VBox();
         section.setAlignment(Pos.CENTER);
-        ImageView authorImageView = new ImageView(AnimalService.getInstance().getCurrentAnimalImage());
+        ImageView authorImageView = new ImageView(animalService.getCurrentAnimalImage());
         authorImageView.getStyleClass().add("author-image");
         Tooltip.install(authorImageView, createTooltip(authorNote));
         authorImageView.setOnMouseClicked(event -> {
-            AnimalService.getInstance().replaceCurrentAnimalToRandomAnimal();
-            authorImageView.setImage(AnimalService.getInstance().getCurrentAnimalImage());
+            animalService.replaceCurrentAnimalToRandomAnimal();
+            authorImageView.setImage(animalService.getCurrentAnimalImage());
         });
         Group root = new Group(authorImageView);
         section.getChildren().add(root);
@@ -269,7 +286,7 @@ public class MainWindowController implements Initializable {
         dialog.setGraphic(null);
         dialog.setContentText(popupInputMessage);
         Stage dialogStage = (Stage) dialog.getDialogPane().getScene().getWindow();
-        dialogStage.getIcons().add(AnimalService.getInstance().getRandomAnimalImage()); // Update the path accordingly
+        dialogStage.getIcons().add(animalService.getRandomAnimalImage()); // Update the path accordingly
         return dialog.showAndWait();
     }
 
@@ -365,20 +382,20 @@ public class MainWindowController implements Initializable {
     @FXML
     private void handleCheckForUpdates() {
         checkForUpdates();
-        if (AppVersionService.isNewVersionAvailable()) {
+        if (appVersionService.isNewVersionAvailable()) {
             handleDownloadAndInstall();
         } else {
-            if (NetworkService.isNetworkPresent()) {
+            if (networkService.isNetworkPresent()) {
                 PopupController.showPopup("Everything up to date!", Alert.AlertType.INFORMATION);
             } else {
-                NetworkService.showPopupNetworkNotPresent();
+                networkService.showPopupNetworkNotPresent();
             }
         }
     }
 
     @FXML
     private void handleDownloadAndInstall() {
-        UpdateController controller = new UpdateController();
+        UpdateController controller = SpringContext.getBean(UpdateController.class);
         controller.setupPage();
     }
 
@@ -388,14 +405,14 @@ public class MainWindowController implements Initializable {
     }
 
     private void checkForUpdates() {
-        AppVersionService.checkForUpdates();
+        appVersionService.checkForUpdates();
 
-        boolean newerVersionPresent = AppVersionService.isNewVersionAvailable();
+        boolean newerVersionPresent = appVersionService.isNewVersionAvailable();
         downloadAndInstall.setDisable(!newerVersionPresent);
         updateNotification.setVisible(newerVersionPresent);
         String updateButtonText = DOWNLOAD_UPDATE_BUTTON_BASE_TEXT;
         if (newerVersionPresent) {
-            updateButtonText += " " + AppVersionService.getLatestVersion();
+            updateButtonText += " " + appVersionService.getLatestVersion();
         }
         downloadAndInstall.setText(updateButtonText);
     }
