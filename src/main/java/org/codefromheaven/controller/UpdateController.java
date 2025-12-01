@@ -12,16 +12,15 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.codefromheaven.context.SpringContext;
 import org.codefromheaven.dto.Setting;
 import org.codefromheaven.helpers.FileUtils;
 import org.codefromheaven.service.animal.AnimalService;
 import org.codefromheaven.service.command.GitBashService;
 import org.codefromheaven.service.update.DownloadLatestVersionService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.stereotype.Component;
+import org.springframework.stereotype.Service;
 
-@Component
+@Service
 public class UpdateController {
 
     private final AnimalService animalService;
