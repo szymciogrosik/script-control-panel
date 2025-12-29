@@ -87,6 +87,26 @@ jobs:
       - name: Build with Maven
         run: mvn clean install -DskipTests
 
+      - name: Build Windows EXE
+        run: scripts/build_windows_exe.bat
+        shell: cmd
+
+      - name: Setup 7-Zip and SFX Module
+        run: |
+          # Install 7-Zip
+          choco install 7zip -y
+
+          # Download 7-Zip Extra to get 7zsd.sfx
+          Invoke-WebRequest -Uri "https://www.7-zip.org/a/7z2301-extra.7z" -OutFile "7z_extra.7z"
+          & "C:\Program Files\7-Zip\7z.exe" e "7z_extra.7z" -o. 7zsd.sfx -r
+        shell: pwsh
+
+      - name: Create Single EXE (SFX)
+        run: |
+           $env:Path += ";C:\Program Files\7-Zip"
+           ./scripts/create_sfx.ps1
+        shell: pwsh
+
       - name: Create ZIP of Config Files
         run: |
           # Ensure temp directory exists
@@ -146,6 +166,16 @@ jobs:
           asset_path: ./target/script-control-panel.jar
           asset_name: script-control-panel.jar
           asset_content_type: application/java-archive
+
+      - name: Upload Windows Single EXE to Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./output/ScriptControlPanel.exe
+          asset_name: ScriptControlPanel.exe
+          asset_content_type: application/vnd.microsoft.portable-executable
 
       - name: Upload Default Files Zip to Release
         uses: actions/upload-release-asset@v1
