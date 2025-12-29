@@ -8,5 +8,6 @@ Instruction how and what needs to be installed to run application and more usefu
 * Updated way of changing the images from Random change to Ordered change.
 * Added possibility of changing themes.
 * Added winter themes - light and dark.
+* Applied styles on all pannes in the application.
 #### Fixes:
 * Refresh the navigation buttons after saving the settings.
