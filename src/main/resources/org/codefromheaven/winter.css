@@ -1,0 +1,86 @@
+.root {
+    -fx-font-family: 'Roboto', sans-serif;
+}
+
+.tooltip {
+    -fx-font-size: 12px;
+    -fx-font-family: 'Roboto', sans-serif;
+    -fx-text-fill: #ffffff;
+    -fx-background-color: rgba(0, 0, 0, 0.7);
+    -fx-padding: 8px 15px;
+    -fx-border-radius: 6px;
+}
+
+.text-header {
+    -fx-fill: #0073e6;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.text-main-header {
+    -fx-fill: #06a650;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.scroll-pane {
+    -fx-padding: 0;
+    -fx-border-width: 0;
+    -fx-background-color: #e3f2fd; /* Light Blue */
+}
+
+.mainStyle > * {
+    -fx-font: normal bold 12px 'Roboto', sans-serif;
+}
+
+.VBox {
+    -fx-spacing: 10px;
+    -fx-alignment: center;
+}
+
+.HBox {
+    -fx-spacing: 10px;
+    -fx-alignment: center;
+}
+
+.label {
+    -fx-text-fill: #1e88e5; /* Darker Blue */
+    -fx-font-size: 14px;
+}
+
+.button-default {
+    -fx-background-color: #90caf9; /* Lighter Blue */
+    -fx-text-fill: #000000;
+    -fx-font-size: 12px;
+}
+
+.button-default:hover {
+    -fx-background-color: #bbdefb; /* Even Lighter Blue */
+}
+
+.tooltip-custom {
+    -fx-text-fill: red;
+}
+
+.author-image {
+    -fx-fit-height: 50px;
+    -fx-fit-width: 50px;
+}
+
+.author-note {
+    -fx-alignment: center;
+}
+
+.primary-page {
+    -fx-min-width: 400px;
+}
+
+.background-primary {
+    -fx-background-color: transparent;
+    -fx-background-image: url("data:image/svg+xml;base64,PHN2ZyB4bWxucz0iaHR0cDovL3d3dy53My5vcmcvMjAwMC9zdmciIHdpZHRoPSIyNCIgaGVpZ2h0PSIyNCIgdmlld0JveD0iMCAwIDI0IDI0Ij48cGF0aCBkPSJNMjIgMTJsLTIgM3YtM2gtMnYzaC0zLjVsMS41IDItMi41IDQgMy41LTUgMiAyLjd2Mi4zMWwtMi0zdi0zLjAxbDIgMy4wMXYzaDJ2LTNsMi0zaC0yem0tMTYtMy4xOWwtMi0yLjgxaDIuODFsMS4xOS0zIDEuMTkgM2gyLjgxbC0yIDIuODEtMSAxLjY4LTEtMS42OHptLTIgNi4xOWwyIDMtMiAzaDJ2LTNoMnYzaDJ2LTNoMnYtMmgtMnYtMmgtMnYyaC0ydi0yaC0ydi0yaC0ydi0yaC0yem0xNS45NjIgNC40NzJsLjAzOC0uMDM4LS4wMzguMDM4em0tMi45NjItMTUuNDcydi0yaDJ2MmgtMnptLTMtNGgydjJoLTJ2LTJ6bTYgMmgydjJoLTJ2LTJ6bS0xMi0yYzEuNjU0IDAgMy0xLjM0NiAzLTNzLTEuMzQ2LTMtMy0zLTMgMS4zNDYtMyAzIDEuMzQ2IDMgMyAzek00IDdoMnYtMmgtMnYyem0tNCA0aDJ2LTJoLTJ2MnptMTYgMmgidj0iaDJ2MmgtMnYtMnoiLz48L3N2Zz4=");
+    -fx-background-repeat: repeat;
+}
+
+.hbox-spacing {
+    -fx-spacing: 5;
+}
