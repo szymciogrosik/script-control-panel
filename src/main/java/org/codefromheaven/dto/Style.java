@@ -4,7 +4,8 @@ import java.util.Arrays;
 
 public enum Style {
     CLASSIC("classic.css"),
-    WINTER("winter.css");
+    WINTER_LIGHT("winter_light.css"),
+    WINTER_DARK("winter_dark.css");
 
     private final String fileName;
 

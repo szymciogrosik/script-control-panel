@@ -153,12 +153,7 @@ public class SettingsController {
     private ComboBox<String> createComboBox(KeyValueDTO setting, ComboBox<String>[] valueFields, int i) {
         ComboBox<String> comboBox = new ComboBox<>();
         comboBox.setPrefWidth(500);
-        String[] options = new String[0];
-        if (setting.getKey().equals(Setting.IMAGE_NAME.getName())) {
-            options = AnimalProvider.getDeterminateAnimals().toArray(new String[0]);
-        } else if (setting.getKey().equals(Setting.APP_STYLE.getName())) {
-            options = Arrays.stream(Style.values()).map(Style::name).toArray(String[]::new);
-        }
+        String[] options = getComboBoxOptions(setting.getKey());
 
         comboBox.getItems().addAll(options);
 
@@ -168,6 +163,16 @@ public class SettingsController {
 
         valueFields[i] = comboBox;
         return comboBox;
+    }
+
+    private String[] getComboBoxOptions(String settingKey) {
+        if (settingKey.equals(Setting.IMAGE_NAME.getName())) {
+            return AnimalProvider.getDeterminateAnimals().stream().sorted().toArray(String[]::new);
+        }
+        if (settingKey.equals(Setting.APP_STYLE.getName())) {
+            return Arrays.stream(Style.values()).map(Style::name).sorted().toArray(String[]::new);
+        }
+        throw new IllegalArgumentException("Key " + settingKey + " is not supported.");
     }
 
     private CheckBox createCheckBox(String value, CheckBox[] valueFields, int i) {

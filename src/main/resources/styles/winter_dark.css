@@ -1,0 +1,112 @@
+/* --- Dark Theme Version --- */
+
+.root {
+    -fx-font-family: 'Roboto', sans-serif;
+    -fx-background-color: #121212; /* Deep Dark Background */
+}
+
+.tooltip {
+    -fx-font-size: 12px;
+    -fx-font-family: 'Roboto', sans-serif;
+    -fx-text-fill: #e0e0e0;
+    -fx-background-color: #333333; /* Slightly lighter than root */
+    -fx-padding: 8px 15px;
+    -fx-border-radius: 6px;
+    -fx-border-color: #444444;
+}
+
+.text-header {
+    -fx-fill: #64B5F6; /* Lighter Blue for visibility */
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.text-main-header {
+    -fx-fill: #90CAF9; /* Brightest Blue for contrast */
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.scroll-pane {
+    -fx-padding: 0;
+    -fx-border-width: 0;
+    -fx-background-color: #121212;
+}
+
+/* Fix for ScrollPane inner content */
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.mainStyle > * {
+    -fx-font: normal bold 12px 'Roboto', sans-serif;
+}
+
+.VBox, .HBox {
+    -fx-spacing: 10px;
+    -fx-alignment: center;
+}
+
+.label {
+    -fx-text-fill: #BBDEFB; /* Soft light blue */
+    -fx-font-size: 14px;
+}
+
+.button-default {
+    -fx-background-color: #1E88E5; /* Solid Blue */
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 12px;
+}
+
+.button-default:hover {
+    -fx-background-color: #004888; /* Brighter blue on hover */
+}
+
+.tooltip-custom {
+    -fx-text-fill: #FF5252; /* Vivid Red for Dark Theme */
+}
+
+.author-image {
+    -fx-fit-height: 50px;
+    -fx-fit-width: 50px;
+}
+
+.author-note {
+    -fx-alignment: center;
+}
+
+.primary-page {
+    -fx-min-width: 400px;
+}
+
+.background-primary {
+    -fx-background-color: #1E1E1E; /* Dark grey */
+}
+
+.hbox-spacing {
+    -fx-spacing: 5;
+}
+
+/* --- Menu Bar Dark Styling --- */
+
+.menu-bar {
+    -fx-background-color: #1E1E1E;
+}
+
+.menu-bar .menu .label,
+.menu-item .label {
+    -fx-text-fill: #BBDEFB !important;
+}
+
+.menu-bar .menu:hover,
+.menu-bar .menu:showing {
+    -fx-background-color: #333333;
+}
+
+.menu-item:focused {
+    -fx-background-color: #424242;
+}
+
+.context-menu {
+    -fx-background-color: #2C2C2C;
+}
