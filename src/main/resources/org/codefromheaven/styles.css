@@ -54,10 +54,8 @@
     -fx-font-size: 12px;
 }
 
-.button-selected {
+.button-default:hover {
     -fx-background-color: #00b6ae;
-    -fx-text-fill: #000000;
-    -fx-font-size: 12px;
 }
 
 .tooltip-custom {
@@ -67,6 +65,14 @@
 .author-image {
     -fx-fit-height: 50px; /* SIZE_OF_AUTHOR_IMAGE_IN_PIXELS */
     -fx-fit-width: 50px;
+}
+
+.author-note {
+    -fx-alignment: center;
+}
+
+.primary-page {
+    -fx-min-width: 400px;
 }
 
 .background-primary {
