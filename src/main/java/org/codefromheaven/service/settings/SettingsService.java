@@ -7,31 +7,32 @@ import org.codefromheaven.dto.settings.KeyValueDTO;
 import org.codefromheaven.dto.settings.SettingsDTO;
 import org.codefromheaven.resources.AnimalProvider;
 
+import org.springframework.stereotype.Service;
+
 import java.util.Optional;
 
+@Service
 public class SettingsService extends SettingsServiceBase {
 
     private static final FileType FILE_TYPE = FileType.SETTINGS;
 
-    private SettingsService() {}
-
-    public static SettingsDTO load() {
+    public SettingsDTO load() {
         return loadSettingsFile(FILE_TYPE);
     }
 
-    public static void saveSettings(SettingsDTO settings) {
+    public void saveSettings(SettingsDTO settings) {
         saveSettings(FILE_TYPE, settings);
     }
 
-    public static String getAppName() {
+    public String getAppName() {
         return loadValue(Setting.APP_NAME).get();
     }
 
-    public static String getPythonScriptsPrefix() {
+    public String getPythonScriptsPrefix() {
         return loadValue(Setting.PYTHON_SCRIPTS_PREFIX).get();
     }
 
-    public static String getAnimalImageFromSettingsOrAddIfDoesNotExist() {
+    public String getAnimalImageFromSettingsOrAddIfDoesNotExist() {
         Optional<String> currentAnimalOptional = loadValue(Setting.IMAGE_NAME);
         if (currentAnimalOptional.isPresent() && !currentAnimalOptional.get().isEmpty() &&
                 AnimalProvider.doesAnimalNameExist(currentAnimalOptional.get())) {
@@ -43,7 +44,7 @@ public class SettingsService extends SettingsServiceBase {
         }
     }
 
-    public static void replaceOrCreateConfigVariable(BaseSetting elementToReplace, String newValue) {
+    public void replaceOrCreateConfigVariable(BaseSetting elementToReplace, String newValue) {
         SettingsDTO settings = loadSettingsFile(FILE_TYPE);
         String key = elementToReplace.getName();
 
@@ -58,19 +59,19 @@ public class SettingsService extends SettingsServiceBase {
         saveSettings(FILE_TYPE, settings);
     }
 
-    public static Optional<String> loadValue(String setting) {
+    public Optional<String> loadValue(String setting) {
         return SettingsServiceBase.loadValue(setting, FILE_TYPE);
     }
 
-    public static Optional<String> loadValue(BaseSetting setting) {
+    public Optional<String> loadValue(BaseSetting setting) {
         return SettingsServiceBase.loadValue(setting.getName(), FILE_TYPE);
     }
 
-    public static boolean isAllowedToDownloadPreReleases() {
+    public boolean isAllowedToDownloadPreReleases() {
         return "true".equals(loadValue(Setting.ALLOW_PRE_RELEASES).orElse(""));
     }
 
-    public static boolean isAllowedToUpdate() {
+    public boolean isAllowedToUpdate() {
         return "true".equals(loadValue(Setting.ALLOW_FOR_UPGRADES).orElse(""));
     }
 

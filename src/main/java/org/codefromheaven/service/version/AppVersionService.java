@@ -16,22 +16,31 @@ import java.io.InputStream;
 import java.io.InputStreamReader;
 import java.net.HttpURLConnection;
 import java.net.URL;
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import java.time.Instant;
 import java.util.Optional;
 import java.util.Properties;
 
+@Service
 public class AppVersionService {
 
     public static final String APP_NAME = "script-control-panel";
     public static final String JAR_NAME = APP_NAME + ".jar";
     public static final String TMP_NAME = "new_" + JAR_NAME;
 
-    private static GitHubRelease gitHubRelease = null;
+    private GitHubRelease gitHubRelease = null;
+    private final NetworkService networkService;
+    private final SettingsService settingsService;
 
-    private AppVersionService() {
+    @Autowired
+    public AppVersionService(NetworkService networkService, SettingsService settingsService) {
+        this.networkService = networkService;
+        this.settingsService = settingsService;
     }
 
-    public static String getCurrentVersion() {
+    public String getCurrentVersion() {
         Properties properties = new Properties();
         try (InputStream input = FileNamesLoader.getResourceAsStream("version.properties")) {
             if (input == null) {
@@ -46,11 +55,11 @@ public class AppVersionService {
         }
     }
 
-    public static boolean isNewVersionAvailable() {
+    public boolean isNewVersionAvailable() {
         return !getCurrentVersion().equals(getLatestVersion());
     }
 
-    public static String getLatestVersion() {
+    public String getLatestVersion() {
         Optional<GitHubRelease> release = getLatestRelease();
         if (release.isPresent()) {
             return release.get().getTagName();
@@ -59,11 +68,11 @@ public class AppVersionService {
         }
     }
 
-    public static void checkForUpdates() {
+    public void checkForUpdates() {
         gitHubRelease = fetchLatestReleaseOrPreRelease().orElse(null);
     }
 
-    public static String getLatestJarDownloadUrl() {
+    public String getLatestJarDownloadUrl() {
         for (GitHubRelease.GitHubAsset asset : getLatestRelease().get().getAssets()) {
             if (asset.getName().equals(JAR_NAME)) {
                 return asset.getBrowserDownloadUrl();
@@ -72,14 +81,14 @@ public class AppVersionService {
         throw new RuntimeException("No " + JAR_NAME + " file found in the latest release");
     }
 
-    private static Optional<GitHubRelease> getLatestRelease() {
+    private Optional<GitHubRelease> getLatestRelease() {
         if (gitHubRelease == null) {
             checkForUpdates();
         }
         return Optional.ofNullable(gitHubRelease);
     }
 
-    public static Optional<GitHubRelease> fetchLatestReleaseOrPreRelease() {
+    public Optional<GitHubRelease> fetchLatestReleaseOrPreRelease() {
         HttpURLConnection connection = null;
         try {
             URL url = new URL(Link.API_ALL_RELEASES.getUrl());
@@ -107,20 +116,20 @@ public class AppVersionService {
 
             latestRelease = findLatestGitHubRelease(releases, latestReleaseDate, latestRelease, objectMapper);
 
-            NetworkService.setNetworkPresent();
+            networkService.setNetworkPresent();
             return Optional.of(latestRelease);
         } catch (IOException e) {
             e.printStackTrace();
-            if (NetworkService.isNetworkUnknown()) {
-                NetworkService.showPopupNetworkNotPresent();
+            if (networkService.isNetworkUnknown()) {
+                networkService.showPopupNetworkNotPresent();
             }
-            NetworkService.setNetworkNotPresent();
+            networkService.setNetworkNotPresent();
             return Optional.empty();
         }
     }
 
-    private static GitHubRelease findLatestGitHubRelease(JsonNode releases, Instant latestReleaseDate, GitHubRelease latestRelease, ObjectMapper objectMapper) throws JsonProcessingException {
-        boolean preReleaseEnabled = SettingsService.isAllowedToDownloadPreReleases();
+    private GitHubRelease findLatestGitHubRelease(JsonNode releases, Instant latestReleaseDate, GitHubRelease latestRelease, ObjectMapper objectMapper) throws JsonProcessingException {
+        boolean preReleaseEnabled = settingsService.isAllowedToDownloadPreReleases();
         for (JsonNode release : releases) {
             GitHubRelease tmpRelease = objectMapper.treeToValue(release, GitHubRelease.class);
 

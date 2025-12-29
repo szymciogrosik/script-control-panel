@@ -7,13 +7,16 @@ module servicerunner {
     requires org.apache.commons.io;
     requires org.apache.commons.lang3;
     requires java.desktop;
+    requires spring.context;
+    requires spring.beans;
+    requires jakarta.annotation;
 
     opens org.codefromheaven to javafx.fxml;
     exports org.codefromheaven;
     exports org.codefromheaven.service;
     opens org.codefromheaven.service to javafx.fxml;
     exports org.codefromheaven.controller;
-    opens org.codefromheaven.controller to javafx.fxml;
+    opens org.codefromheaven.controller to javafx.fxml, spring.beans;
     exports org.codefromheaven.dto;
     opens org.codefromheaven.dto to javafx.fxml;
     exports org.codefromheaven.helpers;
@@ -23,7 +26,7 @@ module servicerunner {
     exports org.codefromheaven.service.command;
     opens org.codefromheaven.service.command to javafx.fxml;
     exports org.codefromheaven.service.animal;
-    opens org.codefromheaven.service.animal to javafx.fxml;
+    opens org.codefromheaven.service.animal to javafx.fxml, spring.beans;
     exports org.codefromheaven.service.settings;
     exports org.codefromheaven.dto.settings;
     opens org.codefromheaven.dto.settings to com.fasterxml.jackson.databind;
@@ -32,10 +35,14 @@ module servicerunner {
     exports org.codefromheaven.dto.release;
     opens org.codefromheaven.dto.release to javafx.fxml;
     exports org.codefromheaven.service.version;
-    opens org.codefromheaven.service.version to javafx.fxml;
+    opens org.codefromheaven.service.version to javafx.fxml, spring.beans;
     exports org.codefromheaven.service.update;
-    opens org.codefromheaven.service.update to javafx.fxml;
+    opens org.codefromheaven.service.update to javafx.fxml, spring.beans;
     exports org.codefromheaven.service.gh;
     opens org.codefromheaven.service.gh to javafx.fxml;
-    opens org.codefromheaven.service.settings to com.fasterxml.jackson.databind, javafx.fxml;
+    opens org.codefromheaven.service.settings to com.fasterxml.jackson.databind, javafx.fxml, spring.beans;
+    exports org.codefromheaven.config;
+    opens org.codefromheaven.config to spring.core;
+    exports org.codefromheaven.context;
+    opens org.codefromheaven.service.network to spring.beans;
 }

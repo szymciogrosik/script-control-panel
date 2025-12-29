@@ -7,6 +7,7 @@ import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
+import org.codefromheaven.context.SpringContext;
 import org.codefromheaven.dto.Setting;
 import org.codefromheaven.dto.settings.FieldOnPageDTO;
 import org.codefromheaven.dto.settings.KeyValueDTO;
@@ -43,7 +44,7 @@ public class SettingsController {
     public void setupPage() {
         Stage settingsStage = new Stage();
         settingsStage.initModality(APPLICATION_MODAL);
-        settingsStage.getIcons().add(AnimalService.getInstance().getRandomAnimalImage());
+        settingsStage.getIcons().add(SpringContext.getBean(AnimalService.class).getRandomAnimalImage());
         settingsStage.setTitle("Additional settings");
         settingsStage.setResizable(false);
 
@@ -52,7 +53,7 @@ public class SettingsController {
         gridPane.setVgap(10);
         gridPane.setHgap(10);
 
-        SettingsDTO configSettings = SettingsService.load();
+        SettingsDTO configSettings = SpringContext.getBean(SettingsService.class).load();
         List<KeyValueDTO> settings = configSettings.getSettings().stream().filter(KeyValueDTO::isEditable).toList();
 
         FieldOnPageDTO valueFields = loadElementsToPage(settings, gridPane);
@@ -195,7 +196,7 @@ public class SettingsController {
             setting.setValue(newValue);
         }
 
-        SettingsService.saveSettings(new SettingsDTO(settings));
+        SpringContext.getBean(SettingsService.class).saveSettings(new SettingsDTO(settings));
         loader.loadContent();
         resizeMainWindow.resizeMainWindow();
         checkForUpdates.checkForUpdates();
