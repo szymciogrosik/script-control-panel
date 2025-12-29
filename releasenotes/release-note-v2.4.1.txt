@@ -1,0 +1,8 @@
+## App overview
+Fixed issues with disappearing a Christmas animals in the application.
+
+## Release notes
+#### Improvements:
+* None.
+#### Fixes:
+* Fixed issues with disappearing a Christmas animals in the application.
