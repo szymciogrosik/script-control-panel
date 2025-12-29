@@ -12,6 +12,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.codefromheaven.context.SpringContext;
@@ -23,6 +24,7 @@ import org.codefromheaven.helpers.MaxHighUtils;
 import org.codefromheaven.service.LoadFromJsonService;
 import org.codefromheaven.service.animal.AnimalService;
 import org.codefromheaven.service.settings.FilesToLoadSettingsService;
+import org.codefromheaven.service.style.StyleService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,7 +50,9 @@ public class HiddenElementSettingsController {
         settingsStage.setResizable(false);
 
         VBox settingsRoot = new VBox(10);
+        settingsRoot.getStyleClass().add("background-primary");
         ScrollPane scrollPane = new ScrollPane();
+        scrollPane.getStyleClass().add("scroll-pane-transparent");
         VBox contentBox = new VBox(10);
         contentBox.setPadding(new Insets(10));
 
@@ -61,6 +65,7 @@ public class HiddenElementSettingsController {
         settingsRoot.getChildren().add(scrollPane);
 
         Button btnSave = new Button("Save");
+        btnSave.getStyleClass().add("button-default");
         btnSave.setMaxWidth(Double.MAX_VALUE);
         HBox.setMargin(btnSave, new Insets(0, 10, 10, 10));
         btnSave.setPadding(new Insets(5));
@@ -80,6 +85,7 @@ public class HiddenElementSettingsController {
 
         // Scene height will be adjusted dynamically
         Scene scene = new Scene(settingsRoot, 400, 100);
+        scene.getStylesheets().add(SpringContext.getBean(StyleService.class).getCurrentStyleUrl());
         settingsStage.setScene(scene);
 
         // Add a listener to adjust the height dynamically as elements are added
@@ -96,13 +102,16 @@ public class HiddenElementSettingsController {
 
         allElements.forEach(section -> {
             VBox sectionBox = new VBox(5);
-            Label sectionLabel = new Label(section.sectionName());
-            sectionLabel.setFont(Font.font("System", FontWeight.BOLD, 12));
-            sectionBox.getChildren().add(sectionLabel);
+            Text sectionHeader = new Text(section.sectionName());
+            sectionHeader.getStyleClass().add("text-main-header");
+            sectionBox.getChildren().add(sectionHeader);
             section.subSections().forEach(subSection -> {
-                sectionBox.getChildren().add(new Label(subSection.subSectionName()));
+                Text subSectionHeader = new Text(subSection.subSectionName());
+                subSectionHeader.getStyleClass().add("text-header");
+                sectionBox.getChildren().add(subSectionHeader);
                 subSection.buttons().forEach(button -> {
                     CheckBox checkBox = new CheckBox(button.getName());
+                    checkBox.getStyleClass().add("check-box-on-dark-background");
                     boolean isChecked = visibilitySettings.isVisible(button);
                     checkBox.setSelected(isChecked);
                     checkBox.selectedProperty().addListener((obs, oldVal, newVal) -> {

@@ -96,3 +96,27 @@
 .menu-item:focused {
     -fx-background-color: #00b6ae;
 }
+
+.scroll-pane-transparent {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane-transparent > .viewport {
+    -fx-background-color: transparent;
+}
+
+.text-on-dark-background {
+    -fx-fill: white;
+}
+
+.label-on-dark-background {
+    -fx-text-fill: white;
+}
+
+.check-box-on-dark-background .box {
+    -fx-border-color: white;
+}
+
+.check-box-on-dark-background .text {
+    -fx-fill: white;
+}

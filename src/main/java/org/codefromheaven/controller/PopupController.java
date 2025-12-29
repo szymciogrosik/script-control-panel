@@ -11,6 +11,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.codefromheaven.context.SpringContext;
 import org.codefromheaven.service.animal.AnimalService;
+import org.codefromheaven.service.style.StyleService;
 
 public class PopupController {
 
@@ -32,6 +33,7 @@ public class PopupController {
 
         // Add the confirmation message text
         Text text = new Text(message);
+        text.getStyleClass().add("text-on-dark-background");
 
         // Add margin to the text
         HBox.setMargin(text, new Insets(10, 20, 0, 0));
@@ -54,6 +56,9 @@ public class PopupController {
         // Set the window icon
         Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
         stage.getIcons().add(SpringContext.getBean(AnimalService.class).getRandomAnimalImage());
+        alert.getDialogPane().getScene().getStylesheets().add(SpringContext.getBean(StyleService.class).getCurrentStyleUrl());
+        alert.getDialogPane().getStyleClass().add("background-primary");
+        alert.getDialogPane().lookupButton(buttonTypeYes).getStyleClass().add("button-default");
 
         alert.showAndWait();
     }

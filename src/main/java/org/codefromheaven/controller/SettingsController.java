@@ -16,6 +16,7 @@ import org.codefromheaven.dto.settings.SettingsDTO;
 import org.codefromheaven.resources.AnimalProvider;
 import org.codefromheaven.service.animal.AnimalService;
 import org.codefromheaven.service.settings.SettingsService;
+import org.codefromheaven.service.style.StyleService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,6 +57,7 @@ public class SettingsController {
         gridPane.setPadding(new Insets(20));
         gridPane.setVgap(10);
         gridPane.setHgap(10);
+        gridPane.getStyleClass().add("background-primary");
 
         SettingsDTO configSettings = SpringContext.getBean(SettingsService.class).load();
         List<KeyValueDTO> settings = configSettings.getSettings().stream().filter(KeyValueDTO::isEditable).toList();
@@ -63,6 +65,7 @@ public class SettingsController {
         FieldOnPageDTO valueFields = loadElementsToPage(settings, gridPane);
 
         Button saveButton = new Button("Save");
+        saveButton.getStyleClass().add("button-default");
         saveButton.setMaxWidth(Double.MAX_VALUE);
         HBox.setHgrow(saveButton, Priority.ALWAYS);
 
@@ -77,12 +80,14 @@ public class SettingsController {
         scrollPane.setContent(gridPane);
         scrollPane.setFitToWidth(true);
         scrollPane.setMaxHeight(700);
+        scrollPane.getStyleClass().add("scroll-pane-transparent");
 
         saveButton.setOnAction(event -> {
             doActionOnSave(settings, valueFields, settingsStage);
         });
 
         Scene scene = new Scene(scrollPane);
+        scene.getStylesheets().add(SpringContext.getBean(StyleService.class).getCurrentStyleUrl());
         settingsStage.setScene(scene);
         settingsStage.showAndWait();
     }
@@ -105,6 +110,7 @@ public class SettingsController {
         for (int i = 0; i < textSettings.size(); i++, globalPosition++) {
             KeyValueDTO setting = textSettings.get(i);
             Label label = new Label(getLabel(setting) + ":");
+            label.getStyleClass().add("label-on-dark-background");
             TextField field = createTextField(setting.getValue(), textValueFields, i);
             gridPane.add(label, 0, globalPosition);
             gridPane.add(field, 1, globalPosition);
@@ -113,7 +119,9 @@ public class SettingsController {
         for (int i = 0; i < checkBoxSettings.size(); i++, globalPosition++) {
             KeyValueDTO setting = checkBoxSettings.get(i);
             Label label = new Label(getLabel(setting) + ":");
+            label.getStyleClass().add("label-on-dark-background");
             CheckBox field = createCheckBox(setting.getValue(), checkBoxFields, i);
+            field.getStyleClass().add("check-box-on-dark-background");
             gridPane.add(label, 0, globalPosition);
             gridPane.add(field, 1, globalPosition);
         }
@@ -121,6 +129,7 @@ public class SettingsController {
         for (int i = 0; i < comboSettings.size(); i++, globalPosition++) {
             KeyValueDTO setting = comboSettings.get(i);
             Label label = new Label(getLabel(setting) + ":");
+            label.getStyleClass().add("label-on-dark-background");
             ComboBox<String> field = createComboBox(setting, comboValueFields, i);
             gridPane.add(label, 0, globalPosition);
             gridPane.add(field, 1, globalPosition);
