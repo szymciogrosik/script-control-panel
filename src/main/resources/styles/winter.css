@@ -71,37 +71,6 @@
     -fx-alignment: center;
 }
 
-/* 1. Target ONLY the top-level text (Settings, About) */
-.menu-bar > .container > .menu > .label,
-.menu-bar .menu > .label {
-    -fx-text-fill: #1e88e5; /* Default Blue */
-}
-
-/* 2. Top-level Hover: ONLY turn the top label white */
-.menu-bar .menu:hover > .label,
-.menu-bar .menu:showing > .label {
-    -fx-text-fill: white !important;
-}
-
-.menu-bar .menu:hover,
-.menu-bar .menu:showing {
-    -fx-background-color: #2196F3;
-}
-
-/* 3. Dropdown items: Force them to stay blue by default */
-.menu-item .label {
-    -fx-text-fill: #2196F3 !important;
-}
-
-/* 4. Dropdown Hover: Turn only the hovered sub-item white */
-.menu-item:focused {
-    -fx-background-color: #2196F3;
-}
-
-.menu-item:focused .label {
-    -fx-text-fill: white !important;
-}
-
 .primary-page {
     -fx-min-width: 400px;
 }
@@ -115,4 +84,18 @@
 
 .hbox-spacing {
     -fx-spacing: 5;
+}
+
+.menu-bar .menu .label,
+.menu-item .label {
+    -fx-text-fill: #1e88e5 !important;
+}
+
+.menu-bar .menu:hover,
+.menu-bar .menu:showing {
+    -fx-background-color: #90caf9;
+}
+
+.menu-item:focused {
+    -fx-background-color: #bbdefb;
 }

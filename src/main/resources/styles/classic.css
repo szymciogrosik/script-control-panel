@@ -71,43 +71,6 @@
     -fx-alignment: center;
 }
 
-/* 1. TOP LEVEL (Settings, About) - Default State */
-.menu-bar .menu > .label {
-    -fx-text-fill: #333333; /* Dark grey to match your .label style */
-}
-
-/* 2. TOP LEVEL - Hover/Selected State */
-.menu-bar .menu:hover,
-.menu-bar .menu:showing {
-    -fx-background-color: #E39100FF; /* Orange background on hover */
-}
-
-.menu-bar .menu:hover > .label,
-.menu-bar .menu:showing > .label {
-    -fx-text-fill: white !important; /* White text on orange */
-}
-
-/* 3. SUB ELEMENTS (Dropdown Items) - Default State */
-.menu-item .label {
-    -fx-text-fill: #333333 !important; /* Dark grey items */
-}
-
-/* 4. SUB ELEMENTS - Hover State */
-.menu-item:focused {
-    -fx-background-color: #00b6ae; /* Teal background (matching your button hover) */
-}
-
-.menu-item:focused .label {
-    -fx-text-fill: white !important;
-}
-
-/* Optional: Darken the dropdown background to match your dark theme */
-.context-menu {
-    -fx-background-color: #ffffff;
-    -fx-border-color: #E39100FF;
-    -fx-border-width: 1px;
-}
-
 .primary-page {
     -fx-min-width: 400px;
 }
@@ -118,4 +81,18 @@
 
 .hbox-spacing {
     -fx-spacing: 5;
+}
+
+.menu-bar .menu .label,
+.menu-item .label {
+    -fx-text-fill: #333333 !important;
+}
+
+.menu-bar .menu:hover,
+.menu-bar .menu:showing {
+    -fx-background-color: #E39100FF;
+}
+
+.menu-item:focused {
+    -fx-background-color: #00b6ae;
 }
