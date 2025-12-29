@@ -7,6 +7,6 @@ Instruction how and what needs to be installed to run application and more usefu
 * Upgraded dependencies to solve CVEs.
 * Updated way of changing the images from Random change to Ordered change.
 * Added possibility of changing themes.
-* Added winter theme.
+* Added winter themes - light and dark.
 #### Fixes:
 * Refresh the navigation buttons after saving the settings.
