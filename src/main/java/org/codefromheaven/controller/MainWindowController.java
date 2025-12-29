@@ -33,6 +33,7 @@ import org.codefromheaven.service.network.NetworkService;
 import org.codefromheaven.service.settings.FilesToLoadSettingsService;
 import org.codefromheaven.service.settings.SettingsService;
 import org.codefromheaven.context.SpringContext;
+import org.codefromheaven.service.style.StyleService;
 import org.codefromheaven.service.version.AppVersionService;
 import org.springframework.stereotype.Component;
 
@@ -46,13 +47,15 @@ public class MainWindowController implements Initializable {
     private final SettingsService settingsService;
     private final AppVersionService appVersionService;
     private final NetworkService networkService;
+    private final StyleService styleService;
 
     @Autowired
-    public MainWindowController(AnimalService animalService, SettingsService settingsService, AppVersionService appVersionService, NetworkService networkService) {
+    public MainWindowController(AnimalService animalService, SettingsService settingsService, AppVersionService appVersionService, NetworkService networkService, StyleService styleService) {
         this.animalService = animalService;
         this.settingsService = settingsService;
         this.appVersionService = appVersionService;
         this.networkService = networkService;
+        this.styleService = styleService;
     }
 
     @FXML
@@ -345,9 +348,19 @@ public class MainWindowController implements Initializable {
         controller.setupPage();
     }
 
+    @FunctionalInterface
+    public interface StyleReloader {
+        void reloadStyle();
+    }
+
+    private void reloadStyle() {
+        primaryPage.getScene().getStylesheets().clear();
+        primaryPage.getScene().getStylesheets().add(styleService.getCurrentStyleUrl());
+    }
+
     @FXML
     private void handleChangeSettings() {
-        SettingsController controller = new SettingsController(this::loadContent, this::resizeMainWindow, this::checkForUpdates);
+        SettingsController controller = new SettingsController(this::loadContent, this::resizeMainWindow, this::checkForUpdates, this::reloadStyle);
         controller.setupPage();
     }
 

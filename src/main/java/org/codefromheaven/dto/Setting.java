@@ -10,6 +10,7 @@ public enum Setting implements BaseSetting {
     BASH_PATH,
     MAX_WINDOW_HEIGHT,
     IMAGE_NAME,
+    APP_STYLE,
     APP_NAME,
     ALLOW_FOR_UPGRADES,
     PYTHON_SCRIPTS_PREFIX;

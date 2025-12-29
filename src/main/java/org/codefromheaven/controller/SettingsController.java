@@ -9,6 +9,7 @@ import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
 import org.codefromheaven.context.SpringContext;
 import org.codefromheaven.dto.Setting;
+import org.codefromheaven.dto.Style;
 import org.codefromheaven.dto.settings.FieldOnPageDTO;
 import org.codefromheaven.dto.settings.KeyValueDTO;
 import org.codefromheaven.dto.settings.SettingsDTO;
@@ -17,6 +18,7 @@ import org.codefromheaven.service.animal.AnimalService;
 import org.codefromheaven.service.settings.SettingsService;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -25,20 +27,22 @@ import static javafx.stage.Modality.APPLICATION_MODAL;
 
 public class SettingsController {
 
-    private final static Set<Setting> COMBO_FIELD_SETTINGS = Set.of(Setting.IMAGE_NAME);
+    private final static Set<Setting> COMBO_FIELD_SETTINGS = Set.of(Setting.IMAGE_NAME, Setting.APP_STYLE);
     private final static Set<Setting> CHECKBOX_FIELD_SETTINGS = Set.of(Setting.ALLOW_FOR_UPGRADES, Setting.ALLOW_PRE_RELEASES);
 
     private final MainWindowController.ContentLoader loader;
     private final MainWindowController.ResizeWindow resizeMainWindow;
     private final MainWindowController.CheckForUpdates checkForUpdates;
+    private final MainWindowController.StyleReloader styleReloader;
 
     public SettingsController(
             MainWindowController.ContentLoader loader, MainWindowController.ResizeWindow resizeMainWindow,
-            MainWindowController.CheckForUpdates checkForUpdates
+            MainWindowController.CheckForUpdates checkForUpdates, MainWindowController.StyleReloader styleReloader
     ) {
         this.loader = loader;
         this.resizeMainWindow = resizeMainWindow;
         this.checkForUpdates = checkForUpdates;
+        this.styleReloader = styleReloader;
     }
 
     public void setupPage() {
@@ -117,7 +121,7 @@ public class SettingsController {
         for (int i = 0; i < comboSettings.size(); i++, globalPosition++) {
             KeyValueDTO setting = comboSettings.get(i);
             Label label = new Label(getLabel(setting) + ":");
-            ComboBox<String> field = createComboBox(setting.getValue(), comboValueFields, i);
+            ComboBox<String> field = createComboBox(setting, comboValueFields, i);
             gridPane.add(label, 0, globalPosition);
             gridPane.add(field, 1, globalPosition);
         }
@@ -146,15 +150,20 @@ public class SettingsController {
         return textField;
     }
 
-    private ComboBox<String> createComboBox(String value, ComboBox<String>[] valueFields, int i) {
+    private ComboBox<String> createComboBox(KeyValueDTO setting, ComboBox<String>[] valueFields, int i) {
         ComboBox<String> comboBox = new ComboBox<>();
         comboBox.setPrefWidth(500);
+        String[] options = new String[0];
+        if (setting.getKey().equals(Setting.IMAGE_NAME.getName())) {
+            options = AnimalProvider.getDeterminateAnimals().toArray(new String[0]);
+        } else if (setting.getKey().equals(Setting.APP_STYLE.getName())) {
+            options = Arrays.stream(Style.values()).map(Style::name).toArray(String[]::new);
+        }
 
-        String[] options = AnimalProvider.getDeterminateAnimals().toArray(new String[0]);
         comboBox.getItems().addAll(options);
 
         if (options.length > 0) {
-            comboBox.setValue(value);
+            comboBox.setValue(setting.getValue());
         }
 
         valueFields[i] = comboBox;
@@ -197,6 +206,7 @@ public class SettingsController {
         }
 
         SpringContext.getBean(SettingsService.class).saveSettings(new SettingsDTO(settings));
+        styleReloader.reloadStyle();
         loader.loadContent();
         resizeMainWindow.resizeMainWindow();
         checkForUpdates.checkForUpdates();

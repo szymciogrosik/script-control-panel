@@ -10,6 +10,7 @@ import org.codefromheaven.service.animal.AnimalService;
 import org.codefromheaven.service.settings.SettingsService;
 import org.codefromheaven.config.AppConfig;
 import org.codefromheaven.context.SpringContext;
+import org.codefromheaven.service.style.StyleService;
 import org.codefromheaven.service.version.AppVersionService;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
@@ -29,6 +30,7 @@ public class App extends Application {
         SettingsService settingsService = SpringContext.getBean(SettingsService.class);
         AnimalService animalService = SpringContext.getBean(AnimalService.class);
         AppVersionService appVersionService = SpringContext.getBean(AppVersionService.class);
+        StyleService styleService = SpringContext.getBean(StyleService.class);
 
         String appName = settingsService.getAppName() + " - " + appVersionService.getCurrentVersion();
         stage.setTitle(appName);
@@ -37,7 +39,7 @@ public class App extends Application {
         Image animalImage = animalService.getCurrentAnimalImage();
         stage.getIcons().add(animalImage);
         Scene scene = new Scene(loadFXML("mainWindow", context));
-        scene.getStylesheets().add(Objects.requireNonNull(getClass().getResource("styles.css")).toExternalForm());
+        scene.getStylesheets().add(styleService.getCurrentStyleUrl());
         stage.setScene(scene);
         stage.show();
     }
