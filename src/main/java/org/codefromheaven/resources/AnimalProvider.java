@@ -2,13 +2,19 @@ package org.codefromheaven.resources;
 
 import org.codefromheaven.dto.data.AnimalDTO;
 
+import org.springframework.core.io.Resource;
+import org.springframework.core.io.support.PathMatchingResourcePatternResolver;
+
+import java.io.IOException;
 import java.time.LocalDate;
-import java.util.Arrays;
+import java.util.ArrayList;
 import java.util.Collections;
 import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.Arrays;
 
 public class AnimalProvider {
 
@@ -17,92 +23,35 @@ public class AnimalProvider {
     static {
         Map<ImageType, List<String>> map = new EnumMap<>(ImageType.class);
 
-        // REPLACE HERE BY GENERATED CODE - START
-        map.put(ImageType.valueOf("CHRISTMAS"), Arrays.asList(
-                "bear_1.png",
-                "bear_2.png",
-                "bear_3.png",
-                "bear_4.png",
-                "bear_5.png",
-                "bear_6.png",
-                "bird_1.png",
-                "bird_2.png",
-                "bird_3.png",
-                "bunny.png",
-                "cat_1.png",
-                "cat_2.png",
-                "cat_3.png",
-                "cat_4.png",
-                "dachshund.png",
-                "deer_1.png",
-                "deer_2.png",
-                "dog_1.png",
-                "dog_2.png",
-                "fox.png",
-                "hedgehog.png",
-                "horse.png",
-                "mouse_1.png",
-                "mouse_2.png",
-                "penguin.png",
-                "polar-bear.png",
-                "racoon.png",
-                "reindeer.png",
-                "rudolf.png",
-                "sea-star.png",
-                "shark.png"
-        ));
-
-        map.put(ImageType.valueOf("BIRTHDAY"), Arrays.asList(
-                "balloon-bear.png",
-                "balloon-dog.png",
-                "balloon-duck.png",
-                "bear.png",
-                "bunny.png",
-                "cat_1.png",
-                "cat_2.png",
-                "cow.png",
-                "panda.png"
-        ));
-
-        map.put(ImageType.valueOf("STANDARD"), Arrays.asList(
-                "armadillo.png",
-                "axolotl.png",
-                "bat.png",
-                "bear.png",
-                "bee.png",
-                "boar.png",
-                "cat.png",
-                "chameleon.png",
-                "chick.png",
-                "crab.png",
-                "crocodile.png",
-                "dinosaur.png",
-                "diplodocus.png",
-                "dolphin.png",
-                "elephant.png",
-                "fox.png",
-                "frog.png",
-                "giraffe.png",
-                "koala.png",
-                "octopus.png",
-                "owl.png",
-                "panda.png",
-                "penguin.png",
-                "raccoon.png",
-                "rat.png",
-                "sea-turtle.png",
-                "sheep.png",
-                "shrimp.png",
-                "snake.png",
-                "squirrel.png",
-                "starfish.png",
-                "turtle.png",
-                "whale.png",
-                "wolf.png"
-        ));
-        // REPLACE HERE BY GENERATED CODE - END
+        for (ImageType type : ImageType.values()) {
+            List<String> animals = loadAnimals(type);
+            if (!animals.isEmpty()) {
+                map.put(type, animals);
+            }
+        }
 
         ANIMALS_BY_TYPE = Collections.unmodifiableMap(map);
+    }
+
+    private static List<String> loadAnimals(ImageType type) {
+        List<String> animals = new ArrayList<>();
+        PathMatchingResourcePatternResolver resolver = new PathMatchingResourcePatternResolver();
+        try {
+            // Load all png files from the directory corresponding to the ImageType
+            // classpath*:animals/standard/*.png
+            String locationPattern = "classpath*:" + type.getPath() + "/*.png";
+            Resource[] resources = resolver.getResources(locationPattern);
+
+            animals = Arrays.stream(resources)
+                    .map(Resource::getFilename)
+                    .sorted()
+                    .collect(Collectors.toList());
+
+        } catch (IOException e) {
+            System.err.println("Failed to load animals for type: " + type.name());
+            e.printStackTrace();
+        }
+        return animals;
     }
 
     private AnimalProvider() {}
