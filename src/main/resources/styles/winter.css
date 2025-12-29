@@ -76,10 +76,7 @@
 }
 
 .background-primary {
-    /*-fx-background-color: #F5F5F5; !* Fallback color *!*/
-    /* This uses a seamless PNG pattern which JavaFX supports natively */
-    -fx-background-image: url("/styles/images/snowflakes.png");
-    -fx-background-repeat: repeat;
+    -fx-background-color: #F5F5F5;
 }
 
 .hbox-spacing {
