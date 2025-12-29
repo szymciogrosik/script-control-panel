@@ -93,8 +93,6 @@ public class MainWindowController implements Initializable {
         updateNotification.setImage(ImageLoader.getImage("/update/notification.png"));
         boolean noSectionPresent = HiddenElementSettingsController.loadAllElements().isEmpty();
         changeVisibleElements.setDisable(noSectionPresent);
-        boolean allowedToUpdate = settingsService.isAllowedToUpdate();
-        menuUpdateButton.setVisible(allowedToUpdate);
         this.loadContent();
     }
 
@@ -104,6 +102,7 @@ public class MainWindowController implements Initializable {
     }
 
     private void loadContent() {
+        refreshHeader();
         checkForUpdates();
         primaryPage.getChildren().clear();
         setupScrollPane();
@@ -123,6 +122,11 @@ public class MainWindowController implements Initializable {
         }
 
         addAuthorNote("Made with love by SJG");
+    }
+
+    private void refreshHeader() {
+        boolean allowedToUpdate = settingsService.isAllowedToUpdate();
+        menuUpdateButton.setVisible(allowedToUpdate);
     }
 
     private void setupScrollPane() {
