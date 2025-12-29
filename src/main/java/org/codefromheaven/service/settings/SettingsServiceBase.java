@@ -65,7 +65,7 @@ public abstract class SettingsServiceBase {
         return new SettingsDTO(settingsToReturn);
     }
 
-    public static String getConfigDir() {
+    private static String getConfigDir() {
         // Config dir cannot be editable
         return DefaultSettings.ALL.getSettings().stream()
                                   .filter(keyValue -> keyValue.getKey().equals(Setting.CONFIG_DIR.getName()))
