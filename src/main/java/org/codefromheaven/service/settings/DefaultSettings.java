@@ -42,6 +42,11 @@ public class DefaultSettings {
                     "Select image which displays in application"
             ),
             new KeyValueDTO(
+                    Setting.APP_STYLE.getName(),
+                    "",
+                    "Select application style"
+            ),
+            new KeyValueDTO(
                     Setting.APP_NAME.getName(),
                     "Script control panel",
                     "Override your app name"

@@ -9,6 +9,7 @@ import javafx.scene.layout.Priority;
 import javafx.stage.Stage;
 import org.codefromheaven.context.SpringContext;
 import org.codefromheaven.dto.Setting;
+import org.codefromheaven.dto.Style;
 import org.codefromheaven.dto.settings.FieldOnPageDTO;
 import org.codefromheaven.dto.settings.KeyValueDTO;
 import org.codefromheaven.dto.settings.SettingsDTO;
@@ -17,6 +18,7 @@ import org.codefromheaven.service.animal.AnimalService;
 import org.codefromheaven.service.settings.SettingsService;
 
 import java.util.ArrayList;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -155,7 +157,7 @@ public class SettingsController {
         if (setting.getKey().equals(Setting.IMAGE_NAME.getName())) {
             options = AnimalProvider.getDeterminateAnimals().toArray(new String[0]);
         } else if (setting.getKey().equals(Setting.APP_STYLE.getName())) {
-            options = new String[]{"Standard", "Angular Material"};
+            options = Arrays.stream(Style.values()).map(Style::name).toArray(String[]::new);
         }
 
         comboBox.getItems().addAll(options);
