@@ -9,5 +9,6 @@ Instruction how and what needs to be installed to run application and more usefu
 * Added possibility of changing themes.
 * Added winter themes - light and dark.
 * Applied styles on all pannes in the application.
+* Replaced animal parser by Spring PathMatchingResourcePatternResolver to dynamically load the images in the runtime.
 #### Fixes:
 * Refresh the navigation buttons after saving the settings.
