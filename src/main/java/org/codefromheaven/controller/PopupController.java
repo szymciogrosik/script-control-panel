@@ -11,6 +11,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import org.codefromheaven.context.SpringContext;
 import org.codefromheaven.service.animal.AnimalService;
+import org.codefromheaven.service.style.StyleService;
 
 public class PopupController {
 
@@ -54,6 +55,8 @@ public class PopupController {
         // Set the window icon
         Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
         stage.getIcons().add(SpringContext.getBean(AnimalService.class).getRandomAnimalImage());
+        alert.getDialogPane().getScene().getStylesheets().add(SpringContext.getBean(StyleService.class).getCurrentStyleUrl());
+        alert.getDialogPane().getStyleClass().add("background-primary");
 
         alert.showAndWait();
     }

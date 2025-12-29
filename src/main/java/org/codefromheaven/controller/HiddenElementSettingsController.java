@@ -23,6 +23,7 @@ import org.codefromheaven.helpers.MaxHighUtils;
 import org.codefromheaven.service.LoadFromJsonService;
 import org.codefromheaven.service.animal.AnimalService;
 import org.codefromheaven.service.settings.FilesToLoadSettingsService;
+import org.codefromheaven.service.style.StyleService;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -48,6 +49,7 @@ public class HiddenElementSettingsController {
         settingsStage.setResizable(false);
 
         VBox settingsRoot = new VBox(10);
+        settingsRoot.getStyleClass().add("background-primary");
         ScrollPane scrollPane = new ScrollPane();
         VBox contentBox = new VBox(10);
         contentBox.setPadding(new Insets(10));
@@ -80,6 +82,7 @@ public class HiddenElementSettingsController {
 
         // Scene height will be adjusted dynamically
         Scene scene = new Scene(settingsRoot, 400, 100);
+        scene.getStylesheets().add(SpringContext.getBean(StyleService.class).getCurrentStyleUrl());
         settingsStage.setScene(scene);
 
         // Add a listener to adjust the height dynamically as elements are added

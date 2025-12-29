@@ -16,6 +16,7 @@ import org.codefromheaven.dto.settings.SettingsDTO;
 import org.codefromheaven.resources.AnimalProvider;
 import org.codefromheaven.service.animal.AnimalService;
 import org.codefromheaven.service.settings.SettingsService;
+import org.codefromheaven.service.style.StyleService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -56,6 +57,7 @@ public class SettingsController {
         gridPane.setPadding(new Insets(20));
         gridPane.setVgap(10);
         gridPane.setHgap(10);
+        gridPane.getStyleClass().add("background-primary");
 
         SettingsDTO configSettings = SpringContext.getBean(SettingsService.class).load();
         List<KeyValueDTO> settings = configSettings.getSettings().stream().filter(KeyValueDTO::isEditable).toList();
@@ -83,6 +85,7 @@ public class SettingsController {
         });
 
         Scene scene = new Scene(scrollPane);
+        scene.getStylesheets().add(SpringContext.getBean(StyleService.class).getCurrentStyleUrl());
         settingsStage.setScene(scene);
         settingsStage.showAndWait();
     }
