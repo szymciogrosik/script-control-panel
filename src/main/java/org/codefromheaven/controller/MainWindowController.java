@@ -291,7 +291,7 @@ public class MainWindowController implements Initializable {
         dialog.setGraphic(null);
         dialog.setContentText(popupInputMessage);
         Stage dialogStage = (Stage) dialog.getDialogPane().getScene().getWindow();
-        dialogStage.getIcons().add(animalService.getRandomAnimalImage()); // Update the path accordingly
+        dialogStage.getIcons().add(animalService.getRandomAnimalImage());
         return dialog.showAndWait();
     }
 
