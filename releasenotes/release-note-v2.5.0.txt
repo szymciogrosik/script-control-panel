@@ -5,5 +5,6 @@ Instruction how and what needs to be installed to run application and more usefu
 #### Improvements:
 * Refactored application to use Spring Context to manage dependencies.
 * Upgraded dependencies to solve CVEs.
+* Updated way of changing the images from Random change to Ordered change.
 #### Fixes:
 * None.

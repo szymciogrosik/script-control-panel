@@ -108,18 +108,28 @@ public class AnimalProvider {
 
     private AnimalProvider() {}
 
-    public static AnimalDTO getRandomAnimal() {
+    public static AnimalDTO getNextAnimal() {
+        return getNextAnimal(null);
+    }
+
+    public static AnimalDTO getNextAnimal(AnimalDTO currentAnimal) {
         ImageType currentType = determinateImageType();
         List<String> animals = getDeterminateAnimals(currentType);
-        Random random = new Random();
-        return new AnimalDTO(animals.get(random.nextInt(animals.size())), currentType);
+
+        if (currentAnimal == null || currentAnimal.imageType() != currentType) {
+            return new AnimalDTO(animals.get(0), currentType);
+        }
+
+        int oldIndex = animals.indexOf(currentAnimal.name());
+        int nextIndex = oldIndex != -1 && oldIndex != (animals.size() - 1) ? oldIndex + 1 : 0;
+        return new AnimalDTO(animals.get(nextIndex), currentType);
     }
 
     public static AnimalDTO findAnimalByNameOrReturnRandomIfNotPresent(String animalName) {
         ImageType currentType = determinateImageType();
         List<String> animals = getDeterminateAnimals(currentType);
         Optional<String> first = animals.stream().filter(a -> a.equals(animalName)).findFirst();
-        return first.map(s -> new AnimalDTO(s, currentType)).orElseGet(AnimalProvider::getRandomAnimal);
+        return first.map(s -> new AnimalDTO(s, currentType)).orElseGet(AnimalProvider::getNextAnimal);
     }
 
     public static List<String> getDeterminateAnimals() {

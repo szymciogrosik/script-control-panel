@@ -148,7 +148,7 @@ public class MainWindowController implements Initializable {
         authorImageView.getStyleClass().add("author-image");
         Tooltip.install(authorImageView, createTooltip(authorNote));
         authorImageView.setOnMouseClicked(event -> {
-            animalService.replaceCurrentAnimalToRandomAnimal();
+            animalService.replaceCurrentAnimalToNextAnimal();
             authorImageView.setImage(animalService.getCurrentAnimalImage());
         });
         Group root = new Group(authorImageView);

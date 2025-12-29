@@ -5,9 +5,6 @@ import org.codefromheaven.dto.Setting;
 import org.codefromheaven.dto.data.AnimalDTO;
 import org.codefromheaven.helpers.ImageLoader;
 import jakarta.annotation.PostConstruct;
-import org.codefromheaven.dto.Setting;
-import org.codefromheaven.dto.data.AnimalDTO;
-import org.codefromheaven.helpers.ImageLoader;
 import org.codefromheaven.resources.AnimalProvider;
 import org.codefromheaven.service.settings.SettingsService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -38,20 +35,20 @@ public class AnimalService {
     }
 
     public Image getRandomAnimalImage() {
-        return ImageLoader.getImage(getAnimalPath(AnimalProvider.getRandomAnimal()));
+        return ImageLoader.getImage(getAnimalPath(AnimalProvider.getNextAnimal(getCurrentAnimal())));
     }
 
-    public void replaceCurrentAnimalToRandomAnimal() {
-        AnimalDTO newAnimal = AnimalProvider.getRandomAnimal();
+    public void replaceCurrentAnimalToNextAnimal() {
+        AnimalDTO newAnimal = AnimalProvider.getNextAnimal(getCurrentAnimal());
         replaceCurrentAnimal(newAnimal);
     }
 
     private void replaceCurrentAnimal(AnimalDTO newAnimal) {
-        settingsService.replaceOrCreateConfigVariable(Setting.IMAGE_NAME, newAnimal.getName());
+        settingsService.replaceOrCreateConfigVariable(Setting.IMAGE_NAME, newAnimal.name());
     }
 
     private String getAnimalPath(AnimalDTO animal) {
-        return "/" + animal.getImageType().getPath() + "/" + animal.getName();
+        return "/" + animal.imageType().getPath() + "/" + animal.name();
     }
 
 }

@@ -38,7 +38,7 @@ public class SettingsService extends SettingsServiceBase {
                 AnimalProvider.doesAnimalNameExist(currentAnimalOptional.get())) {
             return currentAnimalOptional.get();
         } else {
-            String animal = AnimalProvider.getRandomAnimal().getName();
+            String animal = AnimalProvider.getNextAnimal().name();
             replaceOrCreateConfigVariable(Setting.IMAGE_NAME, animal);
             return animal;
         }
