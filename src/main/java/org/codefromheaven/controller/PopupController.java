@@ -57,6 +57,7 @@ public class PopupController {
         stage.getIcons().add(SpringContext.getBean(AnimalService.class).getRandomAnimalImage());
         alert.getDialogPane().getScene().getStylesheets().add(SpringContext.getBean(StyleService.class).getCurrentStyleUrl());
         alert.getDialogPane().getStyleClass().add("background-primary");
+        alert.getDialogPane().lookupButton(buttonTypeYes).getStyleClass().add("button-default");
 
         alert.showAndWait();
     }

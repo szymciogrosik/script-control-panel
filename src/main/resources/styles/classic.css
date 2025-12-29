@@ -96,3 +96,19 @@
 .menu-item:focused {
     -fx-background-color: #00b6ae;
 }
+
+.background-primary .label {
+    -fx-text-fill: white;
+}
+
+.background-primary .check-box .box {
+    -fx-border-color: white;
+}
+
+.background-primary .check-box .text {
+    -fx-fill: white;
+}
+
+.background-primary .text {
+    -fx-fill: white;
+}

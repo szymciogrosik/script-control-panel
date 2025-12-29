@@ -65,6 +65,7 @@ public class SettingsController {
         FieldOnPageDTO valueFields = loadElementsToPage(settings, gridPane);
 
         Button saveButton = new Button("Save");
+        saveButton.getStyleClass().add("button-default");
         saveButton.setMaxWidth(Double.MAX_VALUE);
         HBox.setHgrow(saveButton, Priority.ALWAYS);
 
