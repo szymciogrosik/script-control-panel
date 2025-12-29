@@ -12,13 +12,13 @@
 }
 
 .text-header {
-    -fx-fill: #0073e6;
+    -fx-fill: #2196F3;
     -fx-font-size: 13px;
     -fx-font-weight: bold;
 }
 
 .text-main-header {
-    -fx-fill: #06a650;
+    -fx-fill: #2196F3;
     -fx-font-size: 18px;
     -fx-font-weight: bold;
 }
@@ -26,7 +26,7 @@
 .scroll-pane {
     -fx-padding: 0;
     -fx-border-width: 0;
-    -fx-background-color: #eeeeee;
+    -fx-background-color: #F5F5F5;
 }
 
 .mainStyle > * {
@@ -44,18 +44,19 @@
 }
 
 .label {
-    -fx-text-fill: #333333;
+    -fx-text-fill: #212121;
     -fx-font-size: 14px;
 }
 
 .button-default {
-    -fx-background-color: #E39100FF;
-    -fx-text-fill: #000000;
+    -fx-background-color: #2196F3;
+    -fx-text-fill: #FFFFFF;
     -fx-font-size: 12px;
 }
 
 .button-default:hover {
-    -fx-background-color: #00b6ae;
+    -fx-background-color: #FFC107;
+    -fx-text-fill: #212121;
 }
 
 .tooltip-custom {
@@ -63,7 +64,7 @@
 }
 
 .author-image {
-    -fx-fit-height: 50px; /* SIZE_OF_AUTHOR_IMAGE_IN_PIXELS */
+    -fx-fit-height: 50px; /* SIZE_OF_AUTHOR_IMAGE_IN_PIPIXELS */
     -fx-fit-width: 50px;
 }
 
@@ -76,7 +77,7 @@
 }
 
 .background-primary {
-    -fx-background-color: rgb(33, 33, 33);
+    -fx-background-color: #F5F5F5;
 }
 
 .hbox-spacing {

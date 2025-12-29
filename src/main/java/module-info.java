@@ -9,6 +9,7 @@ module servicerunner {
     requires java.desktop;
     requires spring.context;
     requires spring.beans;
+    requires spring.core;
     requires jakarta.annotation;
 
     opens org.codefromheaven to javafx.fxml;
