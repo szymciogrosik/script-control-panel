@@ -9,3 +9,4 @@ tmp/
 
 # Local config
 local*.properties
+output/

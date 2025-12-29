@@ -87,6 +87,10 @@ jobs:
       - name: Build with Maven
         run: mvn clean install -DskipTests
 
+      - name: Build Windows Exe
+        run: ./scripts/build_windows_app.ps1
+        shell: pwsh
+
       - name: Create ZIP of Config Files
         run: |
           # Ensure temp directory exists
@@ -146,6 +150,16 @@ jobs:
           asset_path: ./target/script-control-panel.jar
           asset_name: script-control-panel.jar
           asset_content_type: application/java-archive
+
+      - name: Upload Windows Exe to Release
+        uses: actions/upload-release-asset@v1
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        with:
+          upload_url: ${{ steps.create_release.outputs.upload_url }}
+          asset_path: ./output/ScriptControlPanel-Win.zip
+          asset_name: ScriptControlPanel-Win.zip
+          asset_content_type: application/zip
 
       - name: Upload Default Files Zip to Release
         uses: actions/upload-release-asset@v1
