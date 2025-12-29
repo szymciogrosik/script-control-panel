@@ -33,6 +33,7 @@ public class PopupController {
 
         // Add the confirmation message text
         Text text = new Text(message);
+        text.getStyleClass().add("text-on-dark-background");
 
         // Add margin to the text
         HBox.setMargin(text, new Insets(10, 20, 0, 0));

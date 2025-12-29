@@ -97,18 +97,26 @@
     -fx-background-color: #00b6ae;
 }
 
-.background-primary .label {
-    -fx-text-fill: white;
+.scroll-pane-transparent {
+    -fx-background-color: transparent;
 }
 
-.background-primary .check-box .box {
-    -fx-border-color: white;
+.scroll-pane-transparent > .viewport {
+    -fx-background-color: transparent;
 }
 
-.background-primary .check-box .text {
+.text-on-dark-background {
     -fx-fill: white;
 }
 
-.background-primary .text {
+.label-on-dark-background {
+    -fx-text-fill: white;
+}
+
+.check-box-on-dark-background .box {
+    -fx-border-color: white;
+}
+
+.check-box-on-dark-background .text {
     -fx-fill: white;
 }

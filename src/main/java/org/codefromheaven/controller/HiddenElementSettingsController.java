@@ -51,6 +51,7 @@ public class HiddenElementSettingsController {
         VBox settingsRoot = new VBox(10);
         settingsRoot.getStyleClass().add("background-primary");
         ScrollPane scrollPane = new ScrollPane();
+        scrollPane.getStyleClass().add("scroll-pane-transparent");
         VBox contentBox = new VBox(10);
         contentBox.setPadding(new Insets(10));
 
@@ -63,7 +64,6 @@ public class HiddenElementSettingsController {
         settingsRoot.getChildren().add(scrollPane);
 
         Button btnSave = new Button("Save");
-        btnSave.getStyleClass().add("button-default");
         btnSave.setMaxWidth(Double.MAX_VALUE);
         HBox.setMargin(btnSave, new Insets(0, 10, 10, 10));
         btnSave.setPadding(new Insets(5));
@@ -101,12 +101,16 @@ public class HiddenElementSettingsController {
         allElements.forEach(section -> {
             VBox sectionBox = new VBox(5);
             Label sectionLabel = new Label(section.sectionName());
+            sectionLabel.getStyleClass().add("label-on-dark-background");
             sectionLabel.setFont(Font.font("System", FontWeight.BOLD, 12));
             sectionBox.getChildren().add(sectionLabel);
             section.subSections().forEach(subSection -> {
-                sectionBox.getChildren().add(new Label(subSection.subSectionName()));
+                Label subSectionLabel = new Label(subSection.subSectionName());
+                subSectionLabel.getStyleClass().add("label-on-dark-background");
+                sectionBox.getChildren().add(subSectionLabel);
                 subSection.buttons().forEach(button -> {
                     CheckBox checkBox = new CheckBox(button.getName());
+                    checkBox.getStyleClass().add("check-box-on-dark-background");
                     boolean isChecked = visibilitySettings.isVisible(button);
                     checkBox.setSelected(isChecked);
                     checkBox.selectedProperty().addListener((obs, oldVal, newVal) -> {
