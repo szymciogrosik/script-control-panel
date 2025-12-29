@@ -12,6 +12,7 @@ import javafx.scene.layout.Priority;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Font;
 import javafx.scene.text.FontWeight;
+import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.codefromheaven.context.SpringContext;
@@ -101,14 +102,13 @@ public class HiddenElementSettingsController {
 
         allElements.forEach(section -> {
             VBox sectionBox = new VBox(5);
-            Label sectionLabel = new Label(section.sectionName());
-            sectionLabel.getStyleClass().add("label-on-dark-background");
-            sectionLabel.setFont(Font.font("System", FontWeight.BOLD, 12));
-            sectionBox.getChildren().add(sectionLabel);
+            Text sectionHeader = new Text(section.sectionName());
+            sectionHeader.getStyleClass().add("text-main-header");
+            sectionBox.getChildren().add(sectionHeader);
             section.subSections().forEach(subSection -> {
-                Label subSectionLabel = new Label(subSection.subSectionName());
-                subSectionLabel.getStyleClass().add("label-on-dark-background");
-                sectionBox.getChildren().add(subSectionLabel);
+                Text subSectionHeader = new Text(subSection.subSectionName());
+                subSectionHeader.getStyleClass().add("text-header");
+                sectionBox.getChildren().add(subSectionHeader);
                 subSection.buttons().forEach(button -> {
                     CheckBox checkBox = new CheckBox(button.getName());
                     checkBox.getStyleClass().add("check-box-on-dark-background");
