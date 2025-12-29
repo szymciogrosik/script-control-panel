@@ -19,6 +19,52 @@ public class AnimalProvider {
         Map<ImageType, List<String>> map = new EnumMap<>(ImageType.class);
 
         // REPLACE HERE BY GENERATED CODE - START
+        map.put(ImageType.valueOf("CHRISTMAS"), Arrays.asList(
+                "bear_1.png",
+                "bear_2.png",
+                "bear_3.png",
+                "bear_4.png",
+                "bear_5.png",
+                "bear_6.png",
+                "bird_1.png",
+                "bird_2.png",
+                "bird_3.png",
+                "bunny.png",
+                "cat_1.png",
+                "cat_2.png",
+                "cat_3.png",
+                "cat_4.png",
+                "dachshund.png",
+                "deer_1.png",
+                "deer_2.png",
+                "dog_1.png",
+                "dog_2.png",
+                "fox.png",
+                "hedgehog.png",
+                "horse.png",
+                "mouse_1.png",
+                "mouse_2.png",
+                "penguin.png",
+                "polar-bear.png",
+                "racoon.png",
+                "reindeer.png",
+                "rudolf.png",
+                "sea-star.png",
+                "shark.png"
+        ));
+
+        map.put(ImageType.valueOf("BIRTHDAY"), Arrays.asList(
+                "balloon-bear.png",
+                "balloon-dog.png",
+                "balloon-duck.png",
+                "bear.png",
+                "bunny.png",
+                "cat_1.png",
+                "cat_2.png",
+                "cow.png",
+                "panda.png"
+        ));
+
         map.put(ImageType.valueOf("STANDARD"), Arrays.asList(
                 "armadillo.png",
                 "axolotl.png",
@@ -55,40 +101,6 @@ public class AnimalProvider {
                 "whale.png",
                 "wolf.png"
         ));
-
-        map.put(ImageType.valueOf("CHRISTMAS"), Arrays.asList(
-                "bear_1.png",
-                "bear_2.png",
-                "bear_3.png",
-                "bear_4.png",
-                "bear_5.png",
-                "bear_6.png",
-                "bird_1.png",
-                "bird_2.png",
-                "bird_3.png",
-                "bunny.png",
-                "cat_1.png",
-                "cat_2.png",
-                "cat_3.png",
-                "cat_4.png",
-                "dachshund.png",
-                "deer_1.png",
-                "deer_2.png",
-                "dog_1.png",
-                "dog_2.png",
-                "fox.png",
-                "hedgehog.png",
-                "horse.png",
-                "mouse_1.png",
-                "mouse_2.png",
-                "penguin.png",
-                "polar-bear.png",
-                "racoon.png",
-                "reindeer.png",
-                "rudolf.png",
-                "sea-star.png",
-                "shark.png"
-        ));
         // REPLACE HERE BY GENERATED CODE - END
 
         ANIMALS_BY_TYPE = Collections.unmodifiableMap(map);
@@ -123,18 +135,25 @@ public class AnimalProvider {
     }
 
     private static ImageType determinateImageType() {
+        if (isAuthorBirthday()) {
+            return ImageType.BIRTHDAY;
+        }
         if (isChristmasTime()) {
             return ImageType.CHRISTMAS;
-        } else {
-            return ImageType.STANDARD;
         }
+        return ImageType.STANDARD;
     }
 
     private static boolean isChristmasTime() {
         LocalDate now = LocalDate.now();
-        boolean afterMiddleOfNovember = now.getMonthValue() >= 11 && now.getDayOfMonth() >= 15;
-        boolean beforeMiddleOfJanuary = now.getMonthValue() == 1 && now.getDayOfMonth() <= 15;
+        boolean afterMiddleOfNovember = (now.getMonthValue() == 11 && now.getDayOfMonth() >= 15) || now.getMonthValue() == 12;
+        boolean beforeMiddleOfJanuary = now.getMonthValue() == 1 && now.getDayOfMonth() <= 13;
         return afterMiddleOfNovember || beforeMiddleOfJanuary;
+    }
+
+    private static boolean isAuthorBirthday() {
+        LocalDate now = LocalDate.now();
+        return now.getMonthValue() == 1 && now.getDayOfMonth() == 14;
     }
 
 }

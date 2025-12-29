@@ -17,11 +17,15 @@ import org.codefromheaven.service.settings.SettingsService;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Set;
 import java.util.stream.Collectors;
 
 import static javafx.stage.Modality.APPLICATION_MODAL;
 
 public class SettingsController {
+
+    private final static Set<Setting> COMBO_FIELD_SETTINGS = Set.of(Setting.IMAGE_NAME);
+    private final static Set<Setting> CHECKBOX_FIELD_SETTINGS = Set.of(Setting.ALLOW_FOR_UPGRADES, Setting.ALLOW_PRE_RELEASES);
 
     private final MainWindowController.ContentLoader loader;
     private final MainWindowController.ResizeWindow resizeMainWindow;
@@ -121,13 +125,13 @@ public class SettingsController {
     }
 
     private List<KeyValueDTO> getComboSettings(List<KeyValueDTO> settings) {
-        return settings.stream().filter(elem -> elem.getKey().equals(Setting.IMAGE_NAME.getName()))
+        return settings.stream().filter(elem -> COMBO_FIELD_SETTINGS.stream().anyMatch(key -> key.getName().equals(elem.getKey())))
                 .collect(Collectors.toList());
     }
 
     private List<KeyValueDTO> getCheckBoxSettings(List<KeyValueDTO> settings) {
-        return settings.stream().filter(elem -> elem.getKey().equals(Setting.ALLOW_PRE_RELEASES.getName()))
-                .collect(Collectors.toList());
+        return settings.stream().filter(elem -> CHECKBOX_FIELD_SETTINGS.stream().anyMatch(key -> key.getName().equals(elem.getKey())))
+                       .collect(Collectors.toList());
     }
 
     private List<KeyValueDTO> getTextSettings(List<KeyValueDTO> settings, List<KeyValueDTO> alreadyUsedSettings) {

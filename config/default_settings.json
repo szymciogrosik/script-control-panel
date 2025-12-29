@@ -12,12 +12,6 @@
       "description": "Java 17+ custom path to bin (f.e. C:\\Program Files\\Java\\jdk-17\\bin)"
     },
     {
-      "key": "ALLOW_FOR_UPGRADES",
-      "value": "false",
-      "editable": false,
-      "description": "Allow for user upgrades"
-    },
-    {
       "key": "ALL_EXAMPLE_SCRIPTS_PATH",
       "value": "config/scripts",
       "description": "Location of all example scripts"
