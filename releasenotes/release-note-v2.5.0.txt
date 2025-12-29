@@ -1,0 +1,9 @@
+## App overview
+Instruction how and what needs to be installed to run application and more useful information, you can find [here](https://github.com/szymciogrosik/script-control-panel/wiki).
+
+## Release notes
+#### Improvements:
+* Refactored application to use Spring Context to manage dependencies.
+* Upgraded dependencies to solve CVEs.
+#### Fixes:
+* None.
