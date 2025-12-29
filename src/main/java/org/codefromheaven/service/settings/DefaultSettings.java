@@ -1,6 +1,7 @@
 package org.codefromheaven.service.settings;
 
 import org.codefromheaven.dto.Setting;
+import org.codefromheaven.dto.Style;
 import org.codefromheaven.dto.settings.KeyValueDTO;
 import org.codefromheaven.dto.settings.SettingsDTO;
 
@@ -43,7 +44,7 @@ public class DefaultSettings {
             ),
             new KeyValueDTO(
                     Setting.APP_STYLE.getName(),
-                    "",
+                    Style.CLASSIC.name(),
                     "Select application style"
             ),
             new KeyValueDTO(
