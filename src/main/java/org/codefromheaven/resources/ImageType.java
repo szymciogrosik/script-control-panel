@@ -1,8 +1,9 @@
 package org.codefromheaven.resources;
 
 public enum ImageType {
-    STANDARD("animals/standard"),
-    CHRISTMAS("animals/christmas");
+    CHRISTMAS("animals/christmas"),
+    BIRTHDAY("animals/birthday"),
+    STANDARD("animals/standard");
 
     private final String path;
 
