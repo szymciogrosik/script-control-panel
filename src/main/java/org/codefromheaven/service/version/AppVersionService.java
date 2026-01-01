@@ -26,9 +26,8 @@ import java.util.Properties;
 @Service
 public class AppVersionService {
 
-    public static final String APP_NAME = "script-control-panel";
-    public static final String JAR_NAME = APP_NAME + ".jar";
-    public static final String TMP_NAME = "new_" + JAR_NAME;
+    public static final String APP_NAME = "ScriptControlPanel-Win";
+    public static final String ZIP_NAME = APP_NAME + ".zip";
 
     private GitHubRelease gitHubRelease = null;
     private final NetworkService networkService;
@@ -74,11 +73,11 @@ public class AppVersionService {
 
     public String getLatestJarDownloadUrl() {
         for (GitHubRelease.GitHubAsset asset : getLatestRelease().get().getAssets()) {
-            if (asset.getName().equals(JAR_NAME)) {
+            if (asset.getName().equals(ZIP_NAME)) {
                 return asset.getBrowserDownloadUrl();
             }
         }
-        throw new RuntimeException("No " + JAR_NAME + " file found in the latest release");
+        throw new RuntimeException("No " + ZIP_NAME + " file found in the latest release");
     }
 
     private Optional<GitHubRelease> getLatestRelease() {

@@ -18,7 +18,7 @@ import java.util.Optional;
 @Service
 public class DownloadLatestVersionService {
 
-    private static final String TMP_FILE_LOCATION = FileUtils.TMP_DIR + "/" + AppVersionService.TMP_NAME;
+    private static final String TMP_FILE_LOCATION = FileUtils.TMP_DIR + "/" + AppVersionService.ZIP_NAME;
     private final AppVersionService appVersionService;
 
     @Autowired
