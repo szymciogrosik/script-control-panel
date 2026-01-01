@@ -57,7 +57,7 @@ $zipPath = Join-Path $outputDir $zipName
 
 Write-Host "Zipping output..."
 if (Test-Path $sourcePath) {
-    Compress-Archive -Path $sourcePath -DestinationPath $zipPath -Force
+    Compress-Archive -Path "$sourcePath\*" -DestinationPath $zipPath -Force
     Write-Host "Build success. Output zipped at $zipPath"
 } else {
     Write-Error "Output directory not found. jpackage might have failed."
