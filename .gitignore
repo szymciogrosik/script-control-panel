@@ -2,11 +2,16 @@ target/
 .idea/
 dependency-reduced-pom.xml
 
-script-control-panel.jar
-my_own*
-tmp/
-*.log
-
 # Local config
 local*.properties
 output/
+
+# Same as for standard app
+/ScriptControlPanel-Win.zip
+/ScriptControlPanel.exe
+/ScriptControlPanel.exe.lnk
+app/
+runtime/
+config/my_own*
+tmp/
+*.log
