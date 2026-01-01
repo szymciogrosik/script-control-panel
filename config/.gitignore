@@ -1,4 +1,8 @@
-script-control-panel.jar
+ScriptControlPanel-Win.zip
+ScriptControlPanel.exe
+ScriptControlPanel.exe.lnk
+app/
+runtime/
 config/my_own*
 tmp/
 *.log

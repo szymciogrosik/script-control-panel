@@ -72,17 +72,19 @@ unzip_script_control_panel() {
 
 # Function to download the latest release of ScriptControlPanel
 download_latest_release() {
+  # Copy initial version instead downloading if present
+  if [ -f "initial/$SCRIPT_CONTROL_PANEL_ZIP" ]; then
+      echo "Found existing initial version. Copying..."
+      cp "initial/$SCRIPT_CONTROL_PANEL_ZIP" "$SCRIPT_CONTROL_PANEL_ZIP"
+      return 0
+  fi
+
   echo "Checking for latest release..."
+
   latest_tag=$(curl -s https://api.github.com/repos/szymciogrosik/script-control-panel/releases/latest | grep "tag_name" | cut -d '"' -f 4)
 
   if [[ -n "$latest_tag" ]]; then
     latest_url="https://github.com/szymciogrosik/script-control-panel/releases/download/$latest_tag/$SCRIPT_CONTROL_PANEL_ZIP"
-
-    # Remove existing zip if it exists to ensure a clean download
-    if [ -f "$SCRIPT_CONTROL_PANEL_ZIP" ]; then
-        echo "Found existing $SCRIPT_CONTROL_PANEL_ZIP. Removing it..."
-        rm "$SCRIPT_CONTROL_PANEL_ZIP"
-    fi
 
     echo "Downloading the latest release of $SCRIPT_CONTROL_PANEL_ZIP from $latest_url"
     curl -L -o "$SCRIPT_CONTROL_PANEL_ZIP" "$latest_url"
@@ -103,18 +105,23 @@ download_latest_release() {
   fi
 }
 
-# Function to run the exe
-run_script_control_panel() {
-  if [ -f "$SCRIPT_CONTROL_PANEL_EXE" ]; then
-      echo "Starting $SCRIPT_CONTROL_PANEL_EXE..."
-      # 'start' is used in Git Bash (Windows) to launch the app independently
-      # This allows the script to close without killing the app
-      start "" "$SCRIPT_CONTROL_PANEL_EXE"
-      return 0
-  else
-      print_error_message "Executable $SCRIPT_CONTROL_PANEL_EXE not found after unzipping."
-      wait_for_button_pressed
-      return 1
+# Function to cleanup tmp directories
+cleanup_tmp_directories() {
+  echo "Cleaning up temporary directories..."
+
+  # Check and remove 'tmp'
+  if [ -d "tmp" ]; then
+    rm -rf tmp
+  fi
+
+  # Check and remove 'app'
+  if [ -d "app" ]; then
+    rm -rf app
+  fi
+
+  # Check and remove 'runtime'
+  if [ -d "runtime" ]; then
+    rm -rf runtime
   fi
 }
 
@@ -123,17 +130,21 @@ if check_git_bash; then
   # Removed logic that skips download if file exists.
   # Now forcing download_latest_release to enable update/replace behavior.
   if download_latest_release; then
+    cleanup_tmp_directories
     # Try to unzip
     if unzip_script_control_panel; then
-        # Try to run
-        if run_script_control_panel; then
-            echo "Process started. Closing the bash window..."
-            sleep 2
-            exit 0
-        fi
+        rm "$SCRIPT_CONTROL_PANEL_ZIP"
+        print_line_separator
+        print_line_separator
+        print_line_separator
+        echo "Installed successfully the Script Control Panel App!"
+        print_line_separator
+        echo "Double press ScriptControlPanel.exe to start!"
+        print_line_separator
+        print_line_separator
+        print_line_separator
     fi
   fi
 fi
 
-# If we get here, something failed
 wait_for_button_pressed

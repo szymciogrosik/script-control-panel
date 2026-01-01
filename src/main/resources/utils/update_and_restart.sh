@@ -1,5 +1,9 @@
 #!/bin/bash
 
+# Configuration
+NEW_ZIP_NAME="ScriptControlPanel-Win.zip"
+APP_EXE_NAME="ScriptControlPanel.exe"
+
 function print_batman() {
   echo "++++++++++++++++++++++++++++++++++++++++++++++++++++++"
   echo "           _                         _"
@@ -45,118 +49,57 @@ function print_info_about_closing_window_soon() {
 
 function wait_for_pressing_key() {
   echo "Press any button to exit..."
-  read
+  read -n 1 -s
 }
 
-# Wait few seconds
+# 1. Wait for the old app to close fully
 print_info_about_waiting_for_closing_application
 
-# Define directories and filenames
+# 2. Setup Directories
 CURRENT_DIR="$(pwd)"
-OLD_APP_NAME="script-control-panel.jar"
-NEW_APP_NAME="new_script-control-panel.jar"
+ZIP_FILE_PATH="$CURRENT_DIR/$NEW_ZIP_NAME"
 
-# Check if $NEW_APP_NAME exists in the current directory
-if [ ! -f "$CURRENT_DIR/$NEW_APP_NAME" ]; then
-  echo "Error: $CURRENT_DIR/$NEW_APP_NAME not found!"
+# Check if the update ZIP exists
+if [ ! -f "$ZIP_FILE_PATH" ]; then
+  echo "Error: Update file $ZIP_FILE_PATH not found!"
   print_error_image
   wait_for_pressing_key
   exit 1
 fi
 
-# Move one level up from the current directory
+# Move one level up (to the installation root)
 cd ..
-
-# Define the target directory after moving up
 TARGET_DIR="$(pwd)"
 
-# Replace the old JAR with the new one
-mv -f "$CURRENT_DIR/$NEW_APP_NAME" "$TARGET_DIR/$OLD_APP_NAME"
-if [ $? -ne 0 ]; then
-  echo "Error: Failed to move $CURRENT_DIR/$NEW_APP_NAME to $TARGET_DIR/$OLD_APP_NAME!"
+# 3. Unzip and Overwrite
+echo "Extracting update..."
+# -o: overwrite existing files without prompting
+# -d: destination directory
+if unzip -o "$ZIP_FILE_PATH" -d "$TARGET_DIR"; then
+  echo "Update extracted successfully."
+else
+  echo "Error: Failed to unzip files!"
   print_error_image
   wait_for_pressing_key
   exit 1
 fi
 
-# Function to get the value of JAVA_PATH from a specified JSON file
-get_java_path_variable_for_file() {
-  local file="$1"
-  local java_path=$(jq -r '.settings[] | select(.key == "JAVA_PATH") | .value' "$1")
-  echo "$java_path"
-}
-
-# Function to get the value of JAVA_PATH, checking multiple files
-get_java_path_variable() {
-  local my_own_settings_file="../config/my_own_settings.json"
-  local settings_file="../config/settings.json"
-
-  local java_path=$(get_java_path_variable_for_file "$my_own_settings_file")
-
-  if [ -z "$java_path" ]; then
-    java_path=$(get_java_path_variable_for_file "$settings_file")
-  fi
-
-  echo "$java_path"
-}
-
-# Function to get the value of JAVA_PATH from a specified JSON file
-get_java_path_variable_for_file() {
-  local json_file="$1"
-  local java_path=$(awk '
-        BEGIN { RS="{"; FS="," }
-        /"key": "JAVA_PATH"/ {
-          for (i = 1; i <= NF; i++) {
-            if ($i ~ /"value":/) {
-              gsub(/.*"value": *"/, "", $i)
-              gsub(/".*/, "", $i)
-              print $i
-              exit 0
-            }
-          }
-        }
-        ' "$json_file")
-  echo "$java_path"
-}
-
-# Function to get the value of JAVA_PATH, checking multiple files
-get_java_path_variable() {
-  local my_own_settings_file="../config/my_own_settings.json"
-  local settings_file="../config/default_settings.json"
-
-  local java_path=$(get_java_path_variable_for_file "$my_own_settings_file")
-
-  if [ -z "$java_path" ]; then
-    java_path=$(get_java_path_variable_for_file "$settings_file")
-  fi
-
-  echo "$java_path"
-}
-
-# Function to run script-control-panel.jar
-run_script_control_panel() {
-  local java_path="$(get_java_path_variable)"
-  if [ -n "$java_path" ]; then
-    local java_dir_path="$java_path\\java"
-    echo "Executing JAR with custom Java path: '$java_dir_path'"
-    nohup "$java_path" -jar "$TARGET_DIR/$OLD_APP_NAME" > "$TARGET_DIR/tmp/app_update.log" 2>&1 &
-  else
-    echo "Executing JAR with standard JAVA_HOME path: '$JAVA_HOME'"
-    nohup java -jar "$TARGET_DIR/$OLD_APP_NAME" > "$TARGET_DIR/tmp/app_update.log" 2>&1 &
-  fi
-}
-
-# Restart the application
-run_script_control_panel
-if [ $? -ne 0 ]; then
-  echo "Error: Failed to start the application!"
+# 4. Run the new Executable
+echo "Starting application..."
+if [ -f "$TARGET_DIR/$APP_EXE_NAME" ]; then
+  # 'start' detaches the process in Windows Git Bash so this script can close
+  start "" "$TARGET_DIR/$APP_EXE_NAME"
+else
+  echo "Error: $APP_EXE_NAME not found after extraction!"
   print_error_image
   wait_for_pressing_key
   exit 1
 fi
 
+# 5. Success and Exit
 echo "------------------------------------------------------"
 echo "Application updated successfully!"
 echo "------------------------------------------------------"
 print_batman
 print_info_about_closing_window_soon
+exit 0
