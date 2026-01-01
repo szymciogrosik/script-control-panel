@@ -1,0 +1,9 @@
+## App overview
+Instruction how and what needs to be installed to run application and more useful information, you can find [here](https://github.com/szymciogrosik/script-control-panel/wiki).
+
+## Release notes
+#### Improvements:
+* Changed a way of distributing the Script Control Panel App, from now it is distributed in portable version, together with the required Java environment.
+* From this version Script Control Panel App is targeted only for Windows.
+#### Fixes:
+* None.
