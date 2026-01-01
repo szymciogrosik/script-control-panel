@@ -50,12 +50,11 @@ check_git_bash() {
 
 # Function to check if ScriptControlPanel already downloaded
 check_downloaded() {
-  if [ -f "$SCRIPT_CONTROL_PANEL_ZIP" ]; then
-    echo "File $SCRIPT_CONTROL_PANEL_ZIP is already downloaded."
+  if [ -f "$SCRIPT_CONTROL_PANEL_EXE" ]; then
+    echo "File $SCRIPT_CONTROL_PANEL_EXE is already downloaded."
     return 0
   else
-    echo "File $SCRIPT_CONTROL_PANEL_ZIP is not downloaded."
-    wait_for_button_pressed
+    echo "File $SCRIPT_CONTROL_PANEL_EXE is not downloaded."
     return 1
   fi
 }

@@ -42,6 +42,7 @@ jpackage `
   --main-jar $jarName `
   --dest $outputDir `
   --name "ScriptControlPanel" `
+  --icon "src/main/resources/icon/duck.ico" `
   --verbose
 
 if ($LASTEXITCODE -ne 0) {
@@ -49,17 +50,22 @@ if ($LASTEXITCODE -ne 0) {
     exit 1
 }
 
-# 4. Zip the output
+# 4. Cleanup and Zip
 $appName = "ScriptControlPanel"
 $zipName = "ScriptControlPanel-Win.zip"
 $sourcePath = Join-Path $outputDir $appName
 $zipPath = Join-Path $outputDir $zipName
 
+# REMOVE stray .ico files if they exist in the root of the app
+$strayIcon = Join-Path $sourcePath "ScriptControlPanel.ico"
+if (Test-Path $strayIcon) {
+    Write-Host "Removing stray icon file..."
+    Remove-Item -Force $strayIcon
+}
+
 Write-Host "Zipping output..."
 if (Test-Path $sourcePath) {
+    # Zips the contents (exe, app, runtime) without the loose .ico
     Compress-Archive -Path "$sourcePath\*" -DestinationPath $zipPath -Force
-    Write-Host "Build success. Output zipped at $zipPath"
-} else {
-    Write-Error "Output directory not found. jpackage might have failed."
-    exit 1
+    Write-Host "Build success."
 }
