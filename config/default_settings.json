@@ -6,12 +6,6 @@
       "description": "Override your app name"
     },
     {
-      "key": "JAVA_PATH",
-      "value": "",
-      "editable": true,
-      "description": "Java 17+ custom path to bin (f.e. C:\\Program Files\\Java\\jdk-17\\bin)"
-    },
-    {
       "key": "ALL_EXAMPLE_SCRIPTS_PATH",
       "value": "config/scripts",
       "description": "Location of all example scripts"
