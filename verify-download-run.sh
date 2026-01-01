@@ -48,24 +48,45 @@ check_git_bash() {
   fi
 }
 
-# Function to check if ScriptControlPanel already downloaded
-check_downloaded() {
-  if [ -f "$SCRIPT_CONTROL_PANEL_EXE" ]; then
-    echo "File $SCRIPT_CONTROL_PANEL_EXE is already downloaded."
-    return 0
+# Function to unzip the downloaded file
+unzip_script_control_panel() {
+  echo "Unzipping $SCRIPT_CONTROL_PANEL_ZIP..."
+
+  # Check if unzip is installed
+  if ! command -v unzip &> /dev/null; then
+      print_error_message "'unzip' command not found. Please install unzip or use Git Bash."
+      wait_for_button_pressed
+      return 1
+  fi
+
+  # -o overwrites existing files without prompting
+  if unzip -o "$SCRIPT_CONTROL_PANEL_ZIP"; then
+      echo "Unzipped successfully."
+      return 0
   else
-    echo "File $SCRIPT_CONTROL_PANEL_EXE is not downloaded."
-    return 1
+      print_error_message "Failed to unzip $SCRIPT_CONTROL_PANEL_ZIP"
+      wait_for_button_pressed
+      return 1
   fi
 }
 
 # Function to download the latest release of ScriptControlPanel
 download_latest_release() {
+  echo "Checking for latest release..."
   latest_tag=$(curl -s https://api.github.com/repos/szymciogrosik/script-control-panel/releases/latest | grep "tag_name" | cut -d '"' -f 4)
+
   if [[ -n "$latest_tag" ]]; then
     latest_url="https://github.com/szymciogrosik/script-control-panel/releases/download/$latest_tag/$SCRIPT_CONTROL_PANEL_ZIP"
+
+    # Remove existing zip if it exists to ensure a clean download
+    if [ -f "$SCRIPT_CONTROL_PANEL_ZIP" ]; then
+        echo "Found existing $SCRIPT_CONTROL_PANEL_ZIP. Removing it..."
+        rm "$SCRIPT_CONTROL_PANEL_ZIP"
+    fi
+
     echo "Downloading the latest release of $SCRIPT_CONTROL_PANEL_ZIP from $latest_url"
-    curl -L -o $SCRIPT_CONTROL_PANEL_ZIP "$latest_url"
+    curl -L -o "$SCRIPT_CONTROL_PANEL_ZIP" "$latest_url"
+
     if [[ $? -eq 0 ]]; then
       echo "Downloaded $SCRIPT_CONTROL_PANEL_ZIP successfully."
       return 0
@@ -82,20 +103,37 @@ download_latest_release() {
   fi
 }
 
-unzip_script_control_panel() {
-
+# Function to run the exe
+run_script_control_panel() {
+  if [ -f "$SCRIPT_CONTROL_PANEL_EXE" ]; then
+      echo "Starting $SCRIPT_CONTROL_PANEL_EXE..."
+      # 'start' is used in Git Bash (Windows) to launch the app independently
+      # This allows the script to close without killing the app
+      start "" "$SCRIPT_CONTROL_PANEL_EXE"
+      return 0
+  else
+      print_error_message "Executable $SCRIPT_CONTROL_PANEL_EXE not found after unzipping."
+      wait_for_button_pressed
+      return 1
+  fi
 }
 
 # Main script execution
 if check_git_bash; then
-  if check_downloaded || download_latest_release; then
-    unzip_script_control_panel
-    echo "Running $SCRIPT_CONTROL_PANEL_EXE"
-    run_script_control_panel
-    echo "Process started. Closing the bash window."
-    sleep 1
-    exit 0
+  # Removed logic that skips download if file exists.
+  # Now forcing download_latest_release to enable update/replace behavior.
+  if download_latest_release; then
+    # Try to unzip
+    if unzip_script_control_panel; then
+        # Try to run
+        if run_script_control_panel; then
+            echo "Process started. Closing the bash window..."
+            sleep 2
+            exit 0
+        fi
+    fi
   fi
 fi
 
+# If we get here, something failed
 wait_for_button_pressed
