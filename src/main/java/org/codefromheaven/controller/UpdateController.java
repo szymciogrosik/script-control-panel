@@ -108,20 +108,18 @@ public class UpdateController {
                 String tmpDirPath = System.getProperty("user.dir") + java.io.File.separator + "tmp";
                 java.io.File updateBat = new java.io.File(tmpDirPath, "update.bat");
                 String batContent = "@echo off\r\n" +
-                        "echo Waiting for application to close...\r\n" +
+                        "set TMP_DIR=%~dp0\r\n" +
+                        "set APP_DIR=%TMP_DIR%..\r\n" +
                         "ping 127.0.0.1 -n 4 > nul\r\n" +
-                        "echo Extracting update...\r\n" +
-                        "cd ..\r\n" +
-                        "powershell -NoProfile -Command \"Expand-Archive -Force -Path 'tmp/"
+                        "cd /d \"%APP_DIR%\"\r\n" +
+                        "powershell -NoProfile -Command \"Expand-Archive -Force -Path '%TMP_DIR%"
                         + AppVersionService.ZIP_NAME + "' -DestinationPath '.'\"\r\n" +
-                        "echo Starting application...\r\n" +
                         "start \"\" \"ScriptControlPanel.exe\"\r\n" +
-                        "echo Cleaning up...\r\n" +
-                        "rmdir /s /q tmp\r\n" +
+                        "rmdir /s /q \"%TMP_DIR%\"\r\n" +
                         "exit\r\n";
                 java.nio.file.Files.writeString(updateBat.toPath(), batContent);
 
-                ProcessBuilder processBuilder = new ProcessBuilder("cmd", "/c", "start", "\"\"", "update.bat");
+                ProcessBuilder processBuilder = new ProcessBuilder("cmd", "/c", "update.bat");
                 processBuilder.directory(new java.io.File(tmpDirPath));
                 processBuilder.start();
             } catch (Exception ex) {
