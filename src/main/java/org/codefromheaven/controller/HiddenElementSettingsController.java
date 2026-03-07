@@ -43,7 +43,7 @@ public class HiddenElementSettingsController {
         Stage settingsStage = new Stage();
         settingsStage.initModality(Modality.APPLICATION_MODAL);
         settingsStage.setTitle("Settings - Change visibility of elements");
-        settingsStage.getIcons().add(SpringContext.getBean(AnimalService.class).getNextAnimalImage());
+        settingsStage.getIcons().add(SpringContext.getBean(AnimalService.class).getRandomAnimalImage());
         settingsStage.setResizable(false);
 
         VBox settingsRoot = new VBox(10);

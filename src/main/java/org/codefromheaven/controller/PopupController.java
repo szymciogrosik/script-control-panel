@@ -61,7 +61,7 @@ public class PopupController {
 
         // Setup the window icon and custom styles
         Stage stage = (Stage) alert.getDialogPane().getScene().getWindow();
-        stage.getIcons().add(SpringContext.getBean(AnimalService.class).getNextAnimalImage());
+        stage.getIcons().add(SpringContext.getBean(AnimalService.class).getRandomAnimalImage());
         alert.getDialogPane().getScene().getStylesheets()
                 .add(SpringContext.getBean(StyleService.class).getCurrentStyleUrl());
         alert.getDialogPane().getStyleClass().add("background-primary");

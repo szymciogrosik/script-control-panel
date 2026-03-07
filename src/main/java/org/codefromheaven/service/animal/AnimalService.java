@@ -34,16 +34,16 @@ public class AnimalService {
         return AnimalProvider.findAnimalByNameOrReturnRandomIfNotPresent(name);
     }
 
-    public Image getNextAnimalImage() {
-        return ImageLoader.getImage(getAnimalPath(AnimalProvider.getNextAnimal(getCurrentAnimal())));
+    public Image getNextAnimalOrRandomIfNotPresent() {
+        return ImageLoader.getImage(getAnimalPath(AnimalProvider.getNextAnimalOrRandomIfNotPresent(getCurrentAnimal())));
     }
 
     public Image getRandomAnimalImage() {
-        return ImageLoader.getImage(getAnimalPath(AnimalProvider.getNextAnimal(getCurrentAnimal())));
+        return ImageLoader.getImage(getAnimalPath(AnimalProvider.getRandomAnimal()));
     }
 
     public void replaceCurrentAnimalToNextAnimal() {
-        AnimalDTO newAnimal = AnimalProvider.getNextAnimal(getCurrentAnimal());
+        AnimalDTO newAnimal = AnimalProvider.getNextAnimalOrRandomIfNotPresent(getCurrentAnimal());
         replaceCurrentAnimal(newAnimal);
     }
 

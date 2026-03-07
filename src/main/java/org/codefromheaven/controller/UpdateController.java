@@ -46,7 +46,7 @@ public class UpdateController {
         Stage popupStage = new Stage();
         popupStage.initModality(Modality.APPLICATION_MODAL);
         popupStage.setTitle("Downloading update");
-        popupStage.getIcons().add(animalService.getNextAnimalImage());
+        popupStage.getIcons().add(animalService.getRandomAnimalImage());
         popupStage.setResizable(false);
 
         Label label = new Label("Downloading update " + appVersionService.getLatestVersion() + "...");
