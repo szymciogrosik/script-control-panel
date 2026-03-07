@@ -49,7 +49,7 @@ public class DefaultSettings {
             ),
             new KeyValueDTO(
                     Setting.APP_NAME.getName(),
-                    "Script control panel",
+                    "Script Control Panel",
                     "Override your app name"
             ),
             new KeyValueDTO(
