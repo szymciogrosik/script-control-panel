@@ -12,12 +12,10 @@ import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.codefromheaven.dto.Setting;
-import org.codefromheaven.helpers.FileUtils;
 import org.codefromheaven.service.animal.AnimalService;
-import org.codefromheaven.service.command.GitBashService;
 import org.codefromheaven.service.style.StyleService;
 import org.codefromheaven.service.update.DownloadLatestVersionService;
+import org.codefromheaven.service.version.AppVersionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -93,8 +91,7 @@ public class UpdateController {
         progressBar.progressProperty().bind(downloadTask.progressProperty());
 
         installButton.setOnAction(e -> {
-            FileUtils.copyFileFromResourceToTmp("utils", "update_and_restart.sh");
-            runReplaceApplicationBashScriptInNewThread();
+            runReplaceApplicationScriptInNewThread();
             closeApplication();
             popupStage.close();
         });
@@ -106,9 +103,28 @@ public class UpdateController {
         popupStage.showAndWait();
     }
 
-    public void runReplaceApplicationBashScriptInNewThread() {
+    public void runReplaceApplicationScriptInNewThread() {
         new Thread(() -> {
-            GitBashService.runCommand(Setting.TMP_DIRECTORY.getName(), true, "./update_and_restart.sh");
+            try {
+                String tmpDirPath = System.getProperty("user.dir") + java.io.File.separator + "tmp";
+                java.io.File updateBat = new java.io.File(tmpDirPath, "update.bat");
+                String batContent = "@echo off\r\n" +
+                        "echo Waiting for application to close...\r\n" +
+                        "ping 127.0.0.1 -n 4 > nul\r\n" +
+                        "echo Extracting update...\r\n" +
+                        "cd ..\r\n" +
+                        "powershell -NoProfile -Command \"Expand-Archive -Force -Path 'tmp/"
+                        + AppVersionService.ZIP_NAME + "' -DestinationPath '.'\"\r\n" +
+                        "echo Starting application...\r\n" +
+                        "start \"\" \"ScriptControlPanel.exe\"\r\n";
+                java.nio.file.Files.writeString(updateBat.toPath(), batContent);
+
+                ProcessBuilder processBuilder = new ProcessBuilder("cmd", "/c", "start", "\"\"", "update.bat");
+                processBuilder.directory(new java.io.File(tmpDirPath));
+                processBuilder.start();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }).start();
     }
 
