@@ -16,6 +16,7 @@ import org.codefromheaven.dto.Setting;
 import org.codefromheaven.helpers.FileUtils;
 import org.codefromheaven.service.animal.AnimalService;
 import org.codefromheaven.service.command.GitBashService;
+import org.codefromheaven.service.style.StyleService;
 import org.codefromheaven.service.update.DownloadLatestVersionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -25,11 +26,17 @@ public class UpdateController {
 
     private final AnimalService animalService;
     private final DownloadLatestVersionService downloadLatestVersionService;
+    private final StyleService styleService;
 
     @Autowired
-    public UpdateController(AnimalService animalService, DownloadLatestVersionService downloadLatestVersionService) {
+    public UpdateController(
+            AnimalService animalService,
+            DownloadLatestVersionService downloadLatestVersionService,
+            StyleService styleService
+    ) {
         this.animalService = animalService;
         this.downloadLatestVersionService = downloadLatestVersionService;
+        this.styleService = styleService;
     }
 
     public void setupPage() {
@@ -62,7 +69,12 @@ public class UpdateController {
         VBox.setMargin(progressBar, margin);
         VBox.setMargin(installButton, margin);
 
+        vbox.getStyleClass().add("background-primary");
+        label.getStyleClass().add("label-on-dark-background");
+        installButton.getStyleClass().add("button-default");
+
         Scene scene = new Scene(vbox, 300, 150);
+        scene.getStylesheets().add(styleService.getCurrentStyleUrl());
         popupStage.setScene(scene);
 
         Task<Void> downloadTask = downloadLatestVersionService.createDownloadTask();
