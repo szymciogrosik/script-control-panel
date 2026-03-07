@@ -5,7 +5,6 @@ import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.HBox;
@@ -25,15 +24,18 @@ public class UpdateController {
     private final AnimalService animalService;
     private final DownloadLatestVersionService downloadLatestVersionService;
     private final StyleService styleService;
+    private final AppVersionService appVersionService;
 
     @Autowired
     public UpdateController(
             AnimalService animalService,
             DownloadLatestVersionService downloadLatestVersionService,
-            StyleService styleService) {
+            StyleService styleService,
+            AppVersionService appVersionService) {
         this.animalService = animalService;
         this.downloadLatestVersionService = downloadLatestVersionService;
         this.styleService = styleService;
+        this.appVersionService = appVersionService;
     }
 
     public void setupPage() {
@@ -47,28 +49,22 @@ public class UpdateController {
         popupStage.setTitle("Downloading update");
         popupStage.setResizable(false);
 
-        Label label = new Label("Downloading update...");
+        Label label = new Label("Downloading update " + appVersionService.getLatestVersion() + "...");
         HBox labelContainer = new HBox(label);
         labelContainer.setAlignment(Pos.CENTER_LEFT);
 
         ProgressBar progressBar = new ProgressBar();
         progressBar.setMaxWidth(Double.MAX_VALUE);
 
-        Button installButton = new Button("Install and restart");
-        installButton.setMaxWidth(Double.MAX_VALUE);
-        installButton.setVisible(false);
-
-        VBox vbox = new VBox(labelContainer, progressBar, installButton);
+        VBox vbox = new VBox(labelContainer, progressBar);
         vbox.setAlignment(Pos.CENTER);
         vbox.setSpacing(20);
         Insets margin = new Insets(0, 20, 0, 20);
         VBox.setMargin(labelContainer, margin);
         VBox.setMargin(progressBar, margin);
-        VBox.setMargin(installButton, margin);
 
         vbox.getStyleClass().add("background-primary");
         label.getStyleClass().add("label-on-dark-background");
-        installButton.getStyleClass().add("button-default");
 
         Scene scene = new Scene(vbox, 300, 150);
         scene.getStylesheets().add(styleService.getCurrentStyleUrl());
@@ -83,17 +79,19 @@ public class UpdateController {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            label.setText("Download completed.");
-            installButton.setVisible(true);
+            Platform.runLater(() -> {
+                label.setText("Download completed.");
+
+                PopupController.showPopup(
+                        "Update is ready. After closing this window, please wait a moment while the application automatically restarts.",
+                        javafx.scene.control.Alert.AlertType.INFORMATION);
+                popupStage.close();
+                runReplaceApplicationScriptInNewThread();
+                closeApplication();
+            });
         });
 
         progressBar.progressProperty().bind(downloadTask.progressProperty());
-
-        installButton.setOnAction(e -> {
-            runReplaceApplicationScriptInNewThread();
-            closeApplication();
-            popupStage.close();
-        });
 
         Thread downloadThread = new Thread(downloadTask);
         downloadThread.setDaemon(true);

@@ -50,7 +50,8 @@ public class MainWindowController implements Initializable {
     private final StyleService styleService;
 
     @Autowired
-    public MainWindowController(AnimalService animalService, SettingsService settingsService, AppVersionService appVersionService, NetworkService networkService, StyleService styleService) {
+    public MainWindowController(AnimalService animalService, SettingsService settingsService,
+            AppVersionService appVersionService, NetworkService networkService, StyleService styleService) {
         this.animalService = animalService;
         this.settingsService = settingsService;
         this.appVersionService = appVersionService;
@@ -175,8 +176,7 @@ public class MainWindowController implements Initializable {
     }
 
     private void addElementsToSceneBase(
-            List<SectionDTO> sections, VisibilitySettings visibilitySettings
-    ) {
+            List<SectionDTO> sections, VisibilitySettings visibilitySettings) {
         for (SectionDTO section : sections) {
             primaryPage.getStyleClass().add("primary-page");
             for (SubSectionDTO subSection : section.subSections()) {
@@ -255,12 +255,14 @@ public class MainWindowController implements Initializable {
                 Optional<String> result = createTextInputDialog(buttonDTO.getPopupInputMessage());
                 result.ifPresent(name -> {
                     for (String command : buttonDTO.getCommands()) {
-                        GitBashService.runCommand(buttonDTO.getScriptLocationParamName(), buttonDTO.isAutoCloseConsole(), command + " " + name);
+                        GitBashService.runCommand(buttonDTO.getScriptLocationParamName(),
+                                buttonDTO.isAutoCloseConsole(), command + " " + name);
                     }
                 });
             } else {
                 for (String command : buttonDTO.getCommands()) {
-                    GitBashService.runCommand(buttonDTO.getScriptLocationParamName(), buttonDTO.isAutoCloseConsole(), command);
+                    GitBashService.runCommand(buttonDTO.getScriptLocationParamName(), buttonDTO.isAutoCloseConsole(),
+                            command);
                 }
             }
         });
@@ -272,12 +274,14 @@ public class MainWindowController implements Initializable {
                 Optional<String> result = createTextInputDialog(buttonDTO.getPopupInputMessage());
                 result.ifPresent(name -> {
                     for (String command : buttonDTO.getCommands()) {
-                        PowerShellService.runCommand(buttonDTO.getScriptLocationParamName(), buttonDTO.isAutoCloseConsole(), command + " " + name);
+                        PowerShellService.runCommand(buttonDTO.getScriptLocationParamName(),
+                                buttonDTO.isAutoCloseConsole(), command + " " + name);
                     }
                 });
             } else {
                 for (String command : buttonDTO.getCommands()) {
-                    PowerShellService.runCommand(buttonDTO.getScriptLocationParamName(), buttonDTO.isAutoCloseConsole(), command);
+                    PowerShellService.runCommand(buttonDTO.getScriptLocationParamName(), buttonDTO.isAutoCloseConsole(),
+                            command);
                 }
             }
         });
@@ -304,8 +308,7 @@ public class MainWindowController implements Initializable {
     }
 
     private boolean isAnyElementInSectionEnabled(
-            String fileToLoad, VisibilitySettings visibilitySettings
-    ) {
+            String fileToLoad, VisibilitySettings visibilitySettings) {
         List<SectionDTO> sections = LoadFromJsonService.load(fileToLoad);
         for (SectionDTO section : sections) {
             for (SubSectionDTO subSection : section.subSections()) {
@@ -321,8 +324,7 @@ public class MainWindowController implements Initializable {
 
     private boolean isAnyElementInSubSectionEnabled(
             SubSectionDTO subSection, String sectionName,
-            VisibilitySettings visibilitySettings
-    ) {
+            VisibilitySettings visibilitySettings) {
         for (ButtonDTO button : subSection.buttons()) {
             boolean visible = visibilitySettings.isVisible(button);
             if (visible) {
@@ -344,7 +346,8 @@ public class MainWindowController implements Initializable {
 
     @FXML
     private void handleChangeVisibleElements() {
-        HiddenElementSettingsController controller = new HiddenElementSettingsController(this::loadContent, this::resizeMainWindow);
+        HiddenElementSettingsController controller = new HiddenElementSettingsController(this::loadContent,
+                this::resizeMainWindow);
         controller.setupPage();
     }
 
@@ -360,7 +363,8 @@ public class MainWindowController implements Initializable {
 
     @FXML
     private void handleChangeSettings() {
-        SettingsController controller = new SettingsController(this::loadContent, this::resizeMainWindow, this::checkForUpdates, this::reloadStyle);
+        SettingsController controller = new SettingsController(this::loadContent, this::resizeMainWindow,
+                this::checkForUpdates, this::reloadStyle);
         controller.setupPage();
     }
 
@@ -398,7 +402,7 @@ public class MainWindowController implements Initializable {
     private void handleCheckForUpdates() {
         checkForUpdates();
         if (appVersionService.isNewVersionAvailable()) {
-            handleDownloadAndInstall();
+            triggerDownloadAndInstallPopup();
         } else {
             if (networkService.isNetworkPresent()) {
                 PopupController.showPopup("Everything up to date!", Alert.AlertType.INFORMATION);
@@ -410,8 +414,24 @@ public class MainWindowController implements Initializable {
 
     @FXML
     private void handleDownloadAndInstall() {
-        UpdateController controller = SpringContext.getBean(UpdateController.class);
-        controller.setupPage();
+        if (!appVersionService.isNewVersionAvailable()) {
+            checkForUpdates();
+        }
+
+        if (appVersionService.isNewVersionAvailable()) {
+            triggerDownloadAndInstallPopup();
+        }
+    }
+
+    private void triggerDownloadAndInstallPopup() {
+        PopupController.showConfirmationPopup(
+                "New version " + appVersionService.getLatestVersion()
+                        + " is available.\nDo you want to download and install it now?",
+                "Download and install",
+                () -> {
+                    UpdateController controller = SpringContext.getBean(UpdateController.class);
+                    controller.setupPage();
+                });
     }
 
     @FunctionalInterface
@@ -435,12 +455,14 @@ public class MainWindowController implements Initializable {
     private void addInformationAboutBuildingConfiguration(VisibilitySettings visibilitySettings) {
         String sectionName = "Looks like there is nothing to show";
         String subSectionName = "Read about configuration";
-        ButtonDTO exampleConfig = new ButtonDTO("Example configuration", "", Collections.singletonList(Link.WIKI.getUrl()),
-                                                ElementType.LINK, true, false, "",
-                                                "Open link in default browser", true, sectionName, subSectionName);
-        ButtonDTO buildYourOwnConfig = new ButtonDTO("Build your own configuration", "", Collections.singletonList(Link.WIKI_CONFIGURATION.getUrl()),
-                                                     ElementType.LINK, true, false, "",
-                                                     "Open link in default browser", true, sectionName, subSectionName);
+        ButtonDTO exampleConfig = new ButtonDTO("Example configuration", "",
+                Collections.singletonList(Link.WIKI.getUrl()),
+                ElementType.LINK, true, false, "",
+                "Open link in default browser", true, sectionName, subSectionName);
+        ButtonDTO buildYourOwnConfig = new ButtonDTO("Build your own configuration", "",
+                Collections.singletonList(Link.WIKI_CONFIGURATION.getUrl()),
+                ElementType.LINK, true, false, "",
+                "Open link in default browser", true, sectionName, subSectionName);
         SubSectionDTO subSection = new SubSectionDTO(subSectionName, Arrays.asList(exampleConfig, buildYourOwnConfig));
         SectionDTO section = new SectionDTO(sectionName, Collections.singletonList(subSection));
         addElementsToScene(Collections.singletonList(section), visibilitySettings);
