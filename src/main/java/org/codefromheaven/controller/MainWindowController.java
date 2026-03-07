@@ -5,7 +5,6 @@ import java.util.*;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
@@ -295,7 +294,7 @@ public class MainWindowController implements Initializable {
         dialog.setGraphic(null);
         dialog.setContentText(popupInputMessage);
         Stage dialogStage = (Stage) dialog.getDialogPane().getScene().getWindow();
-        dialogStage.getIcons().add(animalService.getRandomAnimalImage());
+        dialogStage.getIcons().add(animalService.getNextAnimalImage());
         return dialog.showAndWait();
     }
 

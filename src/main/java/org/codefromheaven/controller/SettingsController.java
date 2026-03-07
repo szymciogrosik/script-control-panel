@@ -49,8 +49,8 @@ public class SettingsController {
     public void setupPage() {
         Stage settingsStage = new Stage();
         settingsStage.initModality(APPLICATION_MODAL);
-        settingsStage.getIcons().add(SpringContext.getBean(AnimalService.class).getRandomAnimalImage());
         settingsStage.setTitle("Additional settings");
+        settingsStage.getIcons().add(SpringContext.getBean(AnimalService.class).getNextAnimalImage());
         settingsStage.setResizable(false);
 
         GridPane gridPane = new GridPane();

@@ -34,6 +34,10 @@ public class AnimalService {
         return AnimalProvider.findAnimalByNameOrReturnRandomIfNotPresent(name);
     }
 
+    public Image getNextAnimalImage() {
+        return ImageLoader.getImage(getAnimalPath(AnimalProvider.getNextAnimal(getCurrentAnimal())));
+    }
+
     public Image getRandomAnimalImage() {
         return ImageLoader.getImage(getAnimalPath(AnimalProvider.getNextAnimal(getCurrentAnimal())));
     }
