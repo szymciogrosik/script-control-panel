@@ -2,7 +2,7 @@
   "settings": [
     {
       "key": "APP_NAME",
-      "value": "Buenos DIAS",
+      "value": "Script Control Panel",
       "description": "Override your app name"
     },
     {
