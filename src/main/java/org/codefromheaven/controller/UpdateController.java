@@ -30,8 +30,7 @@ public class UpdateController {
     public UpdateController(
             AnimalService animalService,
             DownloadLatestVersionService downloadLatestVersionService,
-            StyleService styleService
-    ) {
+            StyleService styleService) {
         this.animalService = animalService;
         this.downloadLatestVersionService = downloadLatestVersionService;
         this.styleService = styleService;
@@ -116,7 +115,10 @@ public class UpdateController {
                         "powershell -NoProfile -Command \"Expand-Archive -Force -Path 'tmp/"
                         + AppVersionService.ZIP_NAME + "' -DestinationPath '.'\"\r\n" +
                         "echo Starting application...\r\n" +
-                        "start \"\" \"ScriptControlPanel.exe\"\r\n";
+                        "start \"\" \"ScriptControlPanel.exe\"\r\n" +
+                        "echo Cleaning up...\r\n" +
+                        "rmdir /s /q tmp\r\n" +
+                        "exit\r\n";
                 java.nio.file.Files.writeString(updateBat.toPath(), batContent);
 
                 ProcessBuilder processBuilder = new ProcessBuilder("cmd", "/c", "start", "\"\"", "update.bat");
