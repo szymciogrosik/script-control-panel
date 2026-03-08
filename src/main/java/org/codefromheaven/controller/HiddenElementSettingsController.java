@@ -14,13 +14,11 @@ import javafx.stage.Modality;
 import javafx.stage.Stage;
 import org.codefromheaven.context.SpringContext;
 import org.codefromheaven.dto.data.SectionDTO;
-import org.codefromheaven.dto.settings.KeyValueDTO;
-import org.codefromheaven.dto.settings.SettingsDTO;
+import org.codefromheaven.dto.data.LayoutAndButtonsDTO;
 import org.codefromheaven.service.settings.VisibilitySettings;
 import org.codefromheaven.helpers.MaxHighUtils;
-import org.codefromheaven.service.LoadFromJsonService;
 import org.codefromheaven.service.animal.AnimalService;
-import org.codefromheaven.service.settings.FilesToLoadSettingsService;
+import org.codefromheaven.service.settings.LayoutAndButtonsService;
 import org.codefromheaven.service.style.StyleService;
 
 import java.util.ArrayList;
@@ -33,8 +31,7 @@ public class HiddenElementSettingsController {
     private final VisibilitySettings visibilitySettings = new VisibilitySettings();
 
     public HiddenElementSettingsController(
-            MainWindowController.ContentLoader loader, MainWindowController.ResizeWindow resizeMainWindow
-    ) {
+            MainWindowController.ContentLoader loader, MainWindowController.ResizeWindow resizeMainWindow) {
         this.loader = loader;
         this.resizeMainWindow = resizeMainWindow;
     }
@@ -122,12 +119,11 @@ public class HiddenElementSettingsController {
     }
 
     public static List<SectionDTO> loadAllElements() {
-        List<SectionDTO> allElements = new ArrayList<>();
-        SettingsDTO filesToLoad = FilesToLoadSettingsService.load();
-        for (String fileToLoad : filesToLoad.getSettings().stream().map(KeyValueDTO::getKey).toList()) {
-            allElements.addAll(LoadFromJsonService.load(fileToLoad));
+        LayoutAndButtonsDTO layoutAndButtons = LayoutAndButtonsService.load();
+        if (layoutAndButtons != null && layoutAndButtons.layout() != null) {
+            return layoutAndButtons.layout();
         }
-        return allElements;
+        return new ArrayList<>();
     }
 
 }

@@ -11,7 +11,7 @@ import org.codefromheaven.context.SpringContext;
 import org.codefromheaven.dto.Setting;
 import org.codefromheaven.dto.Style;
 import org.codefromheaven.dto.settings.FieldOnPageDTO;
-import org.codefromheaven.dto.settings.KeyValueDTO;
+import org.codefromheaven.dto.settings.SettingDTO;
 import org.codefromheaven.dto.settings.SettingsDTO;
 import org.codefromheaven.resources.AnimalProvider;
 import org.codefromheaven.service.animal.AnimalService;
@@ -21,15 +21,12 @@ import org.codefromheaven.service.style.StyleService;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
-import java.util.Set;
+
 import java.util.stream.Collectors;
 
 import static javafx.stage.Modality.APPLICATION_MODAL;
 
 public class SettingsController {
-
-    private final static Set<Setting> COMBO_FIELD_SETTINGS = Set.of(Setting.IMAGE_NAME, Setting.APP_STYLE);
-    private final static Set<Setting> CHECKBOX_FIELD_SETTINGS = Set.of(Setting.ALLOW_FOR_UPGRADES, Setting.ALLOW_PRE_RELEASES);
 
     private final MainWindowController.ContentLoader loader;
     private final MainWindowController.ResizeWindow resizeMainWindow;
@@ -38,8 +35,7 @@ public class SettingsController {
 
     public SettingsController(
             MainWindowController.ContentLoader loader, MainWindowController.ResizeWindow resizeMainWindow,
-            MainWindowController.CheckForUpdates checkForUpdates, MainWindowController.StyleReloader styleReloader
-    ) {
+            MainWindowController.CheckForUpdates checkForUpdates, MainWindowController.StyleReloader styleReloader) {
         this.loader = loader;
         this.resizeMainWindow = resizeMainWindow;
         this.checkForUpdates = checkForUpdates;
@@ -60,7 +56,7 @@ public class SettingsController {
         gridPane.getStyleClass().add("background-primary");
 
         SettingsDTO configSettings = SpringContext.getBean(SettingsService.class).load();
-        List<KeyValueDTO> settings = configSettings.getSettings().stream().filter(KeyValueDTO::isEditable).toList();
+        List<SettingDTO> settings = configSettings.getSettings().stream().filter(SettingDTO::isEditable).toList();
 
         FieldOnPageDTO valueFields = loadElementsToPage(settings, gridPane);
 
@@ -92,15 +88,15 @@ public class SettingsController {
         settingsStage.showAndWait();
     }
 
-    private FieldOnPageDTO loadElementsToPage(List<KeyValueDTO> settings, GridPane gridPane) {
-        List<KeyValueDTO> comboSettings = getComboSettings(settings);
-        List<KeyValueDTO> checkBoxSettings = getCheckBoxSettings(settings);
+    private FieldOnPageDTO loadElementsToPage(List<SettingDTO> settings, GridPane gridPane) {
+        List<SettingDTO> comboSettings = getComboSettings(settings);
+        List<SettingDTO> checkBoxSettings = getCheckBoxSettings(settings);
 
-        List<KeyValueDTO> alreadyUsedSettings = new ArrayList<>();
+        List<SettingDTO> alreadyUsedSettings = new ArrayList<>();
         alreadyUsedSettings.addAll(comboSettings);
         alreadyUsedSettings.addAll(checkBoxSettings);
 
-        List<KeyValueDTO> textSettings = getTextSettings(settings, alreadyUsedSettings);
+        List<SettingDTO> textSettings = getTextSettings(settings, alreadyUsedSettings);
 
         TextField[] textValueFields = new TextField[textSettings.size()];
         CheckBox[] checkBoxFields = new CheckBox[checkBoxSettings.size()];
@@ -108,7 +104,7 @@ public class SettingsController {
 
         int globalPosition = 0;
         for (int i = 0; i < textSettings.size(); i++, globalPosition++) {
-            KeyValueDTO setting = textSettings.get(i);
+            SettingDTO setting = textSettings.get(i);
             Label label = new Label(getLabel(setting) + ":");
             label.getStyleClass().add("label-on-dark-background");
             TextField field = createTextField(setting.getValue(), textValueFields, i);
@@ -117,7 +113,7 @@ public class SettingsController {
         }
 
         for (int i = 0; i < checkBoxSettings.size(); i++, globalPosition++) {
-            KeyValueDTO setting = checkBoxSettings.get(i);
+            SettingDTO setting = checkBoxSettings.get(i);
             Label label = new Label(getLabel(setting) + ":");
             label.getStyleClass().add("label-on-dark-background");
             CheckBox field = createCheckBox(setting.getValue(), checkBoxFields, i);
@@ -127,7 +123,7 @@ public class SettingsController {
         }
 
         for (int i = 0; i < comboSettings.size(); i++, globalPosition++) {
-            KeyValueDTO setting = comboSettings.get(i);
+            SettingDTO setting = comboSettings.get(i);
             Label label = new Label(getLabel(setting) + ":");
             label.getStyleClass().add("label-on-dark-background");
             ComboBox<String> field = createComboBox(setting, comboValueFields, i);
@@ -138,17 +134,19 @@ public class SettingsController {
         return new FieldOnPageDTO(textValueFields, comboValueFields, checkBoxFields);
     }
 
-    private List<KeyValueDTO> getComboSettings(List<KeyValueDTO> settings) {
-        return settings.stream().filter(elem -> COMBO_FIELD_SETTINGS.stream().anyMatch(key -> key.getName().equals(elem.getKey())))
+    private List<SettingDTO> getComboSettings(List<SettingDTO> settings) {
+        return settings.stream()
+                .filter(elem -> org.codefromheaven.dto.settings.SettingType.SELECT.equals(elem.getType()))
                 .collect(Collectors.toList());
     }
 
-    private List<KeyValueDTO> getCheckBoxSettings(List<KeyValueDTO> settings) {
-        return settings.stream().filter(elem -> CHECKBOX_FIELD_SETTINGS.stream().anyMatch(key -> key.getName().equals(elem.getKey())))
-                       .collect(Collectors.toList());
+    private List<SettingDTO> getCheckBoxSettings(List<SettingDTO> settings) {
+        return settings.stream()
+                .filter(elem -> org.codefromheaven.dto.settings.SettingType.SWITCH.equals(elem.getType()))
+                .collect(Collectors.toList());
     }
 
-    private List<KeyValueDTO> getTextSettings(List<KeyValueDTO> settings, List<KeyValueDTO> alreadyUsedSettings) {
+    private List<SettingDTO> getTextSettings(List<SettingDTO> settings, List<SettingDTO> alreadyUsedSettings) {
         return settings.stream().filter(elem -> !alreadyUsedSettings.contains(elem)).collect(Collectors.toList());
     }
 
@@ -159,7 +157,7 @@ public class SettingsController {
         return textField;
     }
 
-    private ComboBox<String> createComboBox(KeyValueDTO setting, ComboBox<String>[] valueFields, int i) {
+    private ComboBox<String> createComboBox(SettingDTO setting, ComboBox<String>[] valueFields, int i) {
         ComboBox<String> comboBox = new ComboBox<>();
         comboBox.setPrefWidth(500);
         String[] options = getComboBoxOptions(setting.getKey());
@@ -191,30 +189,30 @@ public class SettingsController {
         return checkBox;
     }
 
-    private void doActionOnSave(List<KeyValueDTO> settings, FieldOnPageDTO valueFields, Stage settingsStage) {
-        List<KeyValueDTO> comboSettings = getComboSettings(settings);
-        List<KeyValueDTO> checkBoxSettings = getCheckBoxSettings(settings);
+    private void doActionOnSave(List<SettingDTO> settings, FieldOnPageDTO valueFields, Stage settingsStage) {
+        List<SettingDTO> comboSettings = getComboSettings(settings);
+        List<SettingDTO> checkBoxSettings = getCheckBoxSettings(settings);
 
-        List<KeyValueDTO> alreadyUsedSettings = new ArrayList<>();
+        List<SettingDTO> alreadyUsedSettings = new ArrayList<>();
         alreadyUsedSettings.addAll(comboSettings);
         alreadyUsedSettings.addAll(checkBoxSettings);
 
-        List<KeyValueDTO> textSettings = getTextSettings(settings, alreadyUsedSettings);
+        List<SettingDTO> textSettings = getTextSettings(settings, alreadyUsedSettings);
 
         for (int i = 0; i < textSettings.size(); i++) {
-            KeyValueDTO setting = textSettings.get(i);
+            SettingDTO setting = textSettings.get(i);
             String newValue = valueFields.textFields()[i].getText();
             setting.setValue(newValue);
         }
 
         for (int i = 0; i < comboSettings.size(); i++) {
-            KeyValueDTO setting = comboSettings.get(i);
+            SettingDTO setting = comboSettings.get(i);
             String newValue = valueFields.comboBoxes()[i].getValue();
             setting.setValue(newValue);
         }
 
         for (int i = 0; i < checkBoxSettings.size(); i++) {
-            KeyValueDTO setting = checkBoxSettings.get(i);
+            SettingDTO setting = checkBoxSettings.get(i);
             String newValue = String.valueOf(valueFields.checkBoxes()[i].isSelected());
             setting.setValue(newValue);
         }
@@ -227,11 +225,11 @@ public class SettingsController {
         settingsStage.close();
     }
 
-    private String getLabel(KeyValueDTO keyValueDTO) {
-        if (keyValueDTO.getDescription() != null && !keyValueDTO.getDescription().isBlank()) {
-            return keyValueDTO.getDescription();
+    private String getLabel(SettingDTO SettingDTO) {
+        if (SettingDTO.getDescription() != null && !SettingDTO.getDescription().isBlank()) {
+            return SettingDTO.getDescription();
         } else {
-            return keyValueDTO.getKey();
+            return SettingDTO.getKey();
         }
     }
 

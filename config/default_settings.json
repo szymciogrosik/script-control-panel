@@ -3,16 +3,13 @@
     {
       "key": "APP_NAME",
       "value": "Script Control Panel",
+      "type": "TEXT",
       "description": "Override your app name"
-    },
-    {
-      "key": "ALL_EXAMPLE_SCRIPTS_PATH",
-      "value": "config/scripts",
-      "description": "Location of all example scripts"
     },
     {
       "key": "PYTHON_SCRIPTS_PREFIX",
       "value": "py",
+      "type": "TEXT",
       "description": "Python script prefix"
     }
   ]

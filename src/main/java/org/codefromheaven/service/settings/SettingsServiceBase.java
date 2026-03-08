@@ -2,7 +2,7 @@ package org.codefromheaven.service.settings;
 
 import org.codefromheaven.dto.FileType;
 import org.codefromheaven.dto.Setting;
-import org.codefromheaven.dto.settings.KeyValueDTO;
+import org.codefromheaven.dto.settings.SettingDTO;
 import org.codefromheaven.dto.settings.SettingsDTO;
 import org.codefromheaven.helpers.FileUtils;
 import org.codefromheaven.helpers.JsonUtils;
@@ -33,19 +33,20 @@ public abstract class SettingsServiceBase {
 
     public static SettingsDTO loadSettingsFile(FileType fileType) {
         Optional<SettingsDTO> myOwnSettings = loadSettingsFile(getMyOwnFileDir(fileType.name()));
-        SettingsDTO defaultSettings = mergeDefaultSettings(loadSettingsFile(getDefaultFileDir(fileType.name())).orElse(new SettingsDTO()), fileType);
+        SettingsDTO defaultSettings = mergeDefaultSettings(
+                loadSettingsFile(getDefaultFileDir(fileType.name())).orElse(new SettingsDTO()), fileType);
 
         if (myOwnSettings.isEmpty()) {
             return defaultSettings;
         }
 
-        List<KeyValueDTO> settingsToReturn = new ArrayList<>();
+        List<SettingDTO> settingsToReturn = new ArrayList<>();
 
-        // Iterate through default setting and if you will be found my_own_value then add it
+        // Iterate through default setting and if you will be found my_own_value then
+        // add it
         defaultSettings.getSettings().forEach(defaultSetting -> {
-            Optional<KeyValueDTO> myOwn =
-                    myOwnSettings.get().getSettings().stream()
-                                 .filter(elem -> defaultSetting.getKey().equals(elem.getKey())).findFirst();
+            Optional<SettingDTO> myOwn = myOwnSettings.get().getSettings().stream()
+                    .filter(elem -> defaultSetting.getKey().equals(elem.getKey())).findFirst();
             if (myOwn.isPresent() && defaultSetting.isEditable()) {
                 // Override my own description with the newest one from default
                 myOwn.get().setDescription(defaultSetting.getDescription());
@@ -68,19 +69,21 @@ public abstract class SettingsServiceBase {
     private static String getConfigDir() {
         // Config dir cannot be editable
         return DefaultSettings.ALL.getSettings().stream()
-                                  .filter(keyValue -> keyValue.getKey().equals(Setting.CONFIG_DIR.getName()))
-                                  .findFirst().get().getValue();
+                .filter(keyValue -> keyValue.getKey().equals(Setting.CONFIG_DIR.getName()))
+                .findFirst().get().getValue();
     }
 
     private static SettingsDTO mergeDefaultSettings(SettingsDTO defaultSettingsFromFile, FileType fileType) {
         if (fileType != FileType.SETTINGS) {
             return defaultSettingsFromFile;
         }
-        List<KeyValueDTO> keyValueList = new ArrayList<>();
+        List<SettingDTO> keyValueList = new ArrayList<>();
         // Add all default settings from class which does not present in the file
         DefaultSettings.ALL.getSettings().forEach(elem -> {
-            if (defaultSettingsFromFile.getSettings().stream().noneMatch(elem2 -> elem2.getKey().equals(elem.getKey()))) {
-                keyValueList.add(new KeyValueDTO(elem.getKey(), elem.getValue(), elem.isEditable(), elem.getDescription()));
+            if (defaultSettingsFromFile.getSettings().stream()
+                    .noneMatch(elem2 -> elem2.getKey().equals(elem.getKey()))) {
+                keyValueList.add(new SettingDTO(elem.getKey(), elem.getValue(), elem.getType(), elem.getDescription(),
+                        elem.isEditable()));
             }
         });
         // Add all default settings from file
@@ -108,18 +111,20 @@ public abstract class SettingsServiceBase {
     }
 
     public static SettingsDTO getCustomSettingsDifferentThanDefault(FileType fileType, SettingsDTO customSettings) {
-        SettingsDTO defaultSettings = mergeDefaultSettings(loadSettingsFile(getDefaultFileDir(fileType.name())).orElse(new SettingsDTO()), fileType);
+        SettingsDTO defaultSettings = mergeDefaultSettings(
+                loadSettingsFile(getDefaultFileDir(fileType.name())).orElse(new SettingsDTO()), fileType);
         return new SettingsDTO(
                 customSettings.getSettings().stream()
-                           .filter(setting -> defaultSettings.getSettings().stream().noneMatch(defaultSetting -> defaultSetting.equals(setting)))
-                           .collect(Collectors.toList()));
+                        .filter(setting -> defaultSettings.getSettings().stream()
+                                .noneMatch(defaultSetting -> defaultSetting.equals(setting)))
+                        .collect(Collectors.toList()));
     }
 
     public static Optional<String> loadValue(String setting, FileType fileType) {
         SettingsDTO settingsList = loadSettingsFile(fileType);
         return settingsList.getSettings().stream()
-                           .filter(elem -> elem.getKey().equals(setting))
-                           .map(KeyValueDTO::getValue).findFirst();
+                .filter(elem -> elem.getKey().equals(setting))
+                .map(SettingDTO::getValue).findFirst();
     }
 
     public static boolean isPresentMyOwnSettingFile(FileType fileType) {

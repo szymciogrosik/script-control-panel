@@ -3,7 +3,7 @@ package org.codefromheaven.service.settings;
 import org.codefromheaven.dto.FileType;
 import org.codefromheaven.dto.Setting;
 import org.codefromheaven.dto.settings.BaseSetting;
-import org.codefromheaven.dto.settings.KeyValueDTO;
+import org.codefromheaven.dto.settings.SettingDTO;
 import org.codefromheaven.dto.settings.SettingsDTO;
 import org.codefromheaven.resources.AnimalProvider;
 
@@ -48,12 +48,16 @@ public class SettingsService extends SettingsServiceBase {
         SettingsDTO settings = loadSettingsFile(FILE_TYPE);
         String key = elementToReplace.getName();
 
-        Optional<KeyValueDTO> keyValue =
-                settings.getSettings().stream().filter(elem -> elem.getKey().equals(key)).findFirst();
+        Optional<SettingDTO> keyValue = settings.getSettings().stream().filter(elem -> elem.getKey().equals(key))
+                .findFirst();
         if (keyValue.isPresent()) {
             keyValue.get().setValue(newValue);
         } else {
-            settings.getSettings().add(new KeyValueDTO(key, newValue, ""));
+            Optional<SettingDTO> defaultElem = DefaultSettings.ALL.getSettings().stream()
+                    .filter(e -> e.getKey().equals(key)).findFirst();
+            org.codefromheaven.dto.settings.SettingType type = defaultElem.isPresent() ? defaultElem.get().getType()
+                    : org.codefromheaven.dto.settings.SettingType.TEXT;
+            settings.getSettings().add(new SettingDTO(key, newValue, type, ""));
         }
 
         saveSettings(FILE_TYPE, settings);

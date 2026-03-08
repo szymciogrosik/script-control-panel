@@ -1,8 +1,7 @@
 package org.codefromheaven.service.command;
 
-import org.codefromheaven.context.SpringContext;
 import org.codefromheaven.dto.Command;
-import org.codefromheaven.service.settings.SettingsService;
+import org.codefromheaven.service.settings.LayoutAndButtonsService;
 
 import java.io.IOException;
 
@@ -29,8 +28,7 @@ public class PowerShellSetupService implements Runnable {
                     "powershell.exe",
                     "Start-Process powershell.exe '" +
                             (!autoCloseConsole ? "-NoExit" : "")
-                            + " \"[Console]::Title = ''Buenos Dias PowerShell run''; " + finalCommand + "\"'"
-            );
+                            + " \"[Console]::Title = ''Buenos Dias PowerShell run''; " + finalCommand + "\"'");
             processBuilder.start();
         } catch (IOException e) {
             System.out.println(" --- Interruption in RunCommand: " + e);
@@ -39,7 +37,7 @@ public class PowerShellSetupService implements Runnable {
     }
 
     private static String getOpenDirectoryCommand(String scriptPathVarName) {
-        return "cd \"" + SpringContext.getBean(SettingsService.class).loadValue(scriptPathVarName).get() + "\"";
+        return "cd \"" + LayoutAndButtonsService.getDirectoryPath(scriptPathVarName) + "\"";
     }
 
 }

@@ -18,18 +18,16 @@ import org.codefromheaven.dto.Link;
 import org.codefromheaven.dto.data.ButtonDTO;
 import org.codefromheaven.dto.data.SectionDTO;
 import org.codefromheaven.dto.data.SubSectionDTO;
-import org.codefromheaven.dto.settings.KeyValueDTO;
-import org.codefromheaven.dto.settings.SettingsDTO;
+import org.codefromheaven.dto.data.LayoutAndButtonsDTO;
 import org.codefromheaven.service.settings.VisibilitySettings;
 import org.codefromheaven.helpers.ImageLoader;
 import org.codefromheaven.helpers.LinkUtils;
 import org.codefromheaven.helpers.MaxHighUtils;
-import org.codefromheaven.service.LoadFromJsonService;
 import org.codefromheaven.service.animal.AnimalService;
 import org.codefromheaven.service.command.GitBashService;
 import org.codefromheaven.service.command.PowerShellService;
 import org.codefromheaven.service.network.NetworkService;
-import org.codefromheaven.service.settings.FilesToLoadSettingsService;
+import org.codefromheaven.service.settings.LayoutAndButtonsService;
 import org.codefromheaven.service.settings.SettingsService;
 import org.codefromheaven.context.SpringContext;
 import org.codefromheaven.service.style.StyleService;
@@ -111,15 +109,16 @@ public class MainWindowController implements Initializable {
         setupScrollPane();
 
         VisibilitySettings visibilitySettings = new VisibilitySettings();
-        SettingsDTO filesToLoad = FilesToLoadSettingsService.load();
+        LayoutAndButtonsDTO layoutAndButtons = LayoutAndButtonsService.load();
 
         boolean anyElementEnabled = false;
-        for (String fileToLoad : filesToLoad.getSettings().stream().map(KeyValueDTO::getKey).toList()) {
-            if (isAnyElementInSectionEnabled(fileToLoad, visibilitySettings)) {
-                addElementsToScene(fileToLoad, visibilitySettings);
+        if (layoutAndButtons != null && layoutAndButtons.layout() != null) {
+            if (isAnyElementInSectionsEnabled(layoutAndButtons.layout(), visibilitySettings)) {
+                addElementsToScene(layoutAndButtons.layout(), visibilitySettings);
                 anyElementEnabled = true;
             }
         }
+
         if (!anyElementEnabled) {
             addInformationAboutBuildingConfiguration(visibilitySettings);
         }
@@ -161,12 +160,6 @@ public class MainWindowController implements Initializable {
         Group root = new Group(authorImageView);
         section.getChildren().add(root);
         primaryPage.getChildren().add(section);
-    }
-
-    private void addElementsToScene(String fileToLoad, VisibilitySettings visibilitySettings) {
-        List<SectionDTO> loadedElements = LoadFromJsonService.load(fileToLoad);
-        addSectionHeader(loadedElements.stream().findFirst().get().sectionName());
-        addElementsToSceneBase(loadedElements, visibilitySettings);
     }
 
     private void addElementsToScene(List<SectionDTO> loadedElements, VisibilitySettings visibilitySettings) {
@@ -306,9 +299,8 @@ public class MainWindowController implements Initializable {
         return tt;
     }
 
-    private boolean isAnyElementInSectionEnabled(
-            String fileToLoad, VisibilitySettings visibilitySettings) {
-        List<SectionDTO> sections = LoadFromJsonService.load(fileToLoad);
+    private boolean isAnyElementInSectionsEnabled(
+            List<SectionDTO> sections, VisibilitySettings visibilitySettings) {
         for (SectionDTO section : sections) {
             for (SubSectionDTO subSection : section.subSections()) {
                 boolean anyElementInSubSectionEnabled = isAnyElementInSubSectionEnabled(
