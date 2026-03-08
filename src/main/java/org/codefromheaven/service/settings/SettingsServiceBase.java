@@ -19,6 +19,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
@@ -79,22 +80,37 @@ public abstract class SettingsServiceBase {
             return defaultSettingsFromFile;
         }
         List<SettingDTO> keyValueList = new ArrayList<>();
-        // Add all default settings from class which does not present in the file
-        DefaultSettings.ALL.getSettings().forEach(elem -> {
+
+        // 1. Default settings from the app
+        DefaultSettings.ALL.getSettings().forEach(appDefault -> {
             Optional<SettingDTO> fromFile = defaultSettingsFromFile.getSettings().stream()
-                    .filter(elem2 -> elem2.getKey().equals(elem.getKey())).findFirst();
+                    .filter(fileSetting -> fileSetting.getKey().equals(appDefault.getKey())).findFirst();
+
             if (fromFile.isPresent()) {
                 SettingDTO fileSetting = fromFile.get();
-                fileSetting.setType(elem.getType());
-                fileSetting.setDescription(elem.getDescription());
+                fileSetting.setType(appDefault.getType());
+                fileSetting.setDescription(appDefault.getDescription());
                 keyValueList.add(fileSetting);
             } else {
-                keyValueList.add(new SettingDTO(elem.getKey(), elem.getValue(), elem.getType(), elem.getDescription(),
-                        elem.isEditable()));
+                keyValueList.add(new SettingDTO(
+                        appDefault.getKey(),
+                        appDefault.getValue(),
+                        appDefault.getType(),
+                        appDefault.getDescription(),
+                        appDefault.isEditable()));
             }
         });
-        // Add all default settings from file
-        keyValueList.addAll(defaultSettingsFromFile.getSettings());
+
+        // 2. Add diff from default config file
+        defaultSettingsFromFile.getSettings().forEach(fileSetting -> {
+            if (keyValueList.stream().noneMatch(existing -> existing.getKey().equals(fileSetting.getKey()))) {
+                if (fileSetting.getType() == null) {
+                    fileSetting.setType(org.codefromheaven.dto.settings.SettingType.TEXT);
+                }
+                keyValueList.add(fileSetting);
+            }
+        });
+
         return new SettingsDTO(keyValueList);
     }
 
@@ -123,7 +139,8 @@ public abstract class SettingsServiceBase {
         return new SettingsDTO(
                 customSettings.getSettings().stream()
                         .filter(setting -> defaultSettings.getSettings().stream()
-                                .noneMatch(defaultSetting -> defaultSetting.equals(setting)))
+                                .noneMatch(defaultSetting -> defaultSetting.getKey().equals(setting.getKey()) &&
+                                        Objects.equals(defaultSetting.getValue(), setting.getValue())))
                         .collect(Collectors.toList()));
     }
 

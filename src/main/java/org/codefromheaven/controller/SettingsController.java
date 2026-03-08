@@ -6,23 +6,24 @@ import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.stage.DirectoryChooser;
+import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.codefromheaven.context.SpringContext;
 import org.codefromheaven.dto.Setting;
 import org.codefromheaven.dto.Style;
 import org.codefromheaven.dto.settings.FieldOnPageDTO;
 import org.codefromheaven.dto.settings.SettingDTO;
+import org.codefromheaven.dto.settings.SettingType;
 import org.codefromheaven.dto.settings.SettingsDTO;
 import org.codefromheaven.resources.AnimalProvider;
 import org.codefromheaven.service.animal.AnimalService;
 import org.codefromheaven.service.settings.SettingsService;
 import org.codefromheaven.service.style.StyleService;
 
-import java.util.ArrayList;
+import java.io.File;
 import java.util.Arrays;
 import java.util.List;
-
-import java.util.stream.Collectors;
 
 import static javafx.stage.Modality.APPLICATION_MODAL;
 
@@ -89,65 +90,37 @@ public class SettingsController {
     }
 
     private FieldOnPageDTO loadElementsToPage(List<SettingDTO> settings, GridPane gridPane) {
-        List<SettingDTO> comboSettings = getComboSettings(settings);
-        List<SettingDTO> checkBoxSettings = getCheckBoxSettings(settings);
+        TextField[] textValueFields = new TextField[settings.size()];
+        CheckBox[] checkBoxFields = new CheckBox[settings.size()];
+        ComboBox<String>[] comboValueFields = new ComboBox[settings.size()];
 
-        List<SettingDTO> alreadyUsedSettings = new ArrayList<>();
-        alreadyUsedSettings.addAll(comboSettings);
-        alreadyUsedSettings.addAll(checkBoxSettings);
-
-        List<SettingDTO> textSettings = getTextSettings(settings, alreadyUsedSettings);
-
-        TextField[] textValueFields = new TextField[textSettings.size()];
-        CheckBox[] checkBoxFields = new CheckBox[checkBoxSettings.size()];
-        ComboBox<String>[] comboValueFields = new ComboBox[comboSettings.size()];
-
-        int globalPosition = 0;
-        for (int i = 0; i < textSettings.size(); i++, globalPosition++) {
-            SettingDTO setting = textSettings.get(i);
+        for (int i = 0; i < settings.size(); i++) {
+            SettingDTO setting = settings.get(i);
             Label label = new Label(getLabel(setting) + ":");
             label.getStyleClass().add("label-on-dark-background");
-            TextField field = createTextField(setting.getValue(), textValueFields, i);
-            gridPane.add(label, 0, globalPosition);
-            gridPane.add(field, 1, globalPosition);
-        }
 
-        for (int i = 0; i < checkBoxSettings.size(); i++, globalPosition++) {
-            SettingDTO setting = checkBoxSettings.get(i);
-            Label label = new Label(getLabel(setting) + ":");
-            label.getStyleClass().add("label-on-dark-background");
-            CheckBox field = createCheckBox(setting.getValue(), checkBoxFields, i);
-            field.getStyleClass().add("check-box-on-dark-background");
-            gridPane.add(label, 0, globalPosition);
-            gridPane.add(field, 1, globalPosition);
-        }
+            gridPane.add(label, 0, i);
 
-        for (int i = 0; i < comboSettings.size(); i++, globalPosition++) {
-            SettingDTO setting = comboSettings.get(i);
-            Label label = new Label(getLabel(setting) + ":");
-            label.getStyleClass().add("label-on-dark-background");
-            ComboBox<String> field = createComboBox(setting, comboValueFields, i);
-            gridPane.add(label, 0, globalPosition);
-            gridPane.add(field, 1, globalPosition);
+            if (SettingType.SELECT.equals(setting.getType())) {
+                ComboBox<String> field = createComboBox(setting, comboValueFields, i);
+                gridPane.add(field, 1, i);
+            } else if (SettingType.SWITCH.equals(setting.getType())) {
+                CheckBox field = createCheckBox(setting.getValue(), checkBoxFields, i);
+                field.getStyleClass().add("check-box-on-dark-background");
+                gridPane.add(field, 1, i);
+            } else if (SettingType.NUMBER.equals(setting.getType())) {
+                TextField field = createNumberField(setting.getValue(), textValueFields, i);
+                gridPane.add(field, 1, i);
+            } else if (SettingType.PATH.equals(setting.getType())) {
+                HBox field = createPathSelector(setting, textValueFields, i);
+                gridPane.add(field, 1, i);
+            } else {
+                TextField field = createTextField(setting.getValue(), textValueFields, i);
+                gridPane.add(field, 1, i);
+            }
         }
 
         return new FieldOnPageDTO(textValueFields, comboValueFields, checkBoxFields);
-    }
-
-    private List<SettingDTO> getComboSettings(List<SettingDTO> settings) {
-        return settings.stream()
-                .filter(elem -> org.codefromheaven.dto.settings.SettingType.SELECT.equals(elem.getType()))
-                .collect(Collectors.toList());
-    }
-
-    private List<SettingDTO> getCheckBoxSettings(List<SettingDTO> settings) {
-        return settings.stream()
-                .filter(elem -> org.codefromheaven.dto.settings.SettingType.SWITCH.equals(elem.getType()))
-                .collect(Collectors.toList());
-    }
-
-    private List<SettingDTO> getTextSettings(List<SettingDTO> settings, List<SettingDTO> alreadyUsedSettings) {
-        return settings.stream().filter(elem -> !alreadyUsedSettings.contains(elem)).collect(Collectors.toList());
     }
 
     private TextField createTextField(String value, TextField[] valueFields, int i) {
@@ -155,6 +128,43 @@ public class SettingsController {
         textField.setPrefWidth(500);
         valueFields[i] = textField;
         return textField;
+    }
+
+    private TextField createNumberField(String value, TextField[] valueFields, int i) {
+        TextField textField = new TextField(value);
+        textField.setPrefWidth(500);
+        textField.setTextFormatter(new javafx.scene.control.TextFormatter<>(change -> {
+            if (change.getControlNewText().matches("\\d*")) {
+                return change;
+            }
+            return null;
+        }));
+        valueFields[i] = textField;
+        return textField;
+    }
+
+    private HBox createPathSelector(SettingDTO setting, TextField[] valueFields, int i) {
+        TextField textField = new TextField(setting.getValue());
+        textField.setPrefWidth(430);
+        Button browseButton = new Button("Browse");
+        browseButton.getStyleClass().add("button-default");
+        browseButton.setOnAction(e -> {
+            if (setting.getKey().equals(Setting.BASH_PATH.getName())) {
+                FileChooser fileChooser = new FileChooser();
+                File file = fileChooser.showOpenDialog(textField.getScene().getWindow());
+                if (file != null) {
+                    textField.setText(file.getAbsolutePath());
+                }
+            } else {
+                DirectoryChooser dirChooser = new DirectoryChooser();
+                File dir = dirChooser.showDialog(textField.getScene().getWindow());
+                if (dir != null) {
+                    textField.setText(dir.getAbsolutePath());
+                }
+            }
+        });
+        valueFields[i] = textField;
+        return new HBox(10, textField, browseButton);
     }
 
     private ComboBox<String> createComboBox(SettingDTO setting, ComboBox<String>[] valueFields, int i) {
@@ -190,30 +200,16 @@ public class SettingsController {
     }
 
     private void doActionOnSave(List<SettingDTO> settings, FieldOnPageDTO valueFields, Stage settingsStage) {
-        List<SettingDTO> comboSettings = getComboSettings(settings);
-        List<SettingDTO> checkBoxSettings = getCheckBoxSettings(settings);
-
-        List<SettingDTO> alreadyUsedSettings = new ArrayList<>();
-        alreadyUsedSettings.addAll(comboSettings);
-        alreadyUsedSettings.addAll(checkBoxSettings);
-
-        List<SettingDTO> textSettings = getTextSettings(settings, alreadyUsedSettings);
-
-        for (int i = 0; i < textSettings.size(); i++) {
-            SettingDTO setting = textSettings.get(i);
-            String newValue = valueFields.textFields()[i].getText();
-            setting.setValue(newValue);
-        }
-
-        for (int i = 0; i < comboSettings.size(); i++) {
-            SettingDTO setting = comboSettings.get(i);
-            String newValue = valueFields.comboBoxes()[i].getValue();
-            setting.setValue(newValue);
-        }
-
-        for (int i = 0; i < checkBoxSettings.size(); i++) {
-            SettingDTO setting = checkBoxSettings.get(i);
-            String newValue = String.valueOf(valueFields.checkBoxes()[i].isSelected());
+        for (int i = 0; i < settings.size(); i++) {
+            SettingDTO setting = settings.get(i);
+            String newValue;
+            if (SettingType.SELECT.equals(setting.getType())) {
+                newValue = valueFields.comboBoxes()[i].getValue();
+            } else if (SettingType.SWITCH.equals(setting.getType())) {
+                newValue = String.valueOf(valueFields.checkBoxes()[i].isSelected());
+            } else {
+                newValue = valueFields.textFields()[i].getText();
+            }
             setting.setValue(newValue);
         }
 

@@ -4,13 +4,7 @@
       "key": "APP_NAME",
       "value": "Script Control Panel",
       "type": "TEXT",
-      "description": "Override your app name"
-    },
-    {
-      "key": "PYTHON_SCRIPTS_PREFIX",
-      "value": "py",
-      "type": "TEXT",
-      "description": "Python script prefix"
+      "description": "App name"
     }
   ]
 }
