@@ -67,6 +67,8 @@ public class MainWindowController implements Initializable {
     @FXML
     private MenuItem changeVisibleElements;
     @FXML
+    private MenuItem editLayoutAndButtons;
+    @FXML
     private MenuItem changeSettings;
     @FXML
     private MenuItem pinBashFileToTaskBar;
@@ -241,20 +243,31 @@ public class MainWindowController implements Initializable {
         }
     }
 
+    private String addPrefixToCommand(String command, ElementType elementType) {
+        return switch (elementType) {
+            case BASH -> "./" + command;
+            case POWERSHELL -> ".\\" + command;
+            case PYTHON -> settingsService.getPythonScriptsPrefix() + " " + command;
+            default -> command;
+        };
+    }
+
     private void addButtonListenerForBashCommand(Button button, ButtonDTO buttonDTO) {
         button.setOnMouseClicked(event -> {
             if (buttonDTO.isPopupInputDisplayed()) {
                 Optional<String> result = createTextInputDialog(buttonDTO.getPopupInputMessage());
                 result.ifPresent(name -> {
                     for (String command : buttonDTO.getCommands()) {
+                        String prefixedCommand = addPrefixToCommand(command, buttonDTO.getElementType());
                         GitBashService.runCommand(buttonDTO.getScriptLocationParamName(),
-                                buttonDTO.isAutoCloseConsole(), command + " " + name);
+                                buttonDTO.isAutoCloseConsole(), prefixedCommand + " " + name);
                     }
                 });
             } else {
                 for (String command : buttonDTO.getCommands()) {
+                    String prefixedCommand = addPrefixToCommand(command, buttonDTO.getElementType());
                     GitBashService.runCommand(buttonDTO.getScriptLocationParamName(), buttonDTO.isAutoCloseConsole(),
-                            command);
+                            prefixedCommand);
                 }
             }
         });
@@ -266,14 +279,16 @@ public class MainWindowController implements Initializable {
                 Optional<String> result = createTextInputDialog(buttonDTO.getPopupInputMessage());
                 result.ifPresent(name -> {
                     for (String command : buttonDTO.getCommands()) {
+                        String prefixedCommand = addPrefixToCommand(command, buttonDTO.getElementType());
                         PowerShellService.runCommand(buttonDTO.getScriptLocationParamName(),
-                                buttonDTO.isAutoCloseConsole(), command + " " + name);
+                                buttonDTO.isAutoCloseConsole(), prefixedCommand + " " + name);
                     }
                 });
             } else {
                 for (String command : buttonDTO.getCommands()) {
+                    String prefixedCommand = addPrefixToCommand(command, buttonDTO.getElementType());
                     PowerShellService.runCommand(buttonDTO.getScriptLocationParamName(), buttonDTO.isAutoCloseConsole(),
-                            command);
+                            prefixedCommand);
                 }
             }
         });
@@ -356,6 +371,13 @@ public class MainWindowController implements Initializable {
     private void handleChangeSettings() {
         SettingsController controller = new SettingsController(this::loadContent, this::resizeMainWindow,
                 this::checkForUpdates, this::reloadStyle);
+        controller.setupPage();
+    }
+
+    @FXML
+    private void handleEditLayoutAndButtons() {
+        LayoutAndButtonsEditorController controller = new LayoutAndButtonsEditorController(this::loadContent,
+                this::resizeMainWindow);
         controller.setupPage();
     }
 

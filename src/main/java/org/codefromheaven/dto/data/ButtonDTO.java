@@ -2,11 +2,14 @@ package org.codefromheaven.dto.data;
 
 import org.codefromheaven.dto.ElementType;
 import org.codefromheaven.dto.settings.VisibilitySettingKey;
+import com.fasterxml.jackson.annotation.JsonCreator;
+import com.fasterxml.jackson.annotation.JsonProperty;
 
 import java.util.List;
 
 public class ButtonDTO {
 
+    @JsonProperty("buttonName")
     private final String name;
     private final String scriptLocationParamName;
     private final List<String> commands;
@@ -18,8 +21,9 @@ public class ButtonDTO {
     private final boolean visibleAsDefault;
     private final VisibilitySettingKey visibilitySettingKey;
 
+    @JsonCreator
     public ButtonDTO(
-            String name,
+            @JsonProperty("buttonName") String name,
             String scriptLocationParamName,
             List<String> commands,
             ElementType elementType,
@@ -78,6 +82,7 @@ public class ButtonDTO {
         return visibleAsDefault;
     }
 
+    @com.fasterxml.jackson.annotation.JsonIgnore
     public VisibilitySettingKey getKey() {
         return visibilitySettingKey;
     }

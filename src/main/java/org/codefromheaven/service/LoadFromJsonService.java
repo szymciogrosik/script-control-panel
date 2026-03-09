@@ -5,10 +5,8 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.codefromheaven.dto.ElementType;
 import org.codefromheaven.dto.data.ButtonDTO;
-import org.codefromheaven.context.SpringContext;
 import org.codefromheaven.dto.data.SectionDTO;
 import org.codefromheaven.dto.data.SubSectionDTO;
-import org.codefromheaven.service.settings.SettingsService;
 import org.codefromheaven.service.settings.SettingsServiceBase;
 
 import org.codefromheaven.dto.data.DirectoryDTO;
@@ -26,8 +24,82 @@ public class LoadFromJsonService {
     }
 
     public static LayoutAndButtonsDTO loadLayoutAndButtons(String configName) {
-        Optional<LayoutAndButtonsDTO> commands = loadBase(SettingsServiceBase.getMyOwnFileDir(configName));
-        return commands.orElseGet(() -> loadBase(SettingsServiceBase.getDefaultFileDir(configName)).get());
+        Optional<LayoutAndButtonsDTO> defaultLayout = loadBase(SettingsServiceBase.getDefaultFileDir(configName));
+        Optional<LayoutAndButtonsDTO> customLayout = loadBase(SettingsServiceBase.getMyOwnFileDir(configName));
+
+        if (defaultLayout.isEmpty()) {
+            return customLayout.orElseGet(() -> new LayoutAndButtonsDTO(new ArrayList<>(), new ArrayList<>()));
+        }
+        if (customLayout.isEmpty()) {
+            return defaultLayout.get();
+        }
+        return mergeLayouts(defaultLayout.get(), customLayout.get());
+    }
+
+    private static LayoutAndButtonsDTO mergeLayouts(LayoutAndButtonsDTO defaultDto, LayoutAndButtonsDTO customDto) {
+        List<DirectoryDTO> mergedDirs = new ArrayList<>(defaultDto.directories());
+        for (DirectoryDTO customDir : customDto.directories()) {
+            mergedDirs.removeIf(d -> d.name().equals(customDir.name()));
+            mergedDirs.add(customDir);
+        }
+
+        List<SectionDTO> mergedSections = new ArrayList<>();
+        for (SectionDTO defaultSec : defaultDto.layout()) {
+            Optional<SectionDTO> customSecOpt = customDto.layout().stream()
+                    .filter(s -> s.sectionName().equals(defaultSec.sectionName())).findFirst();
+
+            if (customSecOpt.isEmpty()) {
+                mergedSections.add(defaultSec);
+            } else {
+                List<SubSectionDTO> mergedSubSecs = new ArrayList<>();
+                for (SubSectionDTO defaultSubSec : defaultSec.subSections()) {
+                    Optional<SubSectionDTO> customSubSecOpt = customSecOpt.get().subSections().stream()
+                            .filter(ss -> ss.subSectionName().equals(defaultSubSec.subSectionName())).findFirst();
+
+                    if (customSubSecOpt.isEmpty()) {
+                        mergedSubSecs.add(defaultSubSec);
+                    } else {
+                        List<ButtonDTO> mergedButtons = new ArrayList<>();
+                        for (ButtonDTO defaultBtn : defaultSubSec.buttons()) {
+                            Optional<ButtonDTO> customBtnOpt = customSubSecOpt.get().buttons().stream()
+                                    .filter(b -> b.getName().equals(defaultBtn.getName())
+                                            && b.getElementType() == defaultBtn.getElementType())
+                                    .findFirst();
+                            mergedButtons.add(customBtnOpt.orElse(defaultBtn));
+                        }
+
+                        // Add new buttons that exist only in custom layout
+                        for (ButtonDTO customBtn : customSubSecOpt.get().buttons()) {
+                            if (mergedButtons.stream().noneMatch(b -> b.getName().equals(customBtn.getName())
+                                    && b.getElementType() == customBtn.getElementType())) {
+                                mergedButtons.add(customBtn);
+                            }
+                        }
+
+                        mergedSubSecs.add(new SubSectionDTO(defaultSubSec.subSectionName(), mergedButtons));
+                    }
+                }
+
+                // Add new subsections that exist only in custom layout
+                for (SubSectionDTO customSubSec : customSecOpt.get().subSections()) {
+                    if (mergedSubSecs.stream()
+                            .noneMatch(ss -> ss.subSectionName().equals(customSubSec.subSectionName()))) {
+                        mergedSubSecs.add(customSubSec);
+                    }
+                }
+
+                mergedSections.add(new SectionDTO(defaultSec.sectionName(), mergedSubSecs));
+            }
+        }
+
+        // Add new sections that exist only in custom layout
+        for (SectionDTO customSec : customDto.layout()) {
+            if (mergedSections.stream().noneMatch(s -> s.sectionName().equals(customSec.sectionName()))) {
+                mergedSections.add(customSec);
+            }
+        }
+
+        return new LayoutAndButtonsDTO(mergedDirs, mergedSections);
     }
 
     public static Optional<LayoutAndButtonsDTO> loadBase(String configPath) {
@@ -60,7 +132,12 @@ public class LoadFromJsonService {
                         String subSectionName = subSectionNode.get("subSectionName").asText();
                         SubSectionDTO subSection = getOrCreateSubSection(section.subSections(), subSectionName);
 
-                        for (JsonNode commandNode : subSectionNode.get("commands")) {
+                        JsonNode commandsNode = subSectionNode.get("commands");
+                        if (commandsNode == null || !commandsNode.isArray()) {
+                            continue;
+                        }
+
+                        for (JsonNode commandNode : commandsNode) {
                             ElementType elementType = ElementType.getEnumType(commandNode.get("elementType").asText());
                             JsonNode commandsArray = commandNode.get("commands");
 
@@ -69,13 +146,22 @@ public class LoadFromJsonService {
                                     commandNode.get(visibleAsDefaultPropertyName).asBoolean();
                             subSection.buttons().add(new ButtonDTO(
                                     commandNode.get("buttonName").asText(),
-                                    commandNode.get("scriptLocationParamName").asText(),
+                                    commandNode.get("scriptLocationParamName") != null
+                                            ? commandNode.get("scriptLocationParamName").asText()
+                                            : "",
                                     fetchCommandsWithPrefix(commandsArray, elementType),
                                     elementType,
-                                    commandNode.get("autoCloseConsole").asBoolean(),
-                                    commandNode.get("popupInputDisplayed").asBoolean(),
-                                    commandNode.get("popupInputMessage").asText(),
-                                    commandNode.get("description").asText(),
+                                    commandNode.get("autoCloseConsole") != null
+                                            ? commandNode.get("autoCloseConsole").asBoolean()
+                                            : false,
+                                    commandNode.get("popupInputDisplayed") != null
+                                            ? commandNode.get("popupInputDisplayed").asBoolean()
+                                            : false,
+                                    commandNode.get("popupInputMessage") != null
+                                            ? commandNode.get("popupInputMessage").asText()
+                                            : "",
+                                    commandNode.get("description") != null ? commandNode.get("description").asText()
+                                            : "",
                                     visibleAsDefault,
                                     sectionName,
                                     subSectionName));
@@ -97,20 +183,10 @@ public class LoadFromJsonService {
         List<String> commands = new ArrayList<>();
         if (commandsArray.isArray()) {
             for (JsonNode commandElement : commandsArray) {
-                String command = addPrefixToCommand(commandElement.asText(), elementType);
-                commands.add(command);
+                commands.add(commandElement.asText());
             }
         }
         return commands;
-    }
-
-    private static String addPrefixToCommand(String command, ElementType elementType) {
-        return switch (elementType) {
-            case BASH -> "./" + command;
-            case POWERSHELL -> ".\\" + command;
-            case PYTHON -> SpringContext.getBean(SettingsService.class).getPythonScriptsPrefix() + " " + command;
-            default -> command;
-        };
     }
 
     private static SectionDTO getOrCreateSection(List<SectionDTO> allSections, String sectionName) {
