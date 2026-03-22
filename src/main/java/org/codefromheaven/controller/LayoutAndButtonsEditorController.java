@@ -11,7 +11,6 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
-import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
@@ -33,7 +32,6 @@ import org.codefromheaven.service.style.StyleService;
 import org.codefromheaven.service.LoadFromJsonService;
 import org.codefromheaven.service.settings.LayoutOrderService;
 
-import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
@@ -368,10 +366,25 @@ public class LayoutAndButtonsEditorController {
         descField.setPrefRowCount(3);
 
         browseButton.setOnAction(e -> {
-            DirectoryChooser directoryChooser = new DirectoryChooser();
-            File selectedDirectory = directoryChooser.showDialog(stage);
+            javafx.stage.DirectoryChooser directoryChooser = new javafx.stage.DirectoryChooser();
+            try {
+                java.io.File initialDir = new java.io.File(System.getProperty("user.dir"));
+                if (initialDir.exists() && initialDir.isDirectory()) {
+                    directoryChooser.setInitialDirectory(initialDir);
+                }
+            } catch (Exception ex) {
+                // Ignore and use default
+            }
+            java.io.File selectedDirectory = directoryChooser.showDialog(stage);
             if (selectedDirectory != null) {
-                pathField.setText(selectedDirectory.getAbsolutePath().replace("\\", "/"));
+                java.nio.file.Path basePath = java.nio.file.Paths.get("").toAbsolutePath();
+                java.nio.file.Path targetPath = selectedDirectory.toPath().toAbsolutePath();
+                try {
+                    String relativePath = basePath.relativize(targetPath).toString().replace("\\", "/");
+                    pathField.setText(relativePath.isEmpty() ? "." : relativePath);
+                } catch (IllegalArgumentException ex) {
+                    pathField.setText(selectedDirectory.getAbsolutePath().replace("\\", "/"));
+                }
             }
         });
 
