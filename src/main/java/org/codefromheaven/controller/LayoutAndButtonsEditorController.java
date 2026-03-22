@@ -880,11 +880,23 @@ public class LayoutAndButtonsEditorController {
 
         CheckBox popupCheck = new CheckBox();
         popupCheck.setSelected(btn.popupInputDisplayed.get());
-        popupCheck.selectedProperty().addListener((o, old, nev) -> btn.popupInputDisplayed.set(nev));
         popupCheck.getStyleClass().add("check-box-on-dark-background");
 
         TextField popupMsgField = new TextField(btn.popupInputMessage.get());
         popupMsgField.textProperty().addListener((o, old, nev) -> btn.popupInputMessage.set(nev));
+
+        popupCheck.selectedProperty().addListener((o, old, nev) -> {
+            btn.popupInputDisplayed.set(nev);
+            if (!nev) {
+                popupMsgField.setText("");
+            }
+        });
+
+        Label popupMsgLabel = createLabel("Input script param popup text:");
+        popupMsgLabel.visibleProperty().bind(popupCheck.selectedProperty());
+        popupMsgLabel.managedProperty().bind(popupCheck.selectedProperty());
+        popupMsgField.visibleProperty().bind(popupCheck.selectedProperty());
+        popupMsgField.managedProperty().bind(popupCheck.selectedProperty());
 
         TextArea descField = new TextArea(btn.description.get());
         descField.setWrapText(true);
@@ -920,7 +932,7 @@ public class LayoutAndButtonsEditorController {
             grid.add(autoCloseCheck, 1, row++);
             grid.add(createLabel("Show input script param popup:"), 0, row);
             grid.add(popupCheck, 1, row++);
-            grid.add(createLabel("Input script param popup text:"), 0, row);
+            grid.add(popupMsgLabel, 0, row);
             grid.add(popupMsgField, 1, row++);
         }
 
