@@ -39,6 +39,8 @@ import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+import java.util.Set;
+import java.util.HashSet;
 import java.util.stream.Collectors;
 
 public class LayoutAndButtonsEditorController {
@@ -88,7 +90,7 @@ public class LayoutAndButtonsEditorController {
 
         VBox root = new VBox(10, tabPane, bottomBar); // Renamed from 'rootBox' to 'root' to match original
         root.setPadding(new Insets(10)); // Changed padding from 15 to 10
-        root.getStyleClass().add("primary-page"); // Kept original style class
+        root.getStyleClass().addAll("primary-page", "background-primary"); // Apply both classes for app consistency
         VBox.setVgrow(tabPane, Priority.ALWAYS); // Changed 'tabs' to 'tabPane'
 
         Scene scene = new Scene(root, 1200, 700);
@@ -120,6 +122,10 @@ public class LayoutAndButtonsEditorController {
     }
 
     private void saveAndApply(Stage stage) {
+        if (!validateVariables()) {
+            return;
+        }
+
         List<DirectoryDTO> dirs = directories.stream().map(MutableDirectory::toDto).collect(Collectors.toList());
         List<SectionDTO> sections = this.sections.stream().map(MutableSection::toDto).collect(Collectors.toList());
 
@@ -203,6 +209,28 @@ public class LayoutAndButtonsEditorController {
         return result;
     }
 
+    private boolean validateVariables() {
+        Set<String> names = new HashSet<>();
+        for (MutableDirectory dir : directories) {
+            String name = dir.name.get();
+            if (name == null || name.trim().isEmpty()) {
+                PopupController.showPopup("Variable names cannot be empty.", Alert.AlertType.ERROR);
+                return false;
+            }
+            if (!names.add(name)) {
+                PopupController.showPopup("Variable names must be unique. Duplicate found: " + name, Alert.AlertType.ERROR);
+                return false;
+            }
+        }
+        return true;
+    }
+
+    private Label createLabel(String text) {
+        Label label = new Label(text);
+        label.getStyleClass().add("label-on-dark-background");
+        return label;
+    }
+
     // --- Editor Layouts ---
 
     private VBox createDirectoriesEditor(Stage stage) {
@@ -240,11 +268,11 @@ public class LayoutAndButtonsEditorController {
         HBox pathBox = new HBox(5, pathField, browseButton);
         HBox.setHgrow(pathField, Priority.ALWAYS);
 
-        form.add(new Label("Variable Name:"), 0, 0);
+        form.add(createLabel("Variable Name:"), 0, 0);
         form.add(nameField, 1, 0);
-        form.add(new Label("Path Location:"), 0, 1);
+        form.add(createLabel("Path Location:"), 0, 1);
         form.add(pathBox, 1, 1);
-        form.add(new Label("Description:"), 0, 2);
+        form.add(createLabel("Description:"), 0, 2);
         form.add(descField, 1, 2);
 
         form.setDisable(true); // default hidden/disabled
@@ -264,15 +292,39 @@ public class LayoutAndButtonsEditorController {
                 nameField.textProperty().bindBidirectional(newVal.name);
                 pathField.textProperty().bindBidirectional(newVal.path);
                 descField.textProperty().bindBidirectional(newVal.description);
+
+                // Initial validation check for when we select an item
+                String currentName = newVal.name.get();
+                if (currentName == null || currentName.trim().isEmpty() ||
+                    directories.stream().filter(d -> currentName.equals(d.name.get())).count() > 1) {
+                    nameField.setStyle("-fx-text-box-border: red; -fx-focus-color: red;");
+                } else {
+                    nameField.setStyle("");
+                }
             } else {
                 form.setDisable(true);
                 nameField.clear();
                 pathField.clear();
                 descField.clear();
+                nameField.setStyle("");
             }
         });
 
-        nameField.textProperty().addListener((o, oldValue, newValue) -> dirList.refresh());
+        nameField.textProperty().addListener((o, oldValue, newValue) -> {
+            dirList.refresh();
+            if (newValue == null || newValue.trim().isEmpty()) {
+                nameField.setStyle("-fx-text-box-border: red; -fx-focus-color: red;");
+            } else {
+                long count = directories.stream()
+                        .filter(d -> newValue.equals(d.name.get()))
+                        .count();
+                if (count > 1) {
+                    nameField.setStyle("-fx-text-box-border: red; -fx-focus-color: red;");
+                } else {
+                    nameField.setStyle("");
+                }
+            }
+        });
         
         nameField.focusedProperty().addListener((obs, wasFocused, isFocused) -> {
             if (!isFocused) {
@@ -376,9 +428,9 @@ public class LayoutAndButtonsEditorController {
                 sub.buttons.remove(b);
         });
 
-        VBox secBox = new VBox(5, new Label("Sections"), sectionList, new HBox(5, addSecBtn, delSecBtn));
-        VBox subBox = new VBox(5, new Label("Subsections"), subSectionList, new HBox(5, addSubBtn, delSubBtn));
-        VBox btnBox = new VBox(5, new Label("Buttons"), buttonList, new HBox(5, addBtnBtn, delBtnBtn));
+        VBox secBox = new VBox(5, createLabel("Sections"), sectionList, new HBox(5, addSecBtn, delSecBtn));
+        VBox subBox = new VBox(5, createLabel("Subsections"), subSectionList, new HBox(5, addSubBtn, delSubBtn));
+        VBox btnBox = new VBox(5, createLabel("Buttons"), buttonList, new HBox(5, addBtnBtn, delBtnBtn));
 
         VBox.setVgrow(sectionList, Priority.ALWAYS);
         VBox.setVgrow(subSectionList, Priority.ALWAYS);
@@ -446,7 +498,7 @@ public class LayoutAndButtonsEditorController {
 
     private void populateSectionEditForm(VBox form, MutableSection section, ListView<MutableSection> list) {
         form.getChildren().clear();
-        form.getChildren().add(new Label("Editing Section"));
+        form.getChildren().add(createLabel("Editing Section"));
 
         GridPane grid = new GridPane();
         grid.setHgap(10);
@@ -464,14 +516,14 @@ public class LayoutAndButtonsEditorController {
             list.refresh();
         });
 
-        grid.add(new Label("Section Name:"), 0, 0);
+        grid.add(createLabel("Section Name:"), 0, 0);
         grid.add(nameField, 1, 0);
         form.getChildren().add(grid);
     }
 
     private void populateSubSectionEditForm(VBox form, MutableSubSection subSection, ListView<MutableSubSection> list) {
         form.getChildren().clear();
-        form.getChildren().add(new Label("Editing SubSection"));
+        form.getChildren().add(createLabel("Editing SubSection"));
 
         GridPane grid = new GridPane();
         grid.setHgap(10);
@@ -489,14 +541,14 @@ public class LayoutAndButtonsEditorController {
             list.refresh();
         });
 
-        grid.add(new Label("SubSection Name:"), 0, 0);
+        grid.add(createLabel("SubSection Name:"), 0, 0);
         grid.add(nameField, 1, 0);
         form.getChildren().add(grid);
     }
 
     private void populateButtonEditForm(VBox form, MutableButton btn, ListView<MutableButton> list) {
         form.getChildren().clear();
-        form.getChildren().add(new Label("Editing Button"));
+        form.getChildren().add(createLabel("Editing Button"));
 
         GridPane grid = new GridPane();
         grid.setHgap(10);
@@ -598,30 +650,30 @@ public class LayoutAndButtonsEditorController {
         visibleDefCheck.getStyleClass().add("check-box-on-dark-background");
 
         int row = 0;
-        grid.add(new Label("Button Name:"), 0, row);
+        grid.add(createLabel("Button Name:"), 0, row);
         grid.add(nameField, 1, row++);
-        grid.add(new Label("Element Type:"), 0, row);
+        grid.add(createLabel("Element Type:"), 0, row);
         grid.add(typeBox, 1, row++);
 
         ElementType t = btn.elementType.get();
         if (t != ElementType.LINK) {
-            grid.add(new Label("Script Directory Variable:"), 0, row);
+            grid.add(createLabel("Script Directory Variable:"), 0, row);
             grid.add(locationBox, 1, row++);
         }
 
-        grid.add(new Label(t == ElementType.LINK ? "URLs (1 per line):" : "Commands:"), 0, row);
+        grid.add(createLabel(t == ElementType.LINK ? "URLs (1 per line):" : "Commands:"), 0, row);
         grid.add(commandsContainer, 1, row++);
-        grid.add(new Label("Description (Tooltip):"), 0, row);
+        grid.add(createLabel("Description (Tooltip):"), 0, row);
         grid.add(descField, 1, row++);
-        grid.add(new Label("Visible as default:"), 0, row);
+        grid.add(createLabel("Visible as default:"), 0, row);
         grid.add(visibleDefCheck, 1, row++);
 
         if (t != ElementType.LINK) {
-            grid.add(new Label("Auto close console:"), 0, row);
+            grid.add(createLabel("Auto close console:"), 0, row);
             grid.add(autoCloseCheck, 1, row++);
-            grid.add(new Label("Show input script param popup:"), 0, row);
+            grid.add(createLabel("Show input script param popup:"), 0, row);
             grid.add(popupCheck, 1, row++);
-            grid.add(new Label("Input script param popup text:"), 0, row);
+            grid.add(createLabel("Input script param popup text:"), 0, row);
             grid.add(popupMsgField, 1, row++);
         }
 
