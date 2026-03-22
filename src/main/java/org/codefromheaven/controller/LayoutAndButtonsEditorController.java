@@ -33,6 +33,7 @@ import org.codefromheaven.service.settings.LayoutOrderService;
 
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -43,8 +44,6 @@ import java.util.stream.Collectors;
 import static javafx.beans.binding.Bindings.*;
 
 public class LayoutAndButtonsEditorController {
-
-    private static final String APP_LOCATION = "APP_LOCATION";
 
     private final MainWindowController.ContentLoader contentLoader;
     private final MainWindowController.ResizeWindow resizeWindow;
@@ -138,23 +137,12 @@ public class LayoutAndButtonsEditorController {
         }
 
         directories.clear();
-        boolean hasAppLoc = false;
         if (currentDto.directories() != null) {
             for (DirectoryDTO d : currentDto.directories()) {
                 directories.add(new MutableDirectory(d));
-                if (APP_LOCATION.equals(d.name())) hasAppLoc = true;
             }
         }
-        if (!hasAppLoc) {
-            directories.add(new MutableDirectory(new DirectoryDTO(APP_LOCATION, ".", "Application Root Directory")));
-        }
-        directories.sort((d1, d2) -> {
-            boolean isApp1 = APP_LOCATION.equals(d1.name.get());
-            boolean isApp2 = APP_LOCATION.equals(d2.name.get());
-            if (isApp1 && !isApp2) return -1;
-            if (!isApp1 && isApp2) return 1;
-            return d1.name.get().toLowerCase().compareTo(d2.name.get().toLowerCase());
-        });
+        directories.sort(Comparator.comparing(d -> d.name.get().toLowerCase()));
 
         sections.clear();
         if (currentDto.layout() != null) {
@@ -429,11 +417,6 @@ public class LayoutAndButtonsEditorController {
                 pathField.textProperty().bindBidirectional(newVal.path);
                 descField.textProperty().bindBidirectional(newVal.description);
 
-                boolean isAppLoc = APP_LOCATION.equals(newVal.name.get());
-                nameField.setDisable(isAppLoc);
-                pathField.setDisable(isAppLoc);
-                browseButton.setDisable(isAppLoc);
-
                 // Initial validation check for when we select an item
                 String currentName = newVal.name.get();
                 updateValidationMessage(nameField, varErrorTooltip, currentName);
@@ -483,10 +466,6 @@ public class LayoutAndButtonsEditorController {
             MutableDirectory sel = dirList.getSelectionModel().getSelectedItem();
             if (sel != null) {
                 String removedName = sel.name.get();
-                if (APP_LOCATION.equals(removedName)) {
-                    PopupController.showPopup("Cannot remove the reserved APP_LOCATION variable.", javafx.scene.control.Alert.AlertType.WARNING);
-                    return;
-                }
                 boolean isUsed = false;
                 for (MutableSection sec : sections) {
                     for (MutableSubSection sub : sec.subSections) {
@@ -879,7 +858,7 @@ public class LayoutAndButtonsEditorController {
             updateCommandsString.run();
         };
 
-        Button addCmdBtn = new Button("+ Add Command");
+        Button addCmdBtn = new Button(btn.elementType.get() == ElementType.LINK ? "+ Add URL" : "+ Add command");
         addCmdBtn.getStyleClass().add("button-default");
         addCmdBtn.setOnAction(e -> addCommandRow.accept(""));
         commandsContainer.getChildren().add(addCmdBtn);
@@ -974,13 +953,7 @@ public class LayoutAndButtonsEditorController {
 
     private void sortDirectoriesAlphabetically(ListView<MutableDirectory> dirList) {
         MutableDirectory selected = dirList.getSelectionModel().getSelectedItem();
-        directories.sort((d1, d2) -> {
-            boolean isApp1 = APP_LOCATION.equals(d1.name.get());
-            boolean isApp2 = APP_LOCATION.equals(d2.name.get());
-            if (isApp1 && !isApp2) return -1;
-            if (!isApp1 && isApp2) return 1;
-            return d1.name.get().toLowerCase().compareTo(d2.name.get().toLowerCase());
-        });
+        directories.sort(Comparator.comparing(d -> d.name.get().toLowerCase()));
         if (selected != null) {
             Platform.runLater(() -> dirList.getSelectionModel().select(selected));
         }
