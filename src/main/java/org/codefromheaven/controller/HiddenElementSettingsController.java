@@ -18,7 +18,7 @@ import org.codefromheaven.dto.data.LayoutAndButtonsDTO;
 import org.codefromheaven.service.settings.VisibilitySettings;
 import org.codefromheaven.helpers.MaxHighUtils;
 import org.codefromheaven.service.animal.AnimalService;
-import org.codefromheaven.service.settings.LayoutAndButtonsService;
+import org.codefromheaven.service.settings.LayoutService;
 import org.codefromheaven.service.style.StyleService;
 
 import java.util.ArrayList;
@@ -104,7 +104,7 @@ public class HiddenElementSettingsController {
                 subSectionHeader.getStyleClass().add("text-header");
                 sectionBox.getChildren().add(subSectionHeader);
                 subSection.buttons().forEach(button -> {
-                    CheckBox checkBox = new CheckBox(button.getName());
+                    CheckBox checkBox = new CheckBox(button.getButtonName());
                     checkBox.getStyleClass().add("check-box-on-dark-background");
                     boolean isChecked = visibilitySettings.isVisible(button);
                     checkBox.setSelected(isChecked);
@@ -119,7 +119,7 @@ public class HiddenElementSettingsController {
     }
 
     public static List<SectionDTO> loadAllElements() {
-        LayoutAndButtonsDTO layoutAndButtons = LayoutAndButtonsService.load();
+        LayoutAndButtonsDTO layoutAndButtons = SpringContext.getBean(LayoutService.class).load();
         if (layoutAndButtons != null && layoutAndButtons.layout() != null) {
             return layoutAndButtons.layout();
         }

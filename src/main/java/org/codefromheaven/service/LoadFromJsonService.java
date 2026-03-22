@@ -5,12 +5,13 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.codefromheaven.dto.ElementType;
 import org.codefromheaven.dto.data.ButtonDTO;
+import org.codefromheaven.dto.data.LayoutOrderDTO;
 import org.codefromheaven.dto.data.SectionDTO;
 import org.codefromheaven.dto.data.SubSectionDTO;
-import org.codefromheaven.service.settings.SettingsServiceBase;
 
 import org.codefromheaven.dto.data.DirectoryDTO;
 import org.codefromheaven.dto.data.LayoutAndButtonsDTO;
+import org.springframework.stereotype.Service;
 
 import java.io.File;
 import java.io.IOException;
@@ -18,91 +19,23 @@ import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
+@Service
 public class LoadFromJsonService {
 
-    private LoadFromJsonService() {
+    public Optional<LayoutOrderDTO> loadLayoutOrder(String configPath) {
+        File file = new File(configPath);
+        if (!file.exists()) {
+            return Optional.empty();
+        }
+        ObjectMapper mapper = new ObjectMapper();
+        try {
+            return Optional.of(mapper.readValue(file, LayoutOrderDTO.class));
+        } catch (IOException e) {
+            return Optional.empty();
+        }
     }
 
-    public static LayoutAndButtonsDTO loadLayoutAndButtons(String configName) {
-        Optional<LayoutAndButtonsDTO> defaultLayout = loadBase(SettingsServiceBase.getDefaultFileDir(configName));
-        Optional<LayoutAndButtonsDTO> customLayout = loadBase(SettingsServiceBase.getMyOwnFileDir(configName));
-
-        if (defaultLayout.isEmpty()) {
-            return customLayout.orElseGet(() -> new LayoutAndButtonsDTO(new ArrayList<>(), new ArrayList<>()));
-        }
-        if (customLayout.isEmpty()) {
-            return defaultLayout.get();
-        }
-        return mergeLayouts(defaultLayout.get(), customLayout.get());
-    }
-
-    private static LayoutAndButtonsDTO mergeLayouts(LayoutAndButtonsDTO defaultDto, LayoutAndButtonsDTO customDto) {
-        List<DirectoryDTO> mergedDirs = new ArrayList<>(defaultDto.directories());
-        for (DirectoryDTO customDir : customDto.directories()) {
-            mergedDirs.removeIf(d -> d.name().equals(customDir.name()));
-            mergedDirs.add(customDir);
-        }
-
-        List<SectionDTO> mergedSections = new ArrayList<>();
-        for (SectionDTO defaultSec : defaultDto.layout()) {
-            Optional<SectionDTO> customSecOpt = customDto.layout().stream()
-                    .filter(s -> s.sectionName().equals(defaultSec.sectionName())).findFirst();
-
-            if (customSecOpt.isEmpty()) {
-                mergedSections.add(defaultSec);
-            } else {
-                List<SubSectionDTO> mergedSubSecs = new ArrayList<>();
-                for (SubSectionDTO defaultSubSec : defaultSec.subSections()) {
-                    Optional<SubSectionDTO> customSubSecOpt = customSecOpt.get().subSections().stream()
-                            .filter(ss -> ss.subSectionName().equals(defaultSubSec.subSectionName())).findFirst();
-
-                    if (customSubSecOpt.isEmpty()) {
-                        mergedSubSecs.add(defaultSubSec);
-                    } else {
-                        List<ButtonDTO> mergedButtons = new ArrayList<>();
-                        for (ButtonDTO defaultBtn : defaultSubSec.buttons()) {
-                            Optional<ButtonDTO> customBtnOpt = customSubSecOpt.get().buttons().stream()
-                                    .filter(b -> b.getName().equals(defaultBtn.getName())
-                                            && b.getElementType() == defaultBtn.getElementType())
-                                    .findFirst();
-                            mergedButtons.add(customBtnOpt.orElse(defaultBtn));
-                        }
-
-                        // Add new buttons that exist only in custom layout
-                        for (ButtonDTO customBtn : customSubSecOpt.get().buttons()) {
-                            if (mergedButtons.stream().noneMatch(b -> b.getName().equals(customBtn.getName())
-                                    && b.getElementType() == customBtn.getElementType())) {
-                                mergedButtons.add(customBtn);
-                            }
-                        }
-
-                        mergedSubSecs.add(new SubSectionDTO(defaultSubSec.subSectionName(), mergedButtons));
-                    }
-                }
-
-                // Add new subsections that exist only in custom layout
-                for (SubSectionDTO customSubSec : customSecOpt.get().subSections()) {
-                    if (mergedSubSecs.stream()
-                            .noneMatch(ss -> ss.subSectionName().equals(customSubSec.subSectionName()))) {
-                        mergedSubSecs.add(customSubSec);
-                    }
-                }
-
-                mergedSections.add(new SectionDTO(defaultSec.sectionName(), mergedSubSecs));
-            }
-        }
-
-        // Add new sections that exist only in custom layout
-        for (SectionDTO customSec : customDto.layout()) {
-            if (mergedSections.stream().noneMatch(s -> s.sectionName().equals(customSec.sectionName()))) {
-                mergedSections.add(customSec);
-            }
-        }
-
-        return new LayoutAndButtonsDTO(mergedDirs, mergedSections);
-    }
-
-    public static Optional<LayoutAndButtonsDTO> loadBase(String configPath) {
+    public Optional<LayoutAndButtonsDTO> loadLayout(String configPath) {
         ObjectMapper mapper = new ObjectMapper();
         List<DirectoryDTO> directories = new ArrayList<>();
         List<SectionDTO> allSections = new ArrayList<>();
@@ -149,7 +82,7 @@ public class LoadFromJsonService {
                                     commandNode.get("scriptLocationParamName") != null
                                             ? commandNode.get("scriptLocationParamName").asText()
                                             : "",
-                                    fetchCommandsWithPrefix(commandsArray, elementType),
+                                    fetchCommandsWithPrefix(commandsArray),
                                     elementType,
                                     commandNode.get("autoCloseConsole") != null
                                             ? commandNode.get("autoCloseConsole").asBoolean()
@@ -179,7 +112,7 @@ public class LoadFromJsonService {
         return Optional.of(new LayoutAndButtonsDTO(directories, allSections));
     }
 
-    private static List<String> fetchCommandsWithPrefix(JsonNode commandsArray, ElementType elementType) {
+    private static List<String> fetchCommandsWithPrefix(JsonNode commandsArray) {
         List<String> commands = new ArrayList<>();
         if (commandsArray.isArray()) {
             for (JsonNode commandElement : commandsArray) {

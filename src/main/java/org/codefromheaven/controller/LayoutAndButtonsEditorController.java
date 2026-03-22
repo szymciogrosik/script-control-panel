@@ -15,20 +15,28 @@ import javafx.stage.Stage;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
 import org.codefromheaven.context.SpringContext;
+import org.codefromheaven.dto.ConfigType;
 import org.codefromheaven.dto.ElementType;
+import org.codefromheaven.dto.FileType;
 import org.codefromheaven.dto.data.ButtonDTO;
 import org.codefromheaven.dto.data.DirectoryDTO;
 import org.codefromheaven.dto.data.LayoutAndButtonsDTO;
 import org.codefromheaven.dto.data.SectionDTO;
 import org.codefromheaven.dto.data.SubSectionDTO;
 import org.codefromheaven.service.animal.AnimalService;
-import org.codefromheaven.service.settings.LayoutAndButtonsService;
+import org.codefromheaven.service.settings.LayoutService;
+import org.codefromheaven.service.settings.SettingsServiceBase;
 import org.codefromheaven.service.style.StyleService;
+
+import org.codefromheaven.service.LoadFromJsonService;
+import org.codefromheaven.service.settings.LayoutOrderService;
 
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 public class LayoutAndButtonsEditorController {
@@ -51,7 +59,7 @@ public class LayoutAndButtonsEditorController {
     }
 
     public void setupPage() {
-        currentDto = LayoutAndButtonsService.load();
+        currentDto = SpringContext.getBean(LayoutService.class).load();
         initMutables();
 
         Stage stage = new Stage();
@@ -110,13 +118,86 @@ public class LayoutAndButtonsEditorController {
 
     private void saveAndApply(Stage stage) {
         List<DirectoryDTO> dirs = directories.stream().map(MutableDirectory::toDto).collect(Collectors.toList());
-        List<SectionDTO> sects = sections.stream().map(MutableSection::toDto).collect(Collectors.toList());
-        LayoutAndButtonsDTO newDto = new LayoutAndButtonsDTO(dirs, sects);
+        List<SectionDTO> sections = this.sections.stream().map(MutableSection::toDto).collect(Collectors.toList());
 
-        LayoutAndButtonsService.save(newDto);
+        // Always save the display order (section/subsection/button name order)
+        LayoutOrderService layoutOrderService = SpringContext.getBean(LayoutOrderService.class);
+        layoutOrderService.saveToMyOwnFile(sections);
+
+        LoadFromJsonService loadFromJsonService = SpringContext.getBean(LoadFromJsonService.class);
+        LayoutAndButtonsDTO defaultDto = loadFromJsonService.loadLayout(
+                SettingsServiceBase.getFileDir(FileType.LAYOUT_AND_BUTTONS.name(), ConfigType.DEFAULT))
+                .orElse(new LayoutAndButtonsDTO(new ArrayList<>(), new ArrayList<>()));
+
+        List<DirectoryDTO> customOnlyDirectories = buildCustomOnlyDirectories(dirs, defaultDto);
+        List<SectionDTO> customOnlySections = buildCustomOnlySections(sections, defaultDto);
+
+        LayoutAndButtonsDTO customDto = new LayoutAndButtonsDTO(customOnlyDirectories, customOnlySections);
+        SpringContext.getBean(LayoutService.class).save(customDto);
+
         contentLoader.loadContent();
         resizeWindow.resizeMainWindow();
         stage.close();
+    }
+
+    private List<DirectoryDTO> buildCustomOnlyDirectories(List<DirectoryDTO> dirs, LayoutAndButtonsDTO defaultDto) {
+        List<DirectoryDTO> customOnlyDirs = new ArrayList<>();
+        for (DirectoryDTO dir : dirs) {
+            if (defaultDto.directories().stream().noneMatch(d -> d.equals(dir))) {
+                customOnlyDirs.add(dir);
+            }
+        }
+        return customOnlyDirs;
+    }
+
+    /**
+     * Returns only the sections/subsections/buttons that are new or modified
+     * compared to the default file. Sections/subsections that only exist in the
+     * default are omitted entirely (no need to duplicate them). Sections or
+     * subsections that contain at least one custom button are included with only
+     * those custom buttons.
+     */
+    private List<SectionDTO> buildCustomOnlySections(List<SectionDTO> editorSections, LayoutAndButtonsDTO defaultDto) {
+        List<SectionDTO> result = new ArrayList<>();
+
+        for (SectionDTO editorSec : editorSections) {
+            // Find the matching section in the default file (null if not present)
+            Optional<SectionDTO> defaultSecOpt = defaultDto.layout().stream()
+                    .filter(s -> s.sectionName().equals(editorSec.sectionName()))
+                    .findFirst();
+
+            List<SubSectionDTO> customSubSections = new ArrayList<>();
+
+            for (SubSectionDTO editorSub : editorSec.subSections()) {
+                Optional<SubSectionDTO> defaultSubOpt = defaultSecOpt
+                        .flatMap(ds -> ds.subSections().stream()
+                                .filter(ss -> ss.subSectionName().equals(editorSub.subSectionName()))
+                                .findFirst());
+
+                List<ButtonDTO> customButtons = new ArrayList<>();
+                for (ButtonDTO editorBtn : editorSub.buttons()) {
+                    boolean existsInDefault = defaultSubOpt
+                            .map(ds -> ds.buttons().stream()
+                                    .anyMatch(db -> Objects.equals(db, editorBtn)))
+                            .orElse(false);
+                    if (!existsInDefault) {
+                        customButtons.add(editorBtn);
+                    }
+                }
+
+                // Only include this subsection if it has custom (user-added/edited) buttons
+                if (!customButtons.isEmpty()) {
+                    customSubSections.add(new SubSectionDTO(editorSub.subSectionName(), customButtons));
+                }
+            }
+
+            // Include this section only if it has custom subsections OR doesn't exist in default at all
+            if (!customSubSections.isEmpty() || defaultSecOpt.isEmpty()) {
+                result.add(new SectionDTO(editorSec.sectionName(), customSubSections));
+            }
+        }
+
+        return result;
     }
 
     // --- Editor Layouts ---
@@ -515,11 +596,11 @@ public class LayoutAndButtonsEditorController {
         grid.add(visibleDefCheck, 1, row++);
 
         if (t != ElementType.LINK) {
-            grid.add(new Label("Auto Close Console:"), 0, row);
+            grid.add(new Label("Auto close console:"), 0, row);
             grid.add(autoCloseCheck, 1, row++);
-            grid.add(new Label("Confirm Popup Before Run:"), 0, row);
+            grid.add(new Label("Show input script param popup:"), 0, row);
             grid.add(popupCheck, 1, row++);
-            grid.add(new Label("Popup Message:"), 0, row);
+            grid.add(new Label("Input script param popup text:"), 0, row);
             grid.add(popupMsgField, 1, row++);
         }
 
@@ -552,14 +633,21 @@ public class LayoutAndButtonsEditorController {
 
             cell.setOnDragOver(event -> {
                 if (event.getGestureSource() != cell && event.getDragboard().hasString()) {
-                    event.acceptTransferModes(TransferMode.MOVE);
+                    if (event.getGestureSource() instanceof ListCell sourceCell) {
+                        if (sourceCell.getListView() == listView) {
+                            event.acceptTransferModes(TransferMode.MOVE);
+                        }
+                    }
                 }
                 event.consume();
             });
 
             cell.setOnDragEntered(event -> {
                 if (event.getGestureSource() != cell && event.getDragboard().hasString()) {
-                    cell.setStyle("-fx-border-color: #0078d7; -fx-border-width: 2 0 0 0;");
+                    if (event.getGestureSource() instanceof ListCell sourceCell
+                            && sourceCell.getListView() == listView) {
+                        cell.setStyle("-fx-border-color: #0078d7; -fx-border-width: 2 0 0 0;");
+                    }
                 }
             });
 
@@ -570,13 +658,18 @@ public class LayoutAndButtonsEditorController {
             cell.setOnDragDropped(event -> {
                 Dragboard db = event.getDragboard();
                 boolean success = false;
-                if (db.hasString()) {
+                if (db.hasString() && event.getGestureSource() instanceof ListCell sourceCell
+                        && sourceCell.getListView() == listView) {
                     int draggedIndex = Integer.parseInt(db.getString());
                     int dropIndex = cell.isEmpty() ? listView.getItems().size() : cell.getIndex();
 
                     if (draggedIndex >= 0 && draggedIndex < listView.getItems().size() && draggedIndex != dropIndex) {
-                        T draggedItem = listView.getItems().remove(draggedIndex);
                         int insertIndex = dropIndex;
+                        if (draggedIndex < dropIndex) {
+                            insertIndex--;
+                        }
+                        T draggedItem = listView.getItems().remove(draggedIndex);
+
                         if (insertIndex > listView.getItems().size()) {
                             insertIndex = listView.getItems().size();
                         }
@@ -673,7 +766,7 @@ public class LayoutAndButtonsEditorController {
         final SimpleBooleanProperty visibleAsDefault = new SimpleBooleanProperty();
 
         MutableButton(ButtonDTO dto) {
-            this.name.set(dto.getName());
+            this.name.set(dto.getButtonName());
             this.scriptLocationParamName.set(dto.getScriptLocationParamName());
             this.commands.set(dto.getCommands() == null ? "" : String.join("\n", dto.getCommands()));
             this.elementType.set(dto.getElementType());

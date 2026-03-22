@@ -27,7 +27,7 @@ import org.codefromheaven.service.animal.AnimalService;
 import org.codefromheaven.service.command.GitBashService;
 import org.codefromheaven.service.command.PowerShellService;
 import org.codefromheaven.service.network.NetworkService;
-import org.codefromheaven.service.settings.LayoutAndButtonsService;
+import org.codefromheaven.service.settings.LayoutService;
 import org.codefromheaven.service.settings.SettingsService;
 import org.codefromheaven.context.SpringContext;
 import org.codefromheaven.service.style.StyleService;
@@ -111,7 +111,7 @@ public class MainWindowController implements Initializable {
         setupScrollPane();
 
         VisibilitySettings visibilitySettings = new VisibilitySettings();
-        LayoutAndButtonsDTO layoutAndButtons = LayoutAndButtonsService.load();
+        LayoutAndButtonsDTO layoutAndButtons = SpringContext.getBean(LayoutService.class).load();
 
         boolean anyElementEnabled = false;
         if (layoutAndButtons != null && layoutAndButtons.layout() != null) {
@@ -165,7 +165,6 @@ public class MainWindowController implements Initializable {
     }
 
     private void addElementsToScene(List<SectionDTO> loadedElements, VisibilitySettings visibilitySettings) {
-        addSectionHeader(loadedElements.stream().findFirst().get().sectionName());
         addElementsToSceneBase(loadedElements, visibilitySettings);
     }
 
@@ -173,6 +172,15 @@ public class MainWindowController implements Initializable {
             List<SectionDTO> sections, VisibilitySettings visibilitySettings) {
         for (SectionDTO section : sections) {
             primaryPage.getStyleClass().add("primary-page");
+
+            // Skip the entire section if none of its buttons are visible
+            if (!isAnyElementInSectionsEnabled(Collections.singletonList(section), visibilitySettings)) {
+                continue;
+            }
+
+            // Add the top-level section header for every visible section
+            addSectionHeader(section.sectionName());
+
             for (SubSectionDTO subSection : section.subSections()) {
                 if (!isAnyElementInSubSectionEnabled(subSection, section.sectionName(), visibilitySettings)) {
                     continue;
@@ -203,7 +211,7 @@ public class MainWindowController implements Initializable {
     }
 
     private Button createButton(ButtonDTO buttonDTO) {
-        Button button = new Button(buttonDTO.getName());
+        Button button = new Button(buttonDTO.getButtonName());
         button.getStyleClass().add("button-default");
         button.setTooltip(createTooltip(buttonDTO.getDescription()));
         switch (buttonDTO.getElementType()) {

@@ -1,5 +1,6 @@
 package org.codefromheaven.service.settings;
 
+import org.codefromheaven.dto.ConfigType;
 import org.codefromheaven.dto.FileType;
 import org.codefromheaven.dto.Setting;
 import org.codefromheaven.dto.settings.SettingDTO;
@@ -32,10 +33,14 @@ public abstract class SettingsServiceBase {
     private static final String CONFIG_LOCATION = getConfigDir();
     private static final String CONFIG_DIR = CONFIG_LOCATION.isEmpty() ? "" : CONFIG_LOCATION + "/";
 
+    public static String getConfigDirectory() {
+        return CONFIG_DIR;
+    }
+
     public static SettingsDTO loadSettingsFile(FileType fileType) {
-        Optional<SettingsDTO> myOwnSettings = loadSettingsFile(getMyOwnFileDir(fileType.name()));
+        Optional<SettingsDTO> myOwnSettings = loadSettingsFile(getFileDir(fileType.name(), ConfigType.MY_OWN));
         SettingsDTO defaultSettings = mergeDefaultSettings(
-                loadSettingsFile(getDefaultFileDir(fileType.name())).orElse(new SettingsDTO()), fileType);
+                loadSettingsFile(getFileDir(fileType.name(), ConfigType.DEFAULT)).orElse(new SettingsDTO()), fileType);
 
         if (myOwnSettings.isEmpty()) {
             return defaultSettings;
@@ -125,7 +130,7 @@ public abstract class SettingsServiceBase {
     public static void saveSettings(FileType fileType, SettingsDTO customSettings) {
         FileUtils.createOrReplaceConfigDirectory();
         SettingsDTO settingsToSave = getCustomSettingsDifferentThanDefault(fileType, customSettings);
-        Path path = Paths.get(getMyOwnFileDir(fileType.name()));
+        Path path = Paths.get(getFileDir(fileType.name(), ConfigType.MY_OWN));
         try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
             writer.write(JsonUtils.serialize(settingsToSave));
         } catch (IOException e) {
@@ -135,7 +140,7 @@ public abstract class SettingsServiceBase {
 
     public static SettingsDTO getCustomSettingsDifferentThanDefault(FileType fileType, SettingsDTO customSettings) {
         SettingsDTO defaultSettings = mergeDefaultSettings(
-                loadSettingsFile(getDefaultFileDir(fileType.name())).orElse(new SettingsDTO()), fileType);
+                loadSettingsFile(getFileDir(fileType.name(), ConfigType.DEFAULT)).orElse(new SettingsDTO()), fileType);
         return new SettingsDTO(
                 customSettings.getSettings().stream()
                         .filter(setting -> defaultSettings.getSettings().stream()
@@ -152,18 +157,26 @@ public abstract class SettingsServiceBase {
     }
 
     public static boolean isPresentMyOwnSettingFile(FileType fileType) {
-        try (BufferedReader ignored = new BufferedReader(new FileReader(getMyOwnFileDir(fileType.name())))) {
+        try (BufferedReader ignored = new BufferedReader(new FileReader(getFileDir(fileType.name(), ConfigType.MY_OWN)))) {
             return true;
         } catch (IOException e) {
             return false;
         }
     }
 
-    public static String getDefaultFileDir(String fileName) {
+    public static String getFileDir(String fileName, ConfigType configType) {
+        return switch (configType) {
+            case DEFAULT -> getDefaultFileDir(fileName);
+            case MY_OWN -> getMyOwnFileDir(fileName);
+            default -> throw new RuntimeException("Unknown config type");
+        };
+    }
+
+    private static String getDefaultFileDir(String fileName) {
         return CONFIG_DIR + DEFAULT_PREFIX + getDefaultFileNameBase(fileName);
     }
 
-    public static String getMyOwnFileDir(String fileName) {
+    private static String getMyOwnFileDir(String fileName) {
         return CONFIG_DIR + MY_OWN_PREFIX + getDefaultFileNameBase(fileName);
     }
 

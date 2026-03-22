@@ -1,8 +1,9 @@
 package org.codefromheaven.service.command;
 
+import org.codefromheaven.context.SpringContext;
 import org.codefromheaven.dto.Command;
 import org.codefromheaven.dto.Setting;
-import org.codefromheaven.service.settings.LayoutAndButtonsService;
+import org.codefromheaven.service.settings.LayoutService;
 
 import java.io.IOException;
 
@@ -42,7 +43,7 @@ public class GitBashSetupService implements Runnable {
     }
 
     private static String getOpenDirectoryCommand(String scriptPathVarName) {
-        return "cd " + LayoutAndButtonsService.getDirectoryPath(scriptPathVarName);
+        return "cd " + SpringContext.getBean(LayoutService.class).getDirectoryPath(scriptPathVarName);
     }
 
     private static String getWaitingForButtonCommand() {

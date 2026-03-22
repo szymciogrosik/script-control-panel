@@ -1,5 +1,6 @@
 package org.codefromheaven.service.settings;
 
+import org.codefromheaven.dto.ConfigType;
 import org.codefromheaven.dto.FileType;
 import org.codefromheaven.dto.data.ButtonDTO;
 import org.codefromheaven.dto.settings.VisibilitySettingDTO;
@@ -44,7 +45,7 @@ public class VisibilitySettings {
 
     private void saveVisibilitySettings(FileType fileType, VisibilitySettingsDTO settings) {
         FileUtils.createOrReplaceConfigDirectory();
-        Path path = Paths.get(SettingsServiceBase.getMyOwnFileDir(fileType.name()));
+        Path path = Paths.get(SettingsServiceBase.getFileDir(fileType.name(), ConfigType.MY_OWN));
         try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
             writer.write(JsonUtils.serialize(settings));
         } catch (IOException e) {
@@ -73,25 +74,25 @@ public class VisibilitySettings {
         if (settings.settings() == null) {
             return;
         }
-        settings.settings().add(new VisibilitySettingDTO(button.getKey().getStringKey(), button.getKey().buttonName()));
+        settings.settings().add(new VisibilitySettingDTO(button.getVisibilitySettingKey().getStringKey(), button.getVisibilitySettingKey().buttonName()));
     }
 
     private static void removeMatchingSetting(VisibilitySettingsDTO settings, ButtonDTO button) {
         if (settings.settings() == null)
             return;
-        settings.settings().removeIf(elem -> isMatchingSetting(elem, button.getKey()));
+        settings.settings().removeIf(elem -> isMatchingSetting(elem, button.getVisibilitySettingKey()));
     }
 
     private static boolean doesExistMatchingSetting(VisibilitySettingsDTO settings, ButtonDTO button) {
         if (settings.settings() == null)
             return false;
-        return settings.settings().stream().anyMatch(elem -> isMatchingSetting(elem, button.getKey()));
+        return settings.settings().stream().anyMatch(elem -> isMatchingSetting(elem, button.getVisibilitySettingKey()));
     }
 
     private static boolean doesNotExistMatchingSetting(VisibilitySettingsDTO settings, ButtonDTO button) {
         if (settings.settings() == null)
             return true;
-        return settings.settings().stream().noneMatch(elem -> isMatchingSetting(elem, button.getKey()));
+        return settings.settings().stream().noneMatch(elem -> isMatchingSetting(elem, button.getVisibilitySettingKey()));
     }
 
     private static boolean isMatchingSetting(VisibilitySettingDTO keyValue, VisibilitySettingKey visibilitySettingKey) {
@@ -104,7 +105,7 @@ public class VisibilitySettings {
         if (presentMyOwnSettings) {
             try {
                 VisibilitySettingsDTO loaded = JsonUtils.deserialize(
-                        new File(SettingsServiceBase.getMyOwnFileDir(fileType.name())), VisibilitySettingsDTO.class);
+                        new File(SettingsServiceBase.getFileDir(fileType.name(), ConfigType.MY_OWN)), VisibilitySettingsDTO.class);
                 if (loaded != null && loaded.settings() != null) {
                     return loaded;
                 }

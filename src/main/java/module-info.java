@@ -11,6 +11,7 @@ module servicerunner {
     requires spring.beans;
     requires spring.core;
     requires jakarta.annotation;
+    requires static lombok;
 
     opens org.codefromheaven to javafx.fxml;
     exports org.codefromheaven;

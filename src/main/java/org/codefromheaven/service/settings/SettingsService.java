@@ -4,6 +4,7 @@ import org.codefromheaven.dto.FileType;
 import org.codefromheaven.dto.Setting;
 import org.codefromheaven.dto.settings.BaseSetting;
 import org.codefromheaven.dto.settings.SettingDTO;
+import org.codefromheaven.dto.settings.SettingType;
 import org.codefromheaven.dto.settings.SettingsDTO;
 import org.codefromheaven.resources.AnimalProvider;
 
@@ -55,16 +56,11 @@ public class SettingsService extends SettingsServiceBase {
         } else {
             Optional<SettingDTO> defaultElem = DefaultSettings.ALL.getSettings().stream()
                     .filter(e -> e.getKey().equals(key)).findFirst();
-            org.codefromheaven.dto.settings.SettingType type = defaultElem.isPresent() ? defaultElem.get().getType()
-                    : org.codefromheaven.dto.settings.SettingType.TEXT;
+            SettingType type = defaultElem.isPresent() ? defaultElem.get().getType() : SettingType.TEXT;
             settings.getSettings().add(new SettingDTO(key, newValue, type, ""));
         }
 
         saveSettings(FILE_TYPE, settings);
-    }
-
-    public Optional<String> loadValue(String setting) {
-        return SettingsServiceBase.loadValue(setting, FILE_TYPE);
     }
 
     public Optional<String> loadValue(BaseSetting setting) {
