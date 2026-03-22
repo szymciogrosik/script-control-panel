@@ -294,6 +294,13 @@ public class LayoutAndButtonsEditorController {
         return true;
     }
 
+    private Label createHeaderLabel(String text) {
+        Label label = new Label(text);
+        label.getStyleClass().add("label-on-dark-background");
+        label.setStyle("-fx-font-weight: bold; -fx-font-size: 14px;");
+        return label;
+    }
+
     private Label createLabel(String text) {
         Label label = new Label(text);
         label.getStyleClass().add("label-on-dark-background");
@@ -374,7 +381,8 @@ public class LayoutAndButtonsEditorController {
         form.add(createLabel("Description:"), 0, 2);
         form.add(descField, 1, 2);
 
-        form.setDisable(true); // default hidden/disabled
+        VBox rightSide = new VBox(10, createHeaderLabel("Editing variable"), form);
+        rightSide.setDisable(true); // default hidden/disabled
 
         dirList.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             if (oldVal != null) {
@@ -383,7 +391,7 @@ public class LayoutAndButtonsEditorController {
                 descField.textProperty().unbindBidirectional(oldVal.description);
             }
             if (newVal != null) {
-                form.setDisable(false);
+                rightSide.setDisable(false);
                 nameField.setText(newVal.name.get());
                 pathField.setText(newVal.path.get());
                 descField.setText(newVal.description.get());
@@ -396,7 +404,7 @@ public class LayoutAndButtonsEditorController {
                 String currentName = newVal.name.get();
                 updateValidationMessage(nameField, varErrorTooltip, currentName);
             } else {
-                form.setDisable(true);
+                rightSide.setDisable(true);
                 nameField.clear();
                 pathField.clear();
                 descField.clear();
@@ -437,10 +445,10 @@ public class LayoutAndButtonsEditorController {
         });
 
         HBox listBtns = new HBox(10, addBtn, delBtn);
-        VBox leftSide = new VBox(10, dirList, listBtns);
+        VBox leftSide = new VBox(10, createHeaderLabel("Variables"), dirList, listBtns);
         VBox.setVgrow(dirList, Priority.ALWAYS);
 
-        HBox mainBox = new HBox(10, leftSide, form);
+        HBox mainBox = new HBox(10, leftSide, rightSide);
         mainBox.setPadding(new Insets(15));
 
         VBox root = new VBox(mainBox);
@@ -542,9 +550,9 @@ public class LayoutAndButtonsEditorController {
                 sub.buttons.remove(b);
         });
 
-        VBox secBox = new VBox(5, createLabel("Sections"), sectionList, new HBox(5, addSecBtn, delSecBtn));
-        VBox subBox = new VBox(5, createLabel("Subsections"), subSectionList, new HBox(5, addSubBtn, delSubBtn));
-        VBox btnBox = new VBox(5, createLabel("Buttons"), buttonList, new HBox(5, addBtnBtn, delBtnBtn));
+        VBox secBox = new VBox(5, createHeaderLabel("Sections"), sectionList, new HBox(5, addSecBtn, delSecBtn));
+        VBox subBox = new VBox(5, createHeaderLabel("Subsections"), subSectionList, new HBox(5, addSubBtn, delSubBtn));
+        VBox btnBox = new VBox(5, createHeaderLabel("Buttons"), buttonList, new HBox(5, addBtnBtn, delBtnBtn));
 
         VBox.setVgrow(sectionList, Priority.ALWAYS);
         VBox.setVgrow(subSectionList, Priority.ALWAYS);
@@ -628,7 +636,7 @@ public class LayoutAndButtonsEditorController {
 
     private void populateSectionEditForm(VBox form, MutableSection section, ListView<MutableSection> list) {
         form.getChildren().clear();
-        form.getChildren().add(createLabel("Editing section"));
+        form.getChildren().add(createHeaderLabel("Editing section"));
 
         GridPane grid = new GridPane();
         grid.setHgap(10);
@@ -672,7 +680,7 @@ public class LayoutAndButtonsEditorController {
 
     private void populateSubSectionEditForm(VBox form, MutableSubSection subSection, ListView<MutableSubSection> list) {
         form.getChildren().clear();
-        form.getChildren().add(createLabel("Editing subsection"));
+        form.getChildren().add(createHeaderLabel("Editing subsection"));
 
         GridPane grid = new GridPane();
         grid.setHgap(10);
@@ -713,7 +721,7 @@ public class LayoutAndButtonsEditorController {
 
     private void populateButtonEditForm(VBox form, MutableButton btn, ListView<MutableButton> list) {
         form.getChildren().clear();
-        form.getChildren().add(createLabel("Editing button"));
+        form.getChildren().add(createHeaderLabel("Editing button"));
 
         GridPane grid = new GridPane();
         grid.setHgap(10);
