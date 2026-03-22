@@ -367,9 +367,9 @@ public class LayoutAndButtonsEditorController {
         HBox pathBox = new HBox(5, pathField, browseButton);
         HBox.setHgrow(pathField, Priority.ALWAYS);
 
-        form.add(createLabel("Variable Name:"), 0, 0);
+        form.add(createLabel("Variable name:"), 0, 0);
         form.add(nameField, 1, 0);
-        form.add(createLabel("Path Location:"), 0, 1);
+        form.add(createLabel("Path location:"), 0, 1);
         form.add(pathBox, 1, 1);
         form.add(createLabel("Description:"), 0, 2);
         form.add(descField, 1, 2);
@@ -415,7 +415,7 @@ public class LayoutAndButtonsEditorController {
             }
         });
 
-        Button addBtn = new Button("Add Variable");
+        Button addBtn = new Button("Add variable");
         addBtn.getStyleClass().add("button-default");
         addBtn.setMaxWidth(Double.MAX_VALUE);
         HBox.setHgrow(addBtn, Priority.ALWAYS);
@@ -426,7 +426,7 @@ public class LayoutAndButtonsEditorController {
             Platform.runLater(() -> dirList.getSelectionModel().select(newDir));
         });
 
-        Button delBtn = new Button("Remove Variable");
+        Button delBtn = new Button("Remove variable");
         delBtn.getStyleClass().add("button-default");
         delBtn.setMaxWidth(Double.MAX_VALUE);
         HBox.setHgrow(delBtn, Priority.ALWAYS);
@@ -602,6 +602,22 @@ public class LayoutAndButtonsEditorController {
             }
         });
 
+        // Add mouse click listeners to force switching the right view even if the item is already selected
+        sectionList.setOnMouseClicked(e -> {
+            MutableSection sel = sectionList.getSelectionModel().getSelectedItem();
+            if (sel != null) populateSectionEditForm(rightForm, sel, sectionList);
+        });
+
+        subSectionList.setOnMouseClicked(e -> {
+            MutableSubSection sel = subSectionList.getSelectionModel().getSelectedItem();
+            if (sel != null) populateSubSectionEditForm(rightForm, sel, subSectionList);
+        });
+
+        buttonList.setOnMouseClicked(e -> {
+            MutableButton sel = buttonList.getSelectionModel().getSelectedItem();
+            if (sel != null) populateButtonEditForm(rightForm, sel, buttonList);
+        });
+
         HBox mainBox = new HBox(10, listsBox, rightForm);
         mainBox.setPadding(new Insets(15));
 
@@ -612,7 +628,7 @@ public class LayoutAndButtonsEditorController {
 
     private void populateSectionEditForm(VBox form, MutableSection section, ListView<MutableSection> list) {
         form.getChildren().clear();
-        form.getChildren().add(createLabel("Editing Section"));
+        form.getChildren().add(createLabel("Editing section"));
 
         GridPane grid = new GridPane();
         grid.setHgap(10);
@@ -634,7 +650,7 @@ public class LayoutAndButtonsEditorController {
         });
         validate.run();
 
-        grid.add(createLabel("Section Name:"), 0, 0);
+        grid.add(createLabel("Section name:"), 0, 0);
         grid.add(nameField, 1, 0);
         form.getChildren().add(grid);
     }
@@ -656,7 +672,7 @@ public class LayoutAndButtonsEditorController {
 
     private void populateSubSectionEditForm(VBox form, MutableSubSection subSection, ListView<MutableSubSection> list) {
         form.getChildren().clear();
-        form.getChildren().add(createLabel("Editing SubSection"));
+        form.getChildren().add(createLabel("Editing subsection"));
 
         GridPane grid = new GridPane();
         grid.setHgap(10);
@@ -690,14 +706,14 @@ public class LayoutAndButtonsEditorController {
         });
         validate.run();
 
-        grid.add(createLabel("SubSection Name:"), 0, 0);
+        grid.add(createLabel("Subsection name:"), 0, 0);
         grid.add(nameField, 1, 0);
         form.getChildren().add(grid);
     }
 
     private void populateButtonEditForm(VBox form, MutableButton btn, ListView<MutableButton> list) {
         form.getChildren().clear();
-        form.getChildren().add(createLabel("Editing Button"));
+        form.getChildren().add(createLabel("Editing button"));
 
         GridPane grid = new GridPane();
         grid.setHgap(10);
@@ -815,20 +831,20 @@ public class LayoutAndButtonsEditorController {
         visibleDefCheck.getStyleClass().add("check-box-on-dark-background");
 
         int row = 0;
-        grid.add(createLabel("Button Name:"), 0, row);
+        grid.add(createLabel("Button name:"), 0, row);
         grid.add(nameField, 1, row++);
-        grid.add(createLabel("Element Type:"), 0, row);
+        grid.add(createLabel("Element type:"), 0, row);
         grid.add(typeBox, 1, row++);
 
         ElementType t = btn.elementType.get();
         if (t != ElementType.LINK) {
-            grid.add(createLabel("Script Directory Variable:"), 0, row);
+            grid.add(createLabel("Script directory variable:"), 0, row);
             grid.add(locationBox, 1, row++);
         }
 
         grid.add(createLabel(t == ElementType.LINK ? "URLs (1 per line):" : "Commands:"), 0, row);
         grid.add(commandsContainer, 1, row++);
-        grid.add(createLabel("Description (Tooltip):"), 0, row);
+        grid.add(createLabel("Description (tooltip):"), 0, row);
         grid.add(descField, 1, row++);
         grid.add(createLabel("Visible as default:"), 0, row);
         grid.add(visibleDefCheck, 1, row++);
