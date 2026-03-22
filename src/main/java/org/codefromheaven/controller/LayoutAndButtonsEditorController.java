@@ -5,6 +5,7 @@ import javafx.beans.property.SimpleObjectProperty;
 import javafx.beans.property.SimpleStringProperty;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
+import javafx.application.Platform;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
@@ -34,6 +35,7 @@ import org.codefromheaven.service.settings.LayoutOrderService;
 import java.io.File;
 import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Comparator;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
@@ -107,6 +109,7 @@ public class LayoutAndButtonsEditorController {
                 directories.add(new MutableDirectory(d));
             }
         }
+        directories.sort(Comparator.comparing(d -> d.name.get().toLowerCase()));
 
         sections.clear();
         if (currentDto.layout() != null) {
@@ -205,7 +208,14 @@ public class LayoutAndButtonsEditorController {
     private VBox createDirectoriesEditor(Stage stage) {
         ListView<MutableDirectory> dirList = new ListView<>(directories);
         dirList.setPrefWidth(300);
-        setDraggableListView(dirList);
+        // Disable drag-and-drop for variables
+        dirList.setCellFactory(tv -> new ListCell<MutableDirectory>() {
+            @Override
+            protected void updateItem(MutableDirectory item, boolean empty) {
+                super.updateItem(item, empty);
+                setText(empty || item == null ? null : item.toString());
+            }
+        });
 
         GridPane form = new GridPane();
         form.setHgap(10);
@@ -263,10 +273,21 @@ public class LayoutAndButtonsEditorController {
         });
 
         nameField.textProperty().addListener((o, oldValue, newValue) -> dirList.refresh());
+        
+        nameField.focusedProperty().addListener((obs, wasFocused, isFocused) -> {
+            if (!isFocused) {
+                sortDirectoriesAlphabetically(dirList);
+            }
+        });
 
         Button addBtn = new Button("Add Variable");
         addBtn.getStyleClass().add("button-default");
-        addBtn.setOnAction(e -> directories.add(new MutableDirectory(new DirectoryDTO("NEW_VAR", "", ""))));
+        addBtn.setOnAction(e -> {
+            MutableDirectory newDir = new MutableDirectory(new DirectoryDTO("NEW_VAR", "", ""));
+            directories.add(newDir);
+            sortDirectoriesAlphabetically(dirList);
+            Platform.runLater(() -> dirList.getSelectionModel().select(newDir));
+        });
 
         Button delBtn = new Button("Remove Variable");
         delBtn.getStyleClass().add("button-default");
@@ -605,6 +626,14 @@ public class LayoutAndButtonsEditorController {
         }
 
         form.getChildren().add(grid);
+    }
+
+    private void sortDirectoriesAlphabetically(ListView<MutableDirectory> dirList) {
+        MutableDirectory selected = dirList.getSelectionModel().getSelectedItem();
+        directories.sort(Comparator.comparing(d -> d.name.get().toLowerCase()));
+        if (selected != null) {
+            Platform.runLater(() -> dirList.getSelectionModel().select(selected));
+        }
     }
 
     private <T> void setDraggableListView(ListView<T> listView) {
