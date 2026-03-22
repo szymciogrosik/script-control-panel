@@ -151,7 +151,7 @@ public class LayoutAndButtonsEditorController {
     }
 
     private void saveAndApply(Stage stage) {
-        if (!validateVariables()) {
+        if (!validateAll()) {
             return;
         }
 
@@ -238,19 +238,58 @@ public class LayoutAndButtonsEditorController {
         return result;
     }
 
-    private boolean validateVariables() {
-        Set<String> names = new HashSet<>();
+    private boolean validateAll() {
+        List<String> errors = new ArrayList<>();
+
+        // Variables
+        Set<String> dirNames = new HashSet<>();
         for (MutableDirectory dir : directories) {
             String name = dir.name.get();
             if (name == null || name.trim().isEmpty()) {
-                PopupController.showPopup("Variable names cannot be empty.", Alert.AlertType.ERROR);
-                return false;
-            }
-            if (!names.add(name)) {
-                PopupController.showPopup("Variable names must be unique. Duplicate found: " + name, Alert.AlertType.ERROR);
-                return false;
+                errors.add("Variable names cannot be empty.");
+            } else if (!dirNames.add(name.trim())) {
+                errors.add("Variable names must be unique. Duplicate found: " + name);
             }
         }
+        
+        // Sections
+        Set<String> sectionNames = new HashSet<>();
+        for (MutableSection sec : sections) {
+            String secName = sec.name.get();
+            if (secName == null || secName.trim().isEmpty()) {
+                errors.add("Section names cannot be empty.");
+            } else if (!sectionNames.add(secName.trim())) {
+                errors.add("Section names must be unique. Duplicate found: " + secName);
+            }
+            
+            // SubSections
+            Set<String> subNames = new HashSet<>();
+            for (MutableSubSection sub : sec.subSections) {
+                String subName = sub.name.get();
+                if (subName == null || subName.trim().isEmpty()) {
+                    errors.add("Subsection names cannot be empty (in section '" + secName + "').");
+                } else if (!subNames.add(subName.trim())) {
+                    errors.add("Subsection names must be unique within a section. Duplicate found: " + subName);
+                }
+                
+                // Buttons
+                Set<String> btnNames = new HashSet<>();
+                for (MutableButton btn : sub.buttons) {
+                    String btnName = btn.name.get();
+                    if (btnName == null || btnName.trim().isEmpty()) {
+                        errors.add("Button names cannot be empty (in subsection '" + subName + "').");
+                    } else if (!btnNames.add(btnName.trim())) {
+                        errors.add("Button names must be unique within a subsection. Duplicate found: " + btnName);
+                    }
+                }
+            }
+        }
+
+        if (!errors.isEmpty()) {
+            PopupController.showPopup(String.join("\n", errors), Alert.AlertType.ERROR);
+            return false;
+        }
+
         return true;
     }
 
@@ -326,7 +365,7 @@ public class LayoutAndButtonsEditorController {
                 String currentName = newVal.name.get();
                 if (currentName == null || currentName.trim().isEmpty() ||
                     directories.stream().filter(d -> currentName.equals(d.name.get())).count() > 1) {
-                    nameField.setStyle("-fx-text-box-border: red; -fx-focus-color: red;");
+                    nameField.setStyle("-fx-border-color: #ff3333; -fx-border-width: 2px; -fx-border-radius: 3px;");
                 } else {
                     nameField.setStyle("");
                 }
@@ -342,13 +381,13 @@ public class LayoutAndButtonsEditorController {
         nameField.textProperty().addListener((o, oldValue, newValue) -> {
             dirList.refresh();
             if (newValue == null || newValue.trim().isEmpty()) {
-                nameField.setStyle("-fx-text-box-border: red; -fx-focus-color: red;");
+                nameField.setStyle("-fx-border-color: #ff3333; -fx-border-width: 2px; -fx-border-radius: 3px;");
             } else {
                 long count = directories.stream()
                         .filter(d -> newValue.equals(d.name.get()))
                         .count();
                 if (count > 1) {
-                    nameField.setStyle("-fx-text-box-border: red; -fx-focus-color: red;");
+                    nameField.setStyle("-fx-border-color: #ff3333; -fx-border-width: 2px; -fx-border-radius: 3px;");
                 } else {
                     nameField.setStyle("");
                 }
@@ -561,10 +600,22 @@ public class LayoutAndButtonsEditorController {
         grid.getColumnConstraints().addAll(col1, col2);
 
         TextField nameField = new TextField(section.name.get());
+        
+        Runnable validate = () -> {
+            String val = section.name.get();
+            if (val == null || val.trim().isEmpty() || sections.stream().filter(s -> val.equals(s.name.get())).count() > 1) {
+                nameField.setStyle("-fx-border-color: #ff3333; -fx-border-width: 2px; -fx-border-radius: 3px;");
+            } else {
+                nameField.setStyle("");
+            }
+        };
+
         nameField.textProperty().addListener((o, old, nev) -> {
             section.name.set(nev);
             list.refresh();
+            validate.run();
         });
+        validate.run();
 
         grid.add(createLabel("Section Name:"), 0, 0);
         grid.add(nameField, 1, 0);
@@ -586,10 +637,23 @@ public class LayoutAndButtonsEditorController {
         grid.getColumnConstraints().addAll(col1, col2);
 
         TextField nameField = new TextField(subSection.name.get());
+        
+        Runnable validate = () -> {
+            String val = subSection.name.get();
+            long count = list.getItems().stream().filter(s -> val.equals(s.name.get())).count();
+            if (val == null || val.trim().isEmpty() || count > 1) {
+                nameField.setStyle("-fx-border-color: #ff3333; -fx-border-width: 2px; -fx-border-radius: 3px;");
+            } else {
+                nameField.setStyle("");
+            }
+        };
+
         nameField.textProperty().addListener((o, old, nev) -> {
             subSection.name.set(nev);
             list.refresh();
+            validate.run();
         });
+        validate.run();
 
         grid.add(createLabel("SubSection Name:"), 0, 0);
         grid.add(nameField, 1, 0);
@@ -611,10 +675,23 @@ public class LayoutAndButtonsEditorController {
         grid.getColumnConstraints().addAll(col1, col2);
 
         TextField nameField = new TextField(btn.name.get());
+        
+        Runnable validate = () -> {
+            String val = btn.name.get();
+            long count = list.getItems().stream().filter(b -> val.equals(b.name.get())).count();
+            if (val == null || val.trim().isEmpty() || count > 1) {
+                nameField.setStyle("-fx-border-color: #ff3333; -fx-border-width: 2px; -fx-border-radius: 3px;");
+            } else {
+                nameField.setStyle("");
+            }
+        };
+
         nameField.textProperty().addListener((o, old, nev) -> {
             btn.name.set(nev);
             list.refresh();
+            validate.run();
         });
+        validate.run();
 
         VBox commandsContainer = new VBox(5);
         Runnable updateCommandsString = () -> {
