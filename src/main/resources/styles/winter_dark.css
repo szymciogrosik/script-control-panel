@@ -64,6 +64,7 @@
 
 .tooltip-custom {
     -fx-text-fill: #FF5252; /* Vivid Red for Dark Theme */
+    -fx-font-weight: bold;
 }
 
 .author-image {
@@ -133,4 +134,9 @@
 
 .check-box-on-dark-background .text {
     -fx-fill: #e0e0e0;
+}
+
+.text-field-error {
+    -fx-text-box-border: #ff3333;
+    -fx-focus-color: #ff3333;
 }

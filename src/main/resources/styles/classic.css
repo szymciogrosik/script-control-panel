@@ -60,6 +60,7 @@
 
 .tooltip-custom {
     -fx-text-fill: red;
+    -fx-font-weight: bold;
 }
 
 .author-image {
@@ -119,4 +120,9 @@
 
 .check-box-on-dark-background .text {
     -fx-fill: white;
+}
+
+.text-field-error {
+    -fx-text-box-border: #ff3333;
+    -fx-focus-color: #ff3333;
 }

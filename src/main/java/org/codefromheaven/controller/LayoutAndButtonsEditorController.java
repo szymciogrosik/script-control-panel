@@ -15,6 +15,7 @@ import javafx.stage.DirectoryChooser;
 import javafx.stage.Stage;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
+import lombok.NonNull;
 import org.codefromheaven.context.SpringContext;
 import org.codefromheaven.dto.ConfigType;
 import org.codefromheaven.dto.ElementType;
@@ -251,7 +252,7 @@ public class LayoutAndButtonsEditorController {
                 errors.add("Variable names must be unique. Duplicate found: " + name);
             }
         }
-        
+
         // Sections
         Set<String> sectionNames = new HashSet<>();
         for (MutableSection sec : sections) {
@@ -261,7 +262,7 @@ public class LayoutAndButtonsEditorController {
             } else if (!sectionNames.add(secName.trim())) {
                 errors.add("Section names must be unique. Duplicate found: " + secName);
             }
-            
+
             // SubSections
             Set<String> subNames = new HashSet<>();
             for (MutableSubSection sub : sec.subSections) {
@@ -271,7 +272,7 @@ public class LayoutAndButtonsEditorController {
                 } else if (!subNames.add(subName.trim())) {
                     errors.add("Subsection names must be unique within a section. Duplicate found: " + subName);
                 }
-                
+
                 // Buttons
                 Set<String> btnNames = new HashSet<>();
                 for (MutableButton btn : sub.buttons) {
@@ -299,6 +300,34 @@ public class LayoutAndButtonsEditorController {
         return label;
     }
 
+    private void updateValidationUI(TextField field, Tooltip tooltip, String errorMessage) {
+        if (errorMessage != null) {
+            if (!field.getStyleClass().contains("text-field-error")) {
+                field.getStyleClass().add("text-field-error");
+            }
+            tooltip.setText(errorMessage);
+            if (field.getTooltip() != tooltip) {
+                field.setTooltip(tooltip);
+                if (!tooltip.getStyleClass().contains("tooltip-custom")) {
+                    tooltip.getStyleClass().add("tooltip-custom");
+                }
+            }
+            if (field.getScene() != null && field.getScene().getWindow() != null) {
+                if (tooltip.getScene() != null) {
+                    tooltip.getScene().getStylesheets().setAll(field.getScene().getStylesheets());
+                }
+                var bounds = field.localToScreen(field.getBoundsInLocal());
+                if (bounds != null && !tooltip.isShowing()) {
+                    tooltip.show(field, bounds.getMinX(), bounds.getMaxY() + 2);
+                }
+            }
+        } else {
+            field.getStyleClass().remove("text-field-error");
+            field.setTooltip(null);
+            tooltip.hide();
+        }
+    }
+
     // --- Editor Layouts ---
 
     private VBox createDirectoriesEditor(Stage stage) {
@@ -319,6 +348,8 @@ public class LayoutAndButtonsEditorController {
         form.setPadding(new Insets(0, 0, 0, 15));
 
         TextField nameField = new TextField();
+        Tooltip varErrorTooltip = new Tooltip();
+
         TextField pathField = new TextField();
         Button browseButton = new Button("Browse");
         browseButton.getStyleClass().add("button-default");
@@ -363,37 +394,21 @@ public class LayoutAndButtonsEditorController {
 
                 // Initial validation check for when we select an item
                 String currentName = newVal.name.get();
-                if (currentName == null || currentName.trim().isEmpty() ||
-                    directories.stream().filter(d -> currentName.equals(d.name.get())).count() > 1) {
-                    nameField.setStyle("-fx-border-color: #ff3333; -fx-border-width: 2px; -fx-border-radius: 3px;");
-                } else {
-                    nameField.setStyle("");
-                }
+                updateValidationMessage(nameField, varErrorTooltip, currentName);
             } else {
                 form.setDisable(true);
                 nameField.clear();
                 pathField.clear();
                 descField.clear();
-                nameField.setStyle("");
+                updateValidationUI(nameField, varErrorTooltip, null);
             }
         });
 
         nameField.textProperty().addListener((o, oldValue, newValue) -> {
             dirList.refresh();
-            if (newValue == null || newValue.trim().isEmpty()) {
-                nameField.setStyle("-fx-border-color: #ff3333; -fx-border-width: 2px; -fx-border-radius: 3px;");
-            } else {
-                long count = directories.stream()
-                        .filter(d -> newValue.equals(d.name.get()))
-                        .count();
-                if (count > 1) {
-                    nameField.setStyle("-fx-border-color: #ff3333; -fx-border-width: 2px; -fx-border-radius: 3px;");
-                } else {
-                    nameField.setStyle("");
-                }
-            }
+            updateValidationMessage(nameField, varErrorTooltip, newValue);
         });
-        
+
         nameField.focusedProperty().addListener((obs, wasFocused, isFocused) -> {
             if (!isFocused) {
                 sortDirectoriesAlphabetically(dirList);
@@ -433,6 +448,16 @@ public class LayoutAndButtonsEditorController {
         return root;
     }
 
+    private void updateValidationMessage(TextField nameField, Tooltip varErrorTooltip, String newValue) {
+        String errorMsg = null;
+        if (newValue == null || newValue.trim().isEmpty()) {
+            errorMsg = "Variable name cannot be empty.";
+        } else if (directories.stream().filter(d -> newValue.equals(d.name.get())).count() > 1) {
+            errorMsg = "Variable name must be unique.";
+        }
+        updateValidationUI(nameField, varErrorTooltip, errorMsg);
+    }
+
     private VBox createLayoutEditor() {
         ListView<MutableSection> sectionList = new ListView<>(sections);
         ListView<MutableSubSection> subSectionList = new ListView<>();
@@ -449,27 +474,27 @@ public class LayoutAndButtonsEditorController {
         addSecBtn.getStyleClass().add("button-default");
         addSecBtn.setMaxWidth(Double.MAX_VALUE);
         HBox.setHgrow(addSecBtn, Priority.ALWAYS);
-        
+
         Button delSecBtn = new Button("-");
         delSecBtn.getStyleClass().add("button-default");
         delSecBtn.setMaxWidth(Double.MAX_VALUE);
         HBox.setHgrow(delSecBtn, Priority.ALWAYS);
-        
+
         Button addSubBtn = new Button("+");
         addSubBtn.getStyleClass().add("button-default");
         addSubBtn.setMaxWidth(Double.MAX_VALUE);
         HBox.setHgrow(addSubBtn, Priority.ALWAYS);
-        
+
         Button delSubBtn = new Button("-");
         delSubBtn.getStyleClass().add("button-default");
         delSubBtn.setMaxWidth(Double.MAX_VALUE);
         HBox.setHgrow(delSubBtn, Priority.ALWAYS);
-        
+
         Button addBtnBtn = new Button("+");
         addBtnBtn.getStyleClass().add("button-default");
         addBtnBtn.setMaxWidth(Double.MAX_VALUE);
         HBox.setHgrow(addBtnBtn, Priority.ALWAYS);
-        
+
         Button delBtnBtn = new Button("-");
         delBtnBtn.getStyleClass().add("button-default");
         delBtnBtn.setMaxWidth(Double.MAX_VALUE);
@@ -600,15 +625,7 @@ public class LayoutAndButtonsEditorController {
         grid.getColumnConstraints().addAll(col1, col2);
 
         TextField nameField = new TextField(section.name.get());
-        
-        Runnable validate = () -> {
-            String val = section.name.get();
-            if (val == null || val.trim().isEmpty() || sections.stream().filter(s -> val.equals(s.name.get())).count() > 1) {
-                nameField.setStyle("-fx-border-color: #ff3333; -fx-border-width: 2px; -fx-border-radius: 3px;");
-            } else {
-                nameField.setStyle("");
-            }
-        };
+        Runnable validate = updateValidationMessageRunnable(section, nameField);
 
         nameField.textProperty().addListener((o, old, nev) -> {
             section.name.set(nev);
@@ -620,6 +637,21 @@ public class LayoutAndButtonsEditorController {
         grid.add(createLabel("Section Name:"), 0, 0);
         grid.add(nameField, 1, 0);
         form.getChildren().add(grid);
+    }
+
+    private Runnable updateValidationMessageRunnable(MutableSection section, TextField nameField) {
+        Tooltip sectionErrorTooltip = new Tooltip();
+
+        return () -> {
+            String val = section.name.get();
+            String errorMsg = null;
+            if (val == null || val.trim().isEmpty()) {
+                errorMsg = "Section name cannot be empty.";
+            } else if (sections.stream().filter(s -> val.equals(s.name.get())).count() > 1) {
+                errorMsg = "Section name must be unique.";
+            }
+            updateValidationUI(nameField, sectionErrorTooltip, errorMsg);
+        };
     }
 
     private void populateSubSectionEditForm(VBox form, MutableSubSection subSection, ListView<MutableSubSection> list) {
@@ -637,15 +669,18 @@ public class LayoutAndButtonsEditorController {
         grid.getColumnConstraints().addAll(col1, col2);
 
         TextField nameField = new TextField(subSection.name.get());
+        Tooltip subErrorTooltip = new Tooltip();
         
         Runnable validate = () -> {
             String val = subSection.name.get();
             long count = list.getItems().stream().filter(s -> val.equals(s.name.get())).count();
-            if (val == null || val.trim().isEmpty() || count > 1) {
-                nameField.setStyle("-fx-border-color: #ff3333; -fx-border-width: 2px; -fx-border-radius: 3px;");
-            } else {
-                nameField.setStyle("");
+            String errorMsg = null;
+            if (val == null || val.trim().isEmpty()) {
+                errorMsg = "Subsection name cannot be empty.";
+            } else if (count > 1) {
+                errorMsg = "Subsection name must be unique.";
             }
+            updateValidationUI(nameField, subErrorTooltip, errorMsg);
         };
 
         nameField.textProperty().addListener((o, old, nev) -> {
@@ -675,15 +710,18 @@ public class LayoutAndButtonsEditorController {
         grid.getColumnConstraints().addAll(col1, col2);
 
         TextField nameField = new TextField(btn.name.get());
+        Tooltip btnErrorTooltip = new Tooltip();
         
         Runnable validate = () -> {
             String val = btn.name.get();
             long count = list.getItems().stream().filter(b -> val.equals(b.name.get())).count();
-            if (val == null || val.trim().isEmpty() || count > 1) {
-                nameField.setStyle("-fx-border-color: #ff3333; -fx-border-width: 2px; -fx-border-radius: 3px;");
-            } else {
-                nameField.setStyle("");
+            String errorMsg = null;
+            if (val == null || val.trim().isEmpty()) {
+                errorMsg = "Button name cannot be empty.";
+            } else if (count > 1) {
+                errorMsg = "Button name must be unique.";
             }
+            updateValidationUI(nameField, btnErrorTooltip, errorMsg);
         };
 
         nameField.textProperty().addListener((o, old, nev) -> {
