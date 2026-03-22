@@ -218,8 +218,8 @@ public class MainWindowController implements Initializable {
             case BASH:
             case POWERSHELL:
             case PYTHON:
-            case CUSTOM_COMMAND_BASH:
-            case CUSTOM_COMMAND_POWERSHELL:
+            case DIRECT_COMMAND_BASH:
+            case DIRECT_COMMAND_POWERSHELL:
                 addButtonListenerForServiceCommands(button, buttonDTO);
                 break;
             case LINK:
@@ -238,12 +238,12 @@ public class MainWindowController implements Initializable {
     private void addButtonListenerForServiceCommands(Button button, ButtonDTO buttonDTO) {
         switch (buttonDTO.getElementType()) {
             case BASH:
-            case CUSTOM_COMMAND_BASH:
+            case DIRECT_COMMAND_BASH:
             case PYTHON:
                 addButtonListenerForBashCommand(button, buttonDTO);
                 break;
             case POWERSHELL:
-            case CUSTOM_COMMAND_POWERSHELL:
+            case DIRECT_COMMAND_POWERSHELL:
                 addButtonListenerForPowerShellCommand(button, buttonDTO);
                 break;
             default:

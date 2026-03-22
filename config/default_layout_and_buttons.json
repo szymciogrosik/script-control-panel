@@ -276,7 +276,7 @@
               "commands": [
                 "echo \\\"Print this text\\\""
               ],
-              "elementType": "CUSTOM_COMMAND_BASH",
+              "elementType": "DIRECT_COMMAND_BASH",
               "autoCloseConsole": false,
               "popupInputDisplayed": false,
               "popupInputMessage": "",
@@ -288,7 +288,7 @@
               "commands": [
                 "echo \\\"Print this text\\\""
               ],
-              "elementType": "CUSTOM_COMMAND_POWERSHELL",
+              "elementType": "DIRECT_COMMAND_POWERSHELL",
               "autoCloseConsole": false,
               "popupInputDisplayed": false,
               "popupInputMessage": "",
