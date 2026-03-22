@@ -43,6 +43,8 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.stream.Collectors;
 
+import static javafx.beans.binding.Bindings.*;
+
 public class LayoutAndButtonsEditorController {
 
     private final MainWindowController.ContentLoader contentLoader;
@@ -70,28 +72,55 @@ public class LayoutAndButtonsEditorController {
         stage.getIcons().add(animalService.getCurrentAnimalImage());
         stage.setTitle("Edit Layout and Buttons");
 
-        TabPane tabPane = new TabPane();
-        Tab dirTab = new Tab("Variables (Directories)");
-        dirTab.setClosable(false);
-        dirTab.setContent(createDirectoriesEditor(stage));
+        ToggleButton dirTabBtn = new ToggleButton("Variables (Directories)");
+        dirTabBtn.getStyleClass().add("button-default");
 
-        Tab layoutTab = new Tab("Layout & Buttons");
-        layoutTab.setClosable(false);
-        layoutTab.setContent(createLayoutEditor());
+        ToggleButton layoutTabBtn = new ToggleButton("Layout & Buttons");
+        layoutTabBtn.getStyleClass().add("button-default");
 
-        tabPane.getTabs().addAll(dirTab, layoutTab);
+        ToggleGroup tabGroup = new ToggleGroup();
+        dirTabBtn.setToggleGroup(tabGroup);
+        layoutTabBtn.setToggleGroup(tabGroup);
 
-        Button saveButton = new Button("Save and Apply");
+        // Visual cue for which tab is selected (100% opacity for active, 60% for inactive)
+        dirTabBtn.opacityProperty().bind(when(dirTabBtn.selectedProperty()).then(1.0).otherwise(0.6));
+        layoutTabBtn.opacityProperty().bind(when(layoutTabBtn.selectedProperty()).then(1.0).otherwise(0.6));
+
+        HBox tabBar = new HBox(10, dirTabBtn, layoutTabBtn);
+
+        VBox dirContent = createDirectoriesEditor(stage);
+        VBox layoutContent = createLayoutEditor();
+
+        StackPane contentPane = new StackPane(dirContent);
+
+        dirTabBtn.setSelected(true);
+
+        dirTabBtn.setOnAction(e -> {
+            if (!dirTabBtn.isSelected()) dirTabBtn.setSelected(true); // Prevent deselecting
+            contentPane.getChildren().setAll(dirContent);
+        });
+
+        layoutTabBtn.setOnAction(e -> {
+            if (!layoutTabBtn.isSelected()) layoutTabBtn.setSelected(true); // Prevent deselecting
+            contentPane.getChildren().setAll(layoutContent);
+        });
+
+        Button saveButton = new Button("Save");
         saveButton.getStyleClass().add("button-default");
+        saveButton.setMaxWidth(Double.MAX_VALUE);
+        HBox.setHgrow(saveButton, Priority.ALWAYS);
         saveButton.setOnAction(e -> saveAndApply(stage));
 
         HBox bottomBar = new HBox(saveButton);
         bottomBar.setPadding(new Insets(10, 0, 0, 0));
 
-        VBox root = new VBox(10, tabPane, bottomBar); // Renamed from 'rootBox' to 'root' to match original
-        root.setPadding(new Insets(10)); // Changed padding from 15 to 10
-        root.getStyleClass().addAll("primary-page", "background-primary"); // Apply both classes for app consistency
-        VBox.setVgrow(tabPane, Priority.ALWAYS); // Changed 'tabs' to 'tabPane'
+        VBox mainContent = new VBox(tabBar, contentPane);
+        VBox.setVgrow(contentPane, Priority.ALWAYS);
+
+        VBox root = new VBox(10, mainContent, bottomBar);
+        root.setPadding(new Insets(10));
+        root.getStyleClass().addAll("primary-page", "background-primary");
+        VBox.setVgrow(mainContent, Priority.ALWAYS);
 
         Scene scene = new Scene(root, 1200, 700);
         scene.getStylesheets().add(styleService.getCurrentStyleUrl());
@@ -334,6 +363,8 @@ public class LayoutAndButtonsEditorController {
 
         Button addBtn = new Button("Add Variable");
         addBtn.getStyleClass().add("button-default");
+        addBtn.setMaxWidth(Double.MAX_VALUE);
+        HBox.setHgrow(addBtn, Priority.ALWAYS);
         addBtn.setOnAction(e -> {
             MutableDirectory newDir = new MutableDirectory(new DirectoryDTO("NEW_VAR", "", ""));
             directories.add(newDir);
@@ -343,6 +374,8 @@ public class LayoutAndButtonsEditorController {
 
         Button delBtn = new Button("Remove Variable");
         delBtn.getStyleClass().add("button-default");
+        delBtn.setMaxWidth(Double.MAX_VALUE);
+        HBox.setHgrow(delBtn, Priority.ALWAYS);
         delBtn.setOnAction(e -> {
             MutableDirectory sel = dirList.getSelectionModel().getSelectedItem();
             if (sel != null)
@@ -375,16 +408,33 @@ public class LayoutAndButtonsEditorController {
 
         Button addSecBtn = new Button("+");
         addSecBtn.getStyleClass().add("button-default");
+        addSecBtn.setMaxWidth(Double.MAX_VALUE);
+        HBox.setHgrow(addSecBtn, Priority.ALWAYS);
+        
         Button delSecBtn = new Button("-");
         delSecBtn.getStyleClass().add("button-default");
+        delSecBtn.setMaxWidth(Double.MAX_VALUE);
+        HBox.setHgrow(delSecBtn, Priority.ALWAYS);
+        
         Button addSubBtn = new Button("+");
         addSubBtn.getStyleClass().add("button-default");
+        addSubBtn.setMaxWidth(Double.MAX_VALUE);
+        HBox.setHgrow(addSubBtn, Priority.ALWAYS);
+        
         Button delSubBtn = new Button("-");
         delSubBtn.getStyleClass().add("button-default");
+        delSubBtn.setMaxWidth(Double.MAX_VALUE);
+        HBox.setHgrow(delSubBtn, Priority.ALWAYS);
+        
         Button addBtnBtn = new Button("+");
         addBtnBtn.getStyleClass().add("button-default");
+        addBtnBtn.setMaxWidth(Double.MAX_VALUE);
+        HBox.setHgrow(addBtnBtn, Priority.ALWAYS);
+        
         Button delBtnBtn = new Button("-");
         delBtnBtn.getStyleClass().add("button-default");
+        delBtnBtn.setMaxWidth(Double.MAX_VALUE);
+        HBox.setHgrow(delBtnBtn, Priority.ALWAYS);
 
         subSectionList.setDisable(true);
         addSubBtn.setDisable(true);
