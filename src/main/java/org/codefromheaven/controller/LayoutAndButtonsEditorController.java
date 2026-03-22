@@ -53,6 +53,7 @@ public class LayoutAndButtonsEditorController {
     private final AnimalService animalService;
     private final StyleService styleService;
     private LayoutAndButtonsDTO currentDto;
+    private Runnable refreshLayoutForm;
 
     private final ObservableList<MutableDirectory> directories = FXCollections.observableArrayList();
     private final ObservableList<MutableSection> sections = FXCollections.observableArrayList();
@@ -103,6 +104,9 @@ public class LayoutAndButtonsEditorController {
 
         layoutTabBtn.setOnAction(e -> {
             if (!layoutTabBtn.isSelected()) layoutTabBtn.setSelected(true); // Prevent deselecting
+            if (refreshLayoutForm != null) {
+                refreshLayoutForm.run();
+            }
             contentPane.getChildren().setAll(layoutContent);
         });
 
@@ -385,6 +389,7 @@ public class LayoutAndButtonsEditorController {
         rightSide.setDisable(true); // default hidden/disabled
 
         dirList.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
+            nameField.getProperties().put("isLoading", true);
             if (oldVal != null) {
                 nameField.textProperty().unbindBidirectional(oldVal.name);
                 pathField.textProperty().unbindBidirectional(oldVal.path);
@@ -410,11 +415,18 @@ public class LayoutAndButtonsEditorController {
                 descField.clear();
                 updateValidationUI(nameField, varErrorTooltip, null);
             }
+            nameField.getProperties().put("isLoading", false);
         });
 
         nameField.textProperty().addListener((o, oldValue, newValue) -> {
             dirList.refresh();
             updateValidationMessage(nameField, varErrorTooltip, newValue);
+            Boolean isLoading = (Boolean) nameField.getProperties().get("isLoading");
+            if (isLoading == null || !isLoading) {
+                if (oldValue != null && newValue != null && !oldValue.equals(newValue)) {
+                    updateButtonVariableNames(oldValue, newValue);
+                }
+            }
         });
 
         nameField.focusedProperty().addListener((obs, wasFocused, isFocused) -> {
@@ -440,8 +452,25 @@ public class LayoutAndButtonsEditorController {
         HBox.setHgrow(delBtn, Priority.ALWAYS);
         delBtn.setOnAction(e -> {
             MutableDirectory sel = dirList.getSelectionModel().getSelectedItem();
-            if (sel != null)
+            if (sel != null) {
+                String removedName = sel.name.get();
+                boolean isUsed = false;
+                for (MutableSection sec : sections) {
+                    for (MutableSubSection sub : sec.subSections) {
+                        for (MutableButton btn : sub.buttons) {
+                            if (removedName.equals(btn.scriptLocationParamName.get())) {
+                                isUsed = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (isUsed) {
+                    PopupController.showPopup("Cannot remove variable '" + removedName + "' because it is currently used by one or more buttons.", javafx.scene.control.Alert.AlertType.WARNING);
+                    return;
+                }
                 directories.remove(sel);
+            }
         });
 
         HBox listBtns = new HBox(10, addBtn, delBtn);
@@ -464,6 +493,19 @@ public class LayoutAndButtonsEditorController {
             errorMsg = "Variable name must be unique.";
         }
         updateValidationUI(nameField, varErrorTooltip, errorMsg);
+    }
+
+    private void updateButtonVariableNames(String oldName, String newName) {
+        if (oldName == null || oldName.isEmpty()) return;
+        for (MutableSection sec : sections) {
+            for (MutableSubSection sub : sec.subSections) {
+                for (MutableButton btn : sub.buttons) {
+                    if (oldName.equals(btn.scriptLocationParamName.get())) {
+                        btn.scriptLocationParamName.set(newName);
+                    }
+                }
+            }
+        }
     }
 
     private VBox createLayoutEditor() {
@@ -625,6 +667,23 @@ public class LayoutAndButtonsEditorController {
             MutableButton sel = buttonList.getSelectionModel().getSelectedItem();
             if (sel != null) populateButtonEditForm(rightForm, sel, buttonList);
         });
+
+        refreshLayoutForm = () -> {
+            MutableButton selBtn = buttonList.getSelectionModel().getSelectedItem();
+            if (selBtn != null) {
+                populateButtonEditForm(rightForm, selBtn, buttonList);
+            } else {
+                MutableSubSection selSub = subSectionList.getSelectionModel().getSelectedItem();
+                if (selSub != null) {
+                    populateSubSectionEditForm(rightForm, selSub, subSectionList);
+                } else {
+                    MutableSection selSec = sectionList.getSelectionModel().getSelectedItem();
+                    if (selSec != null) {
+                        populateSectionEditForm(rightForm, selSec, sectionList);
+                    }
+                }
+            }
+        };
 
         HBox mainBox = new HBox(10, listsBox, rightForm);
         mainBox.setPadding(new Insets(15));
@@ -810,7 +869,6 @@ public class LayoutAndButtonsEditorController {
 
         ComboBox<String> locationBox = new ComboBox<>();
         directories.forEach(d -> locationBox.getItems().add(d.name.get()));
-        locationBox.getItems().add(""); // Allow empty
         locationBox.setValue(btn.scriptLocationParamName.get());
         locationBox.valueProperty()
                 .addListener((o, old, nev) -> btn.scriptLocationParamName.set(nev != null ? nev : ""));
