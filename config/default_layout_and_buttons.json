@@ -1,6 +1,11 @@
 {
   "directories": [
     {
+      "name" : "APP_LOCATION",
+      "path" : ".",
+      "description" : "Application Root Directory"
+    },
+    {
       "name": "ALL_EXAMPLE_SCRIPTS_PATH",
       "path": "config/scripts",
       "description": "Location of all example scripts"
