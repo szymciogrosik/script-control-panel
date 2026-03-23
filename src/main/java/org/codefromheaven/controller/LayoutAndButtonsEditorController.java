@@ -37,6 +37,7 @@ import java.util.Set;
 import java.util.HashSet;
 import java.util.stream.Collectors;
 
+import static java.nio.charset.StandardCharsets.*;
 import static javafx.beans.binding.Bindings.*;
 
 public class LayoutAndButtonsEditorController {
@@ -93,9 +94,29 @@ public class LayoutAndButtonsEditorController {
 
         HBox tabBar = new HBox(10, dirTabBtn, defaultLayoutTabBtn, myOwnLayoutTabBtn);
 
-        VBox dirContent = createDirectoriesEditor(stage);
-        VBox defaultLayoutContent = createLayoutEditor(defaultSections, true);
-        VBox myOwnLayoutContent = createLayoutEditor(myOwnSections, false);
+        Label dirDesc = new Label(loadResourceText("/editor/tab_variables_desc.txt"));
+        dirDesc.setWrapText(true);
+        dirDesc.getStyleClass().add("tab-desc-label");
+
+        Label defaultLayoutDesc = new Label(loadResourceText("/editor/tab_default_layout_desc.txt"));
+        defaultLayoutDesc.setWrapText(true);
+        defaultLayoutDesc.getStyleClass().add("tab-desc-label");
+
+        Label myOwnLayoutDesc = new Label(loadResourceText("/editor/tab_my_own_layout_desc.txt"));
+        myOwnLayoutDesc.setWrapText(true);
+        myOwnLayoutDesc.getStyleClass().add("tab-desc-label");
+
+        VBox dirEditor = createDirectoriesEditor(stage);
+        VBox dirContent = new VBox(5, dirDesc, dirEditor);
+        VBox.setVgrow(dirEditor, Priority.ALWAYS);
+
+        VBox defaultEditor = createLayoutEditor(defaultSections, true);
+        VBox defaultLayoutContent = new VBox(5, defaultLayoutDesc, defaultEditor);
+        VBox.setVgrow(defaultEditor, Priority.ALWAYS);
+
+        VBox myOwnEditor = createLayoutEditor(myOwnSections, false);
+        VBox myOwnLayoutContent = new VBox(5, myOwnLayoutDesc, myOwnEditor);
+        VBox.setVgrow(myOwnEditor, Priority.ALWAYS);
 
         StackPane contentPane = new StackPane(dirContent);
 
@@ -1033,6 +1054,17 @@ public class LayoutAndButtonsEditorController {
 
             return cell;
         });
+    }
+
+    private String loadResourceText(String resourcePath) {
+        try (java.io.InputStream is = getClass().getResourceAsStream(resourcePath)) {
+            if (is != null) {
+                return new String(is.readAllBytes(), UTF_8).trim();
+            }
+        } catch (java.io.IOException ignored) {
+            ignored.printStackTrace();
+        }
+        return "";
     }
 
     // --- Mutable Wrapper Classes ---

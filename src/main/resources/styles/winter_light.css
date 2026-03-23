@@ -102,3 +102,10 @@
     -fx-text-box-border: #ff3333;
     -fx-focus-color: #ff3333;
 }
+
+.tab-desc-label {
+    -fx-text-fill: #1e88e5 !important;
+    -fx-font-size: 12px;
+    -fx-font-style: italic;
+    -fx-padding: 8 0 5 0;
+}

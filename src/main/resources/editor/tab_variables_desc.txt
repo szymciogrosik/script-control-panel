@@ -1,0 +1,1 @@
+Manage script directory variables shared across all buttons. Set the category to 'Default' for shared variables or 'My Own' for personal ones.
