@@ -1,9 +1,11 @@
 package org.codefromheaven.service.settings;
 
+import org.apache.commons.lang3.StringUtils;
 import org.codefromheaven.dto.ConfigType;
 import org.codefromheaven.dto.FileType;
 import org.codefromheaven.dto.Setting;
 import org.codefromheaven.dto.settings.SettingDTO;
+import org.codefromheaven.dto.settings.SettingSaveDTO;
 import org.codefromheaven.dto.settings.SettingsDTO;
 import org.codefromheaven.helpers.FileUtils;
 import org.codefromheaven.helpers.JsonUtils;
@@ -33,8 +35,13 @@ public abstract class SettingsServiceBase {
     private static final String CONFIG_LOCATION = getConfigDir();
     private static final String CONFIG_DIR = CONFIG_LOCATION.isEmpty() ? "" : CONFIG_LOCATION + "/";
 
+    public static String getDynamicConfigDir() {
+        String customDir = loadValue(Setting.CONFIG_DIR.getName(), FileType.SETTINGS).orElse("");
+        return StringUtils.isEmpty(customDir) ? CONFIG_DIR : customDir + "/";
+    }
+
     public static String getConfigDirectory() {
-        return CONFIG_DIR;
+        return getDynamicConfigDir();
     }
 
     public static SettingsDTO loadSettingsFile(FileType fileType) {
@@ -127,20 +134,49 @@ public abstract class SettingsServiceBase {
         }
     }
 
-    public static void saveSettings(FileType fileType, SettingsDTO customSettings) {
-        FileUtils.createOrReplaceConfigDirectory();
+    public static SettingsDTO loadDefaultSettings(FileType fileType) {
+        return mergeDefaultSettings(
+                loadSettingsFile(getFileDir(fileType.name(), ConfigType.DEFAULT)).orElse(new SettingsDTO()), fileType);
+    }
+
+    public static void saveDefaultSettings(FileType fileType, SettingsDTO customSettings) {
+        FileUtils.createOrReplaceConfigDirectory(CONFIG_DIR);
+        
+        // When saving default settings, we compare them to the hardcoded App defaults.
+        SettingsDTO appDefaults = mergeDefaultSettings(new SettingsDTO(), fileType);
+        
+        List<SettingSaveDTO> settingsToSave = customSettings.getSettings().stream()
+                .filter(setting -> appDefaults.getSettings().stream()
+                        .noneMatch(defaultSetting -> defaultSetting.getKey().equals(setting.getKey()) &&
+                                Objects.equals(defaultSetting.getValue(), setting.getValue()) &&
+                                defaultSetting.isEditable() == setting.isEditable()))
+                .map(SettingSaveDTO::new)
+                .toList();
+                        
+        Path path = Paths.get(getFileDir(fileType.name(), ConfigType.DEFAULT));
+        try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
+            writer.write(JsonUtils.serialize(java.util.Map.of("settings", settingsToSave)));
+        } catch (IOException e) {
+            throw new RuntimeException("Failed to save default settings", e);
+        }
+    }
+
+    public static void saveMyOwnSettings(FileType fileType, SettingsDTO customSettings) {
+        FileUtils.createOrReplaceConfigDirectory(CONFIG_DIR);
         SettingsDTO settingsToSave = getCustomSettingsDifferentThanDefault(fileType, customSettings);
+        List<SettingSaveDTO> slimSettings = settingsToSave.getSettings().stream()
+                .map(SettingSaveDTO::new)
+                .toList();
         Path path = Paths.get(getFileDir(fileType.name(), ConfigType.MY_OWN));
         try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
-            writer.write(JsonUtils.serialize(settingsToSave));
+            writer.write(JsonUtils.serialize(java.util.Map.of("settings", slimSettings)));
         } catch (IOException e) {
             throw new RuntimeException("Failed to save settings", e);
         }
     }
 
     public static SettingsDTO getCustomSettingsDifferentThanDefault(FileType fileType, SettingsDTO customSettings) {
-        SettingsDTO defaultSettings = mergeDefaultSettings(
-                loadSettingsFile(getFileDir(fileType.name(), ConfigType.DEFAULT)).orElse(new SettingsDTO()), fileType);
+        SettingsDTO defaultSettings = loadDefaultSettings(fileType);
         return new SettingsDTO(
                 customSettings.getSettings().stream()
                         .filter(setting -> defaultSettings.getSettings().stream()
@@ -165,19 +201,16 @@ public abstract class SettingsServiceBase {
     }
 
     public static String getFileDir(String fileName, ConfigType configType) {
+        String baseDir = CONFIG_DIR;
+        if (!FileType.SETTINGS.name().equals(fileName)) {
+            baseDir = getDynamicConfigDir();
+        }
+
         return switch (configType) {
-            case DEFAULT -> getDefaultFileDir(fileName);
-            case MY_OWN -> getMyOwnFileDir(fileName);
+            case DEFAULT -> baseDir + DEFAULT_PREFIX + getDefaultFileNameBase(fileName);
+            case MY_OWN -> baseDir + MY_OWN_PREFIX + getDefaultFileNameBase(fileName);
             default -> throw new RuntimeException("Unknown config type");
         };
-    }
-
-    private static String getDefaultFileDir(String fileName) {
-        return CONFIG_DIR + DEFAULT_PREFIX + getDefaultFileNameBase(fileName);
-    }
-
-    private static String getMyOwnFileDir(String fileName) {
-        return CONFIG_DIR + MY_OWN_PREFIX + getDefaultFileNameBase(fileName);
     }
 
     private static String getDefaultFileNameBase(String fileName) {

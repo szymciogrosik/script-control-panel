@@ -2,6 +2,7 @@ package org.codefromheaven.helpers;
 
 import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import java.io.File;
 import java.io.FileNotFoundException;
@@ -15,6 +16,7 @@ public class JsonUtils {
 
     static {
         mapper.setDateFormat(SDF);
+        mapper.enable(SerializationFeature.INDENT_OUTPUT);
     }
 
     private JsonUtils() {

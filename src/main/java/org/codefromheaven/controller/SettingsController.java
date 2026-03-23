@@ -1,15 +1,19 @@
 package org.codefromheaven.controller;
 
+import javafx.geometry.HPos;
 import javafx.geometry.Insets;
 import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.layout.GridPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.StackPane;
+import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
 import org.codefromheaven.context.SpringContext;
+import org.codefromheaven.dto.FileType;
 import org.codefromheaven.dto.Setting;
 import org.codefromheaven.dto.Style;
 import org.codefromheaven.dto.settings.FieldOnPageDTO;
@@ -20,12 +24,14 @@ import org.codefromheaven.resources.AnimalProvider;
 import org.codefromheaven.service.animal.AnimalService;
 import org.codefromheaven.service.settings.SettingsService;
 import org.codefromheaven.service.style.StyleService;
+import org.codefromheaven.service.settings.SettingsServiceBase;
 
 import java.io.File;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
+import java.util.stream.Collectors;
 
 import static javafx.stage.Modality.APPLICATION_MODAL;
 
@@ -52,17 +58,78 @@ public class SettingsController {
         settingsStage.getIcons().add(SpringContext.getBean(AnimalService.class).getRandomAnimalImage());
         settingsStage.setResizable(false);
 
-        GridPane gridPane = new GridPane();
-        gridPane.setPadding(new Insets(20));
-        gridPane.setVgap(10);
-        gridPane.setHgap(10);
-        gridPane.getStyleClass().add("background-primary");
+        TabPane tabPane = new TabPane();
+        tabPane.setTabClosingPolicy(TabPane.TabClosingPolicy.UNAVAILABLE);
 
-        SettingsDTO configSettings = SpringContext.getBean(SettingsService.class).load();
-        List<SettingDTO> settings = configSettings.getSettings().stream().filter(SettingDTO::isEditable).toList();
+        // --- Load Data ---
+        // 1. Default layer overrides
+        SettingsDTO defaultSettingsDto = SettingsServiceBase.loadDefaultSettings(FileType.SETTINGS);
+        List<SettingDTO> defaultSettings = defaultSettingsDto.getSettings().stream()
+                .map(SettingDTO::new) // Deep copy
+                .collect(Collectors.toList());
 
-        FieldOnPageDTO valueFields = loadElementsToPage(settings, gridPane);
+        // 2. My Own layer overrides
+        SettingsDTO myOwnSettingsDto = SpringContext.getBean(SettingsService.class).load();
+        List<SettingDTO> myOwnSettings = myOwnSettingsDto.getSettings().stream()
+                .map(SettingDTO::new) // Deep copy
+                .collect(Collectors.toList());
 
+        // --- Create Grids ---
+        GridPane defaultGrid = createStandardGridPane();
+        FieldOnPageDTO defaultFields = loadElementsToPage(defaultSettings, defaultGrid, true);
+        ScrollPane defaultScroll = createScrollPane(defaultGrid);
+        
+        GridPane myOwnGrid = createStandardGridPane();
+        FieldOnPageDTO myOwnFields = loadElementsToPage(myOwnSettings, myOwnGrid, false);
+        ScrollPane myOwnScroll = createScrollPane(myOwnGrid);
+
+        // --- Cross-tab bindings ---
+        for (int i = 0; i < defaultSettings.size(); i++) {
+            CheckBox editableCb = defaultFields.editableCheckboxes()[i];
+            
+            SettingType type = myOwnSettings.get(i).getType();
+            if (SettingType.SELECT.equals(type)) {
+                myOwnFields.comboBoxes()[i].disableProperty().bind(editableCb.selectedProperty().not());
+            } else if (SettingType.SWITCH.equals(type)) {
+                myOwnFields.checkBoxes()[i].disableProperty().bind(editableCb.selectedProperty().not());
+            } else {
+                myOwnFields.textFields()[i].disableProperty().bind(editableCb.selectedProperty().not());
+            }
+        }
+
+        // --- Toggle Buttons (Mock Tabs) ---
+        ToggleButton defaultLayoutTabBtn = new ToggleButton("Default settings");
+        defaultLayoutTabBtn.getStyleClass().add("button-default");
+
+        ToggleButton myOwnLayoutTabBtn = new ToggleButton("My own settings");
+        myOwnLayoutTabBtn.getStyleClass().add("button-default");
+
+        ToggleGroup tabGroup = new ToggleGroup();
+        defaultLayoutTabBtn.setToggleGroup(tabGroup);
+        myOwnLayoutTabBtn.setToggleGroup(tabGroup);
+
+        defaultLayoutTabBtn.opacityProperty().bind(javafx.beans.binding.Bindings.when(defaultLayoutTabBtn.selectedProperty()).then(1.0).otherwise(0.6));
+        myOwnLayoutTabBtn.opacityProperty().bind(javafx.beans.binding.Bindings.when(myOwnLayoutTabBtn.selectedProperty()).then(1.0).otherwise(0.6));
+
+        HBox tabBar = new HBox(10, defaultLayoutTabBtn, myOwnLayoutTabBtn);
+        tabBar.setPadding(new Insets(20, 20, 0, 20));
+
+        // --- Content Area ---
+        StackPane contentPane = new StackPane(defaultScroll);
+
+        defaultLayoutTabBtn.setSelected(true);
+
+        defaultLayoutTabBtn.setOnAction(e -> {
+            if (!defaultLayoutTabBtn.isSelected()) defaultLayoutTabBtn.setSelected(true);
+            contentPane.getChildren().setAll(defaultScroll);
+        });
+
+        myOwnLayoutTabBtn.setOnAction(e -> {
+            if (!myOwnLayoutTabBtn.isSelected()) myOwnLayoutTabBtn.setSelected(true);
+            contentPane.getChildren().setAll(myOwnScroll);
+        });
+
+        // --- Bottom action area ---
         Button saveButton = new Button("Save");
         saveButton.getStyleClass().add("button-default");
         saveButton.setMaxWidth(Double.MAX_VALUE);
@@ -71,70 +138,114 @@ public class SettingsController {
         HBox buttonBox = new HBox(saveButton);
         buttonBox.setSpacing(10);
         buttonBox.setFillHeight(true);
+        buttonBox.setPadding(new Insets(10, 20, 20, 20));
 
-        gridPane.add(buttonBox, 0, settings.size(), 2, 1);
-        GridPane.setMargin(buttonBox, new Insets(10, 0, 0, 0));
-
-        ScrollPane scrollPane = new ScrollPane();
-        scrollPane.setContent(gridPane);
-        scrollPane.setFitToWidth(true);
-        scrollPane.setMaxHeight(700);
-        scrollPane.getStyleClass().add("scroll-pane-transparent");
+        VBox root = new VBox(tabBar, contentPane, buttonBox);
+        root.getStyleClass().add("background-primary");
+        VBox.setVgrow(contentPane, Priority.ALWAYS);
 
         saveButton.setOnAction(event -> {
-            doActionOnSave(settings, valueFields, settingsStage);
+            doActionOnSave(defaultSettings, defaultFields, myOwnSettings, myOwnFields, settingsStage);
         });
 
-        Scene scene = new Scene(scrollPane);
+        Scene scene = new Scene(root);
         scene.getStylesheets().add(SpringContext.getBean(StyleService.class).getCurrentStyleUrl());
         settingsStage.setScene(scene);
+        settingsStage.sizeToScene();
         settingsStage.showAndWait();
     }
 
-    private FieldOnPageDTO loadElementsToPage(List<SettingDTO> settings, GridPane gridPane) {
+    private GridPane createStandardGridPane() {
+        GridPane gridPane = new GridPane();
+        gridPane.setPadding(new Insets(20));
+        gridPane.setVgap(10);
+        gridPane.setHgap(10);
+        gridPane.getStyleClass().add("background-primary");
+        return gridPane;
+    }
+
+    private ScrollPane createScrollPane(GridPane gridPane) {
+        ScrollPane scrollPane = new ScrollPane();
+        scrollPane.setContent(gridPane);
+        scrollPane.setFitToWidth(true);
+        scrollPane.getStyleClass().add("scroll-pane-transparent");
+        return scrollPane;
+    }
+
+    private FieldOnPageDTO loadElementsToPage(List<SettingDTO> settings, GridPane gridPane, boolean showEditableColumn) {
         TextField[] textValueFields = new TextField[settings.size()];
         CheckBox[] checkBoxFields = new CheckBox[settings.size()];
         ComboBox<String>[] comboValueFields = new ComboBox[settings.size()];
+        CheckBox[] editableCheckFields = new CheckBox[settings.size()]; // Only used if showEditableColumn
+
+        int rowIndex = 0;
+        if (showEditableColumn) {
+            Label header = new Label("Editable");
+            header.getStyleClass().add("label-on-dark-background");
+            gridPane.add(header, 2, rowIndex);
+            GridPane.setHalignment(header, HPos.CENTER);
+        } else {
+            // Reserve header row so data rows align with the Default tab
+            Label spacerHeader = new Label("");
+            gridPane.add(spacerHeader, 2, rowIndex);
+        }
+        rowIndex++;
 
         for (int i = 0; i < settings.size(); i++) {
             SettingDTO setting = settings.get(i);
             Label label = new Label(getLabel(setting) + ":");
             label.getStyleClass().add("label-on-dark-background");
 
-            gridPane.add(label, 0, i);
+            gridPane.add(label, 0, rowIndex);
 
             if (SettingType.SELECT.equals(setting.getType())) {
                 ComboBox<String> field = createComboBox(setting, comboValueFields, i);
-                gridPane.add(field, 1, i);
+                gridPane.add(field, 1, rowIndex);
             } else if (SettingType.SWITCH.equals(setting.getType())) {
                 CheckBox field = createCheckBox(setting.getValue(), checkBoxFields, i);
                 field.getStyleClass().add("check-box-on-dark-background");
-                gridPane.add(field, 1, i);
+                gridPane.add(field, 1, rowIndex);
             } else if (SettingType.NUMBER.equals(setting.getType())) {
                 TextField field = createNumberField(setting.getValue(), textValueFields, i);
-                gridPane.add(field, 1, i);
+                gridPane.add(field, 1, rowIndex);
             } else if (SettingType.PATH.equals(setting.getType())) {
                 HBox field = createPathSelector(setting, textValueFields, i);
-                gridPane.add(field, 1, i);
+                gridPane.add(field, 1, rowIndex);
             } else {
                 TextField field = createTextField(setting.getValue(), textValueFields, i);
-                gridPane.add(field, 1, i);
+                gridPane.add(field, 1, rowIndex);
             }
+
+            if (showEditableColumn) {
+                CheckBox editableCheckbox = new CheckBox(); // Header describes this now
+                editableCheckbox.setSelected(setting.isEditable());
+                editableCheckbox.getStyleClass().add("check-box-on-dark-background");
+                editableCheckFields[i] = editableCheckbox;
+                gridPane.add(editableCheckbox, 2, rowIndex);
+                GridPane.setHalignment(editableCheckbox, HPos.CENTER);
+            } else {
+                // Placeholder to keep row height consistent with the Default tab
+                Label spacer = new Label("");
+                spacer.setMinWidth(24);
+                gridPane.add(spacer, 2, rowIndex);
+            }
+            
+            rowIndex++;
         }
 
-        return new FieldOnPageDTO(textValueFields, comboValueFields, checkBoxFields);
+        return new FieldOnPageDTO(textValueFields, comboValueFields, checkBoxFields, editableCheckFields);
     }
 
     private TextField createTextField(String value, TextField[] valueFields, int i) {
         TextField textField = new TextField(value);
-        textField.setPrefWidth(500);
+        textField.setPrefWidth(400); // reduced slightly to fit 3rd column if needed
         valueFields[i] = textField;
         return textField;
     }
 
     private TextField createNumberField(String value, TextField[] valueFields, int i) {
         TextField textField = new TextField(value);
-        textField.setPrefWidth(500);
+        textField.setPrefWidth(400);
         textField.setTextFormatter(new javafx.scene.control.TextFormatter<>(change -> {
             if (change.getControlNewText().matches("\\d*")) {
                 return change;
@@ -147,9 +258,10 @@ public class SettingsController {
 
     private HBox createPathSelector(SettingDTO setting, TextField[] valueFields, int i) {
         TextField textField = new TextField(setting.getValue());
-        textField.setPrefWidth(430);
+        textField.setPrefWidth(330);
         Button browseButton = new Button("Browse");
         browseButton.getStyleClass().add("button-default");
+        browseButton.disableProperty().bind(textField.disableProperty());
         browseButton.setOnAction(e -> {
             File initialDir = new File(System.getProperty("user.dir"));
             
@@ -188,7 +300,7 @@ public class SettingsController {
 
     private ComboBox<String> createComboBox(SettingDTO setting, ComboBox<String>[] valueFields, int i) {
         ComboBox<String> comboBox = new ComboBox<>();
-        comboBox.setPrefWidth(500);
+        comboBox.setPrefWidth(400);
         String[] options = getComboBoxOptions(setting.getKey());
 
         comboBox.getItems().addAll(options);
@@ -218,7 +330,7 @@ public class SettingsController {
         return checkBox;
     }
 
-    private void doActionOnSave(List<SettingDTO> settings, FieldOnPageDTO valueFields, Stage settingsStage) {
+    private void readValuesFromFields(List<SettingDTO> settings, FieldOnPageDTO valueFields, boolean isDefaultContext) {
         for (int i = 0; i < settings.size(); i++) {
             SettingDTO setting = settings.get(i);
             String newValue;
@@ -230,9 +342,33 @@ public class SettingsController {
                 newValue = valueFields.textFields()[i].getText();
             }
             setting.setValue(newValue);
+
+            if (isDefaultContext && valueFields.editableCheckboxes() != null) {
+                setting.setEditable(valueFields.editableCheckboxes()[i].isSelected());
+            }
+        }
+    }
+
+    private void doActionOnSave(List<SettingDTO> defaultSettings, FieldOnPageDTO defaultFields,
+                                List<SettingDTO> myOwnSettings, FieldOnPageDTO myOwnFields,
+                                Stage settingsStage) {
+        
+        // 1. Grab values from UI
+        readValuesFromFields(defaultSettings, defaultFields, true);
+        readValuesFromFields(myOwnSettings, myOwnFields, false);
+
+        // 2. Force non-editable custom settings to match their default values so they aren't saved
+        for (int i = 0; i < defaultSettings.size(); i++) {
+            if (!defaultSettings.get(i).isEditable()) {
+                myOwnSettings.get(i).setValue(defaultSettings.get(i).getValue());
+            }
         }
 
-        SpringContext.getBean(SettingsService.class).saveSettings(new SettingsDTO(settings));
+        // 3. Save configurations mapping exactly to their respective layers
+        SettingsServiceBase.saveDefaultSettings(FileType.SETTINGS, new SettingsDTO(defaultSettings));
+        SettingsServiceBase.saveMyOwnSettings(FileType.SETTINGS, new SettingsDTO(myOwnSettings));
+
+        // 3. Trigger app refresh
         styleReloader.reloadStyle();
         loader.loadContent();
         resizeMainWindow.resizeMainWindow();

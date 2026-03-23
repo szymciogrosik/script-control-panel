@@ -22,7 +22,7 @@ public class SettingsService extends SettingsServiceBase {
     }
 
     public void saveSettings(SettingsDTO settings) {
-        saveSettings(FILE_TYPE, settings);
+        saveMyOwnSettings(FILE_TYPE, settings);
     }
 
     public String getAppName() {
@@ -60,7 +60,7 @@ public class SettingsService extends SettingsServiceBase {
             settings.getSettings().add(new SettingDTO(key, newValue, type, ""));
         }
 
-        saveSettings(FILE_TYPE, settings);
+        saveMyOwnSettings(FILE_TYPE, settings);
     }
 
     public Optional<String> loadValue(BaseSetting setting) {

@@ -44,7 +44,7 @@ public class VisibilitySettings {
     }
 
     private void saveVisibilitySettings(FileType fileType, VisibilitySettingsDTO settings) {
-        FileUtils.createOrReplaceConfigDirectory();
+        FileUtils.createOrReplaceConfigDirectory(SettingsServiceBase.getDynamicConfigDir());
         Path path = Paths.get(SettingsServiceBase.getFileDir(fileType.name(), ConfigType.MY_OWN));
         try (BufferedWriter writer = Files.newBufferedWriter(path, StandardCharsets.UTF_8)) {
             writer.write(JsonUtils.serialize(settings));

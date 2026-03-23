@@ -24,6 +24,14 @@ public class SettingDTO {
         this.description = description;
     }
 
+    public SettingDTO(SettingDTO other) {
+        this.key = other.key;
+        this.value = other.value;
+        this.type = other.type;
+        this.description = other.description;
+        this.editable = other.editable;
+    }
+
     public String getKey() {
         return key;
     }

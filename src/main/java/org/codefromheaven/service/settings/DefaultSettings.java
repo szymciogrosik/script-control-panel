@@ -13,7 +13,7 @@ public class DefaultSettings {
     public static final SettingsDTO ALL = new SettingsDTO(
             Arrays.asList(
                     new SettingDTO(Setting.APP_NAME.getName(), "Script Control Panel", SettingType.TEXT,
-                                   "App name"),
+                                   "App name", false),
                     new SettingDTO(Setting.APP_STYLE.getName(), Style.CLASSIC.name(), SettingType.SELECT,
                                    "Application style"),
                     new SettingDTO(Setting.IMAGE_NAME.getName(), "", SettingType.SELECT,
@@ -25,7 +25,7 @@ public class DefaultSettings {
                     new SettingDTO(Setting.BASH_PATH.getName(), "C:/Program Files/Git/git-bash.exe", SettingType.PATH,
                                    "Location of Git bash"),
                     new SettingDTO(Setting.CONFIG_DIR.getName(), "config", SettingType.PATH,
-                                   "Location of configuration files f.e. 'config' or empty when in the same location")
+                                   "Location of configuration files f.e. 'config' or empty when in the same location", false)
             )
     );
 

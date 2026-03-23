@@ -26,9 +26,15 @@ public class FileUtils {
         return appDir;
     }
 
-    public static void createOrReplaceConfigDirectory() {
-        String appDir = System.getProperty("user.dir") + File.separator + CONFIG_DIR;
-        createOrReplaceDirectory(appDir);
+    public static void createOrReplaceConfigDirectory(String path) {
+        if (path == null || path.isEmpty()) {
+            path = CONFIG_DIR;
+        }
+        File dir = new File(path);
+        if (!dir.isAbsolute()) {
+            dir = new File(System.getProperty("user.dir"), path);
+        }
+        createOrReplaceDirectory(dir.getAbsolutePath());
     }
 
     private static void createOrReplaceDirectory(String appDir) {
