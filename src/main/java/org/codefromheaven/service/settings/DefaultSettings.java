@@ -24,10 +24,8 @@ public class DefaultSettings {
                                    "Python scripts prefix"),
                     new SettingDTO(Setting.BASH_PATH.getName(), "C:/Program Files/Git/git-bash.exe", SettingType.PATH,
                                    "Location of Git bash"),
-                    new SettingDTO(Setting.TMP_DIRECTORY.getName(), "tmp", SettingType.PATH,
-                                   "Location of temporary files f.e. for updating application", false),
                     new SettingDTO(Setting.CONFIG_DIR.getName(), "config", SettingType.PATH,
-                                   "Location of configuration files f.e. 'config' or empty when in the same location", false)
+                                   "Location of configuration files f.e. 'config' or empty when in the same location")
             )
     );
 

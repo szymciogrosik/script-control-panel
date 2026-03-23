@@ -22,6 +22,8 @@ import org.codefromheaven.service.settings.SettingsService;
 import org.codefromheaven.service.style.StyleService;
 
 import java.io.File;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.Arrays;
 import java.util.List;
 
@@ -149,22 +151,39 @@ public class SettingsController {
         Button browseButton = new Button("Browse");
         browseButton.getStyleClass().add("button-default");
         browseButton.setOnAction(e -> {
+            File initialDir = new File(System.getProperty("user.dir"));
+            
             if (setting.getKey().equals(Setting.BASH_PATH.getName())) {
                 FileChooser fileChooser = new FileChooser();
-                File file = fileChooser.showOpenDialog(textField.getScene().getWindow());
-                if (file != null) {
-                    textField.setText(file.getAbsolutePath());
+                if (initialDir.exists() && initialDir.isDirectory()) {
+                    fileChooser.setInitialDirectory(initialDir);
                 }
+                File file = fileChooser.showOpenDialog(textField.getScene().getWindow());
+                makeRelativeAndSetText(textField, file);
             } else {
                 DirectoryChooser dirChooser = new DirectoryChooser();
-                File dir = dirChooser.showDialog(textField.getScene().getWindow());
-                if (dir != null) {
-                    textField.setText(dir.getAbsolutePath());
+                if (initialDir.exists() && initialDir.isDirectory()) {
+                    dirChooser.setInitialDirectory(initialDir);
                 }
+                File dir = dirChooser.showDialog(textField.getScene().getWindow());
+                makeRelativeAndSetText(textField, dir);
             }
         });
         valueFields[i] = textField;
         return new HBox(10, textField, browseButton);
+    }
+
+    private void makeRelativeAndSetText(TextField textField, File file) {
+        if (file != null) {
+            Path basePath = Paths.get("").toAbsolutePath();
+            Path targetPath = file.toPath().toAbsolutePath();
+            try {
+                String relativePath = basePath.relativize(targetPath).toString().replace("\\", "/");
+                textField.setText(relativePath.isEmpty() ? "." : relativePath);
+            } catch (IllegalArgumentException ex) {
+                textField.setText(file.getAbsolutePath().replace("\\", "/"));
+            }
+        }
     }
 
     private ComboBox<String> createComboBox(SettingDTO setting, ComboBox<String>[] valueFields, int i) {
