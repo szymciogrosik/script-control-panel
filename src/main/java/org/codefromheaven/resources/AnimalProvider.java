@@ -117,9 +117,6 @@ public class AnimalProvider {
     }
 
     private static ImageType determinateImageType() {
-        if (isAuthorBirthday()) {
-            return ImageType.BIRTHDAY;
-        }
         if (isChristmasTime()) {
             return ImageType.CHRISTMAS;
         }
@@ -131,11 +128,6 @@ public class AnimalProvider {
         boolean afterMiddleOfNovember = (now.getMonthValue() == 11 && now.getDayOfMonth() >= 15) || now.getMonthValue() == 12;
         boolean beforeMiddleOfJanuary = now.getMonthValue() == 1 && now.getDayOfMonth() <= 13;
         return afterMiddleOfNovember || beforeMiddleOfJanuary;
-    }
-
-    private static boolean isAuthorBirthday() {
-        LocalDate now = LocalDate.now();
-        return now.getMonthValue() == 1 && now.getDayOfMonth() == 14;
     }
 
 }
