@@ -1,2 +1,3 @@
-Use checkboxes to control which buttons and sections are visible in the main window.
-Hidden elements are saved locally and will not affect the shared project layout files.
+Use checkboxes to toggle the visibility of buttons and sections in the main window.
+Sections and sub-sections hide automatically when all their child elements are disabled.
+Visibility preferences are saved locally and do not affect shared project layout files.
