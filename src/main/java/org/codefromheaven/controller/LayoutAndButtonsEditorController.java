@@ -98,11 +98,11 @@ public class LayoutAndButtonsEditorController {
         dirDesc.setWrapText(true);
         dirDesc.getStyleClass().add("tab-desc-label");
 
-        Label defaultLayoutDesc = new Label(loadResourceText("/editor/tab_default_layout_desc.txt"));
+        Label defaultLayoutDesc = new Label(loadResourceText("/editor/tab_default_desc.txt"));
         defaultLayoutDesc.setWrapText(true);
         defaultLayoutDesc.getStyleClass().add("tab-desc-label");
 
-        Label myOwnLayoutDesc = new Label(loadResourceText("/editor/tab_my_own_layout_desc.txt"));
+        Label myOwnLayoutDesc = new Label(loadResourceText("/editor/tab_my_own_desc.txt"));
         myOwnLayoutDesc.setWrapText(true);
         myOwnLayoutDesc.getStyleClass().add("tab-desc-label");
 
