@@ -47,12 +47,12 @@ public class HiddenElementSettingsController {
         settingsStage.getIcons().add(SpringContext.getBean(AnimalService.class).getRandomAnimalImage());
         settingsStage.setResizable(false);
 
-        VBox settingsRoot = new VBox(5);
+        VBox settingsRoot = new VBox(2);
         settingsRoot.getStyleClass().add("background-primary");
         ScrollPane scrollPane = new ScrollPane();
         scrollPane.getStyleClass().add("scroll-pane-transparent");
         VBox contentBox = new VBox(10);
-        contentBox.setPadding(new Insets(10));
+        contentBox.setPadding(new Insets(5, 10, 10, 10));
 
         loadPageContent(contentBox);
 
