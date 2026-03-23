@@ -39,7 +39,7 @@
         "elementType" : "BASH",
         "autoCloseConsole" : false,
         "popupInputDisplayed" : true,
-        "popupInputMessage" : "Params",
+        "popupInputMessage" : "Provide a text to display",
         "description" : "Example bash script with popup (input is passed as script params)",
         "visibleAsDefault" : true
       }, {
@@ -85,7 +85,7 @@
         "elementType" : "POWERSHELL",
         "autoCloseConsole" : false,
         "popupInputDisplayed" : true,
-        "popupInputMessage" : "Params",
+        "popupInputMessage" : "Provide a text to display",
         "description" : "Example bat script with popup (input is passed as script params)",
         "visibleAsDefault" : true
       }, {
@@ -128,7 +128,7 @@
         "elementType" : "POWERSHELL",
         "autoCloseConsole" : false,
         "popupInputDisplayed" : true,
-        "popupInputMessage" : "Params",
+        "popupInputMessage" : "Provide a text to display",
         "description" : "Example ps1 script with popup (input is passed as script params)",
         "visibleAsDefault" : true
       }, {
@@ -184,7 +184,7 @@
         "elementType" : "PYTHON",
         "autoCloseConsole" : false,
         "popupInputDisplayed" : true,
-        "popupInputMessage" : "Params",
+        "popupInputMessage" : "Provide a text to display",
         "description" : "Example python script with popup (input is passed as script params)",
         "visibleAsDefault" : true
       }, {
