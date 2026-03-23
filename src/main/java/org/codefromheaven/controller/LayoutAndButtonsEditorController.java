@@ -23,20 +23,16 @@ import org.codefromheaven.dto.data.DirectoryDTO;
 import org.codefromheaven.dto.data.LayoutAndButtonsDTO;
 import org.codefromheaven.dto.data.SectionDTO;
 import org.codefromheaven.dto.data.SubSectionDTO;
+import org.codefromheaven.service.LoadFromJsonService;
 import org.codefromheaven.service.animal.AnimalService;
 import org.codefromheaven.service.settings.LayoutService;
 import org.codefromheaven.service.settings.SettingsServiceBase;
 import org.codefromheaven.service.style.StyleService;
 
-import org.codefromheaven.service.LoadFromJsonService;
-import org.codefromheaven.service.settings.LayoutOrderService;
-
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Comparator;
 import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
 import java.util.Set;
 import java.util.HashSet;
 import java.util.stream.Collectors;
@@ -49,11 +45,14 @@ public class LayoutAndButtonsEditorController {
     private final MainWindowController.ResizeWindow resizeWindow;
     private final AnimalService animalService;
     private final StyleService styleService;
-    private LayoutAndButtonsDTO currentDto;
-    private Runnable refreshLayoutForm;
+    private LayoutAndButtonsDTO defaultDto;
+    private LayoutAndButtonsDTO myOwnDto;
+    private Runnable refreshDefaultLayoutForm;
+    private Runnable refreshMyOwnLayoutForm;
 
     private final ObservableList<MutableDirectory> directories = FXCollections.observableArrayList();
-    private final ObservableList<MutableSection> sections = FXCollections.observableArrayList();
+    private final ObservableList<MutableSection> defaultSections = FXCollections.observableArrayList();
+    private final ObservableList<MutableSection> myOwnSections = FXCollections.observableArrayList();
 
     public LayoutAndButtonsEditorController(MainWindowController.ContentLoader contentLoader,
             MainWindowController.ResizeWindow resizeWindow) {
@@ -64,31 +63,39 @@ public class LayoutAndButtonsEditorController {
     }
 
     public void setupPage() {
-        currentDto = SpringContext.getBean(LayoutService.class).load();
+        LoadFromJsonService loadFromJsonService = SpringContext.getBean(LoadFromJsonService.class);
+        defaultDto = loadFromJsonService.loadLayout(SettingsServiceBase.getFileDir(FileType.LAYOUT_AND_BUTTONS.name(), ConfigType.DEFAULT)).orElse(new LayoutAndButtonsDTO(new ArrayList<>(), new ArrayList<>()));
+        myOwnDto = loadFromJsonService.loadLayout(SettingsServiceBase.getFileDir(FileType.LAYOUT_AND_BUTTONS.name(), ConfigType.MY_OWN)).orElse(new LayoutAndButtonsDTO(new ArrayList<>(), new ArrayList<>()));
+
         initMutables();
 
         Stage stage = new Stage();
         stage.getIcons().add(animalService.getCurrentAnimalImage());
         stage.setTitle("Edit Layout and Buttons");
 
-        ToggleButton dirTabBtn = new ToggleButton("Variables (Directories)");
+        ToggleButton dirTabBtn = new ToggleButton("Edit variables");
         dirTabBtn.getStyleClass().add("button-default");
 
-        ToggleButton layoutTabBtn = new ToggleButton("Layout & Buttons");
-        layoutTabBtn.getStyleClass().add("button-default");
+        ToggleButton defaultLayoutTabBtn = new ToggleButton("Edit default layout");
+        defaultLayoutTabBtn.getStyleClass().add("button-default");
+
+        ToggleButton myOwnLayoutTabBtn = new ToggleButton("Edit my own layout");
+        myOwnLayoutTabBtn.getStyleClass().add("button-default");
 
         ToggleGroup tabGroup = new ToggleGroup();
         dirTabBtn.setToggleGroup(tabGroup);
-        layoutTabBtn.setToggleGroup(tabGroup);
+        defaultLayoutTabBtn.setToggleGroup(tabGroup);
+        myOwnLayoutTabBtn.setToggleGroup(tabGroup);
 
-        // Visual cue for which tab is selected (100% opacity for active, 60% for inactive)
         dirTabBtn.opacityProperty().bind(when(dirTabBtn.selectedProperty()).then(1.0).otherwise(0.6));
-        layoutTabBtn.opacityProperty().bind(when(layoutTabBtn.selectedProperty()).then(1.0).otherwise(0.6));
+        defaultLayoutTabBtn.opacityProperty().bind(when(defaultLayoutTabBtn.selectedProperty()).then(1.0).otherwise(0.6));
+        myOwnLayoutTabBtn.opacityProperty().bind(when(myOwnLayoutTabBtn.selectedProperty()).then(1.0).otherwise(0.6));
 
-        HBox tabBar = new HBox(10, dirTabBtn, layoutTabBtn);
+        HBox tabBar = new HBox(10, dirTabBtn, defaultLayoutTabBtn, myOwnLayoutTabBtn);
 
         VBox dirContent = createDirectoriesEditor(stage);
-        VBox layoutContent = createLayoutEditor();
+        VBox defaultLayoutContent = createLayoutEditor(defaultSections, true);
+        VBox myOwnLayoutContent = createLayoutEditor(myOwnSections, false);
 
         StackPane contentPane = new StackPane(dirContent);
 
@@ -99,12 +106,20 @@ public class LayoutAndButtonsEditorController {
             contentPane.getChildren().setAll(dirContent);
         });
 
-        layoutTabBtn.setOnAction(e -> {
-            if (!layoutTabBtn.isSelected()) layoutTabBtn.setSelected(true); // Prevent deselecting
-            if (refreshLayoutForm != null) {
-                refreshLayoutForm.run();
+        defaultLayoutTabBtn.setOnAction(e -> {
+            if (!defaultLayoutTabBtn.isSelected()) defaultLayoutTabBtn.setSelected(true);
+            if (refreshDefaultLayoutForm != null) {
+                refreshDefaultLayoutForm.run();
             }
-            contentPane.getChildren().setAll(layoutContent);
+            contentPane.getChildren().setAll(defaultLayoutContent);
+        });
+
+        myOwnLayoutTabBtn.setOnAction(e -> {
+            if (!myOwnLayoutTabBtn.isSelected()) myOwnLayoutTabBtn.setSelected(true);
+            if (refreshMyOwnLayoutForm != null) {
+                refreshMyOwnLayoutForm.run();
+            }
+            contentPane.getChildren().setAll(myOwnLayoutContent);
         });
 
         Button saveButton = new Button("Save");
@@ -132,22 +147,38 @@ public class LayoutAndButtonsEditorController {
     }
 
     private void initMutables() {
-        if (currentDto == null) {
-            currentDto = new LayoutAndButtonsDTO(new ArrayList<>(), new ArrayList<>());
-        }
-
         directories.clear();
-        if (currentDto.directories() != null) {
-            for (DirectoryDTO d : currentDto.directories()) {
-                directories.add(new MutableDirectory(d));
+        if (defaultDto.directories() != null) {
+            for (DirectoryDTO d : defaultDto.directories()) {
+                directories.add(new MutableDirectory(d, ConfigType.DEFAULT));
+            }
+        }
+        if (myOwnDto.directories() != null) {
+            for (DirectoryDTO d : myOwnDto.directories()) {
+                boolean existsInDefault = directories.stream().anyMatch(dir -> dir.name.get().equals(d.name()));
+                if (existsInDefault) {
+                    MutableDirectory existing = directories.stream().filter(dir -> dir.name.get().equals(d.name())).findFirst().get();
+                    existing.path.set(d.path());
+                    existing.description.set(d.description());
+                    existing.category.set(ConfigType.MY_OWN);
+                } else {
+                    directories.add(new MutableDirectory(d, ConfigType.MY_OWN));
+                }
             }
         }
         directories.sort(Comparator.comparing(d -> d.name.get().toLowerCase()));
 
-        sections.clear();
-        if (currentDto.layout() != null) {
-            for (SectionDTO s : currentDto.layout()) {
-                sections.add(new MutableSection(s));
+        defaultSections.clear();
+        if (defaultDto.layout() != null) {
+            for (SectionDTO s : defaultDto.layout()) {
+                defaultSections.add(new MutableSection(s));
+            }
+        }
+
+        myOwnSections.clear();
+        if (myOwnDto.layout() != null) {
+            for (SectionDTO s : myOwnDto.layout()) {
+                myOwnSections.add(new MutableSection(s));
             }
         }
     }
@@ -157,88 +188,33 @@ public class LayoutAndButtonsEditorController {
             return;
         }
 
-        List<DirectoryDTO> dirs = directories.stream().map(MutableDirectory::toDto).collect(Collectors.toList());
-        List<SectionDTO> sections = this.sections.stream().map(MutableSection::toDto).collect(Collectors.toList());
+        List<DirectoryDTO> defaultDirs = new ArrayList<>();
+        List<DirectoryDTO> myOwnDirs = new ArrayList<>();
+        for (MutableDirectory dir : directories) {
+            DirectoryDTO dto = dir.toDto();
+            if (dir.category.get() == ConfigType.DEFAULT) {
+                defaultDirs.add(dto);
+            } else {
+                myOwnDirs.add(dto);
+            }
+        }
 
-        // Always save the display order (section/subsection/button name order)
-        LayoutOrderService layoutOrderService = SpringContext.getBean(LayoutOrderService.class);
-        layoutOrderService.saveToMyOwnFile(sections);
+        List<SectionDTO> defaultSectionDtos = defaultSections.stream().map(MutableSection::toDto).collect(Collectors.toList());
+        List<SectionDTO> myOwnSectionDtos = myOwnSections.stream().map(MutableSection::toDto).collect(Collectors.toList());
 
-        LoadFromJsonService loadFromJsonService = SpringContext.getBean(LoadFromJsonService.class);
-        LayoutAndButtonsDTO defaultDto = loadFromJsonService.loadLayout(
-                SettingsServiceBase.getFileDir(FileType.LAYOUT_AND_BUTTONS.name(), ConfigType.DEFAULT))
-                .orElse(new LayoutAndButtonsDTO(new ArrayList<>(), new ArrayList<>()));
+        LayoutAndButtonsDTO newDefaultDto = new LayoutAndButtonsDTO(defaultDirs, defaultSectionDtos);
+        LayoutAndButtonsDTO newMyOwnDto = new LayoutAndButtonsDTO(myOwnDirs, myOwnSectionDtos);
 
-        List<DirectoryDTO> customOnlyDirectories = buildCustomOnlyDirectories(dirs, defaultDto);
-        List<SectionDTO> customOnlySections = buildCustomOnlySections(sections, defaultDto);
-
-        LayoutAndButtonsDTO customDto = new LayoutAndButtonsDTO(customOnlyDirectories, customOnlySections);
-        SpringContext.getBean(LayoutService.class).save(customDto);
+        LayoutService layoutService = SpringContext.getBean(LayoutService.class);
+        layoutService.saveDefault(newDefaultDto);
+        layoutService.saveMyOwn(newMyOwnDto);
 
         contentLoader.loadContent();
         resizeWindow.resizeMainWindow();
         stage.close();
     }
 
-    private List<DirectoryDTO> buildCustomOnlyDirectories(List<DirectoryDTO> dirs, LayoutAndButtonsDTO defaultDto) {
-        List<DirectoryDTO> customOnlyDirs = new ArrayList<>();
-        for (DirectoryDTO dir : dirs) {
-            if (defaultDto.directories().stream().noneMatch(d -> d.equals(dir))) {
-                customOnlyDirs.add(dir);
-            }
-        }
-        return customOnlyDirs;
-    }
 
-    /**
-     * Returns only the sections/subsections/buttons that are new or modified
-     * compared to the default file. Sections/subsections that only exist in the
-     * default are omitted entirely (no need to duplicate them). Sections or
-     * subsections that contain at least one custom button are included with only
-     * those custom buttons.
-     */
-    private List<SectionDTO> buildCustomOnlySections(List<SectionDTO> editorSections, LayoutAndButtonsDTO defaultDto) {
-        List<SectionDTO> result = new ArrayList<>();
-
-        for (SectionDTO editorSec : editorSections) {
-            // Find the matching section in the default file (null if not present)
-            Optional<SectionDTO> defaultSecOpt = defaultDto.layout().stream()
-                    .filter(s -> s.sectionName().equals(editorSec.sectionName()))
-                    .findFirst();
-
-            List<SubSectionDTO> customSubSections = new ArrayList<>();
-
-            for (SubSectionDTO editorSub : editorSec.subSections()) {
-                Optional<SubSectionDTO> defaultSubOpt = defaultSecOpt
-                        .flatMap(ds -> ds.subSections().stream()
-                                .filter(ss -> ss.subSectionName().equals(editorSub.subSectionName()))
-                                .findFirst());
-
-                List<ButtonDTO> customButtons = new ArrayList<>();
-                for (ButtonDTO editorBtn : editorSub.buttons()) {
-                    boolean existsInDefault = defaultSubOpt
-                            .map(ds -> ds.buttons().stream()
-                                    .anyMatch(db -> Objects.equals(db, editorBtn)))
-                            .orElse(false);
-                    if (!existsInDefault) {
-                        customButtons.add(editorBtn);
-                    }
-                }
-
-                // Only include this subsection if it has custom (user-added/edited) buttons
-                if (!customButtons.isEmpty()) {
-                    customSubSections.add(new SubSectionDTO(editorSub.subSectionName(), customButtons));
-                }
-            }
-
-            // Include this section only if it has custom subsections OR doesn't exist in default at all
-            if (!customSubSections.isEmpty() || defaultSecOpt.isEmpty()) {
-                result.add(new SectionDTO(editorSec.sectionName(), customSubSections));
-            }
-        }
-
-        return result;
-    }
 
     private boolean validateAll() {
         List<String> errors = new ArrayList<>();
@@ -256,7 +232,9 @@ public class LayoutAndButtonsEditorController {
 
         // Sections
         Set<String> sectionNames = new HashSet<>();
-        for (MutableSection sec : sections) {
+        List<MutableSection> allSections = new ArrayList<>(defaultSections);
+        allSections.addAll(myOwnSections);
+        for (MutableSection sec : allSections) {
             String secName = sec.name.get();
             if (secName == null || secName.trim().isEmpty()) {
                 errors.add("Section names cannot be empty.");
@@ -390,12 +368,17 @@ public class LayoutAndButtonsEditorController {
         HBox pathBox = new HBox(5, pathField, browseButton);
         HBox.setHgrow(pathField, Priority.ALWAYS);
 
+        ComboBox<ConfigType> categoryBox = new ComboBox<>(FXCollections.observableArrayList(ConfigType.DEFAULT, ConfigType.MY_OWN));
+        categoryBox.setMaxWidth(Double.MAX_VALUE);
+
         form.add(createLabel("Variable name:"), 0, 0);
         form.add(nameField, 1, 0);
         form.add(createLabel("Path location:"), 0, 1);
         form.add(pathBox, 1, 1);
         form.add(createLabel("Description:"), 0, 2);
         form.add(descField, 1, 2);
+        form.add(createLabel("Category:"), 0, 3);
+        form.add(categoryBox, 1, 3);
 
         VBox rightSide = new VBox(10, createHeaderLabel("Editing variable"), form);
         rightSide.setDisable(true); // default hidden/disabled
@@ -406,16 +389,19 @@ public class LayoutAndButtonsEditorController {
                 nameField.textProperty().unbindBidirectional(oldVal.name);
                 pathField.textProperty().unbindBidirectional(oldVal.path);
                 descField.textProperty().unbindBidirectional(oldVal.description);
+                categoryBox.valueProperty().unbindBidirectional(oldVal.category);
             }
             if (newVal != null) {
                 rightSide.setDisable(false);
                 nameField.setText(newVal.name.get());
                 pathField.setText(newVal.path.get());
                 descField.setText(newVal.description.get());
+                categoryBox.setValue(newVal.category.get());
 
                 nameField.textProperty().bindBidirectional(newVal.name);
                 pathField.textProperty().bindBidirectional(newVal.path);
                 descField.textProperty().bindBidirectional(newVal.description);
+                categoryBox.valueProperty().bindBidirectional(newVal.category);
 
                 // Initial validation check for when we select an item
                 String currentName = newVal.name.get();
@@ -452,7 +438,7 @@ public class LayoutAndButtonsEditorController {
         addBtn.setMaxWidth(Double.MAX_VALUE);
         HBox.setHgrow(addBtn, Priority.ALWAYS);
         addBtn.setOnAction(e -> {
-            MutableDirectory newDir = new MutableDirectory(new DirectoryDTO("NEW_VAR", "", ""));
+            MutableDirectory newDir = new MutableDirectory(new DirectoryDTO("NEW_VAR", "", ""), ConfigType.MY_OWN);
             directories.add(newDir);
             sortDirectoriesAlphabetically(dirList);
             Platform.runLater(() -> dirList.getSelectionModel().select(newDir));
@@ -467,7 +453,9 @@ public class LayoutAndButtonsEditorController {
             if (sel != null) {
                 String removedName = sel.name.get();
                 boolean isUsed = false;
-                for (MutableSection sec : sections) {
+                List<MutableSection> allSections = new ArrayList<>(defaultSections);
+                allSections.addAll(myOwnSections);
+                for (MutableSection sec : allSections) {
                     for (MutableSubSection sub : sec.subSections) {
                         for (MutableButton btn : sub.buttons) {
                             if (removedName.equals(btn.scriptLocationParamName.get())) {
@@ -509,7 +497,9 @@ public class LayoutAndButtonsEditorController {
 
     private void updateButtonVariableNames(String oldName, String newName) {
         if (oldName == null || oldName.isEmpty()) return;
-        for (MutableSection sec : sections) {
+        List<MutableSection> allSections = new ArrayList<>(defaultSections);
+        allSections.addAll(myOwnSections);
+        for (MutableSection sec : allSections) {
             for (MutableSubSection sub : sec.subSections) {
                 for (MutableButton btn : sub.buttons) {
                     if (oldName.equals(btn.scriptLocationParamName.get())) {
@@ -520,8 +510,8 @@ public class LayoutAndButtonsEditorController {
         }
     }
 
-    private VBox createLayoutEditor() {
-        ListView<MutableSection> sectionList = new ListView<>(sections);
+    private VBox createLayoutEditor(ObservableList<MutableSection> layoutSections, boolean isDefault) {
+        ListView<MutableSection> sectionList = new ListView<>(layoutSections);
         ListView<MutableSubSection> subSectionList = new ListView<>();
         ListView<MutableButton> buttonList = new ListView<>();
         setDraggableListView(sectionList);
@@ -570,11 +560,11 @@ public class LayoutAndButtonsEditorController {
         addBtnBtn.setDisable(true);
         delBtnBtn.setDisable(true);
 
-        addSecBtn.setOnAction(e -> sections.add(new MutableSection(new SectionDTO("New Section", new ArrayList<>()))));
+        addSecBtn.setOnAction(e -> layoutSections.add(new MutableSection(new SectionDTO("New Section", new ArrayList<>()))));
         delSecBtn.setOnAction(e -> {
             MutableSection s = sectionList.getSelectionModel().getSelectedItem();
             if (s != null)
-                sections.remove(s);
+                layoutSections.remove(s);
         });
 
         addSubBtn.setOnAction(e -> {
@@ -656,7 +646,7 @@ public class LayoutAndButtonsEditorController {
 
         buttonList.getSelectionModel().selectedItemProperty().addListener((obs, oldVal, newVal) -> {
             if (newVal != null)
-                populateButtonEditForm(rightForm, newVal, buttonList);
+                populateButtonEditForm(rightForm, newVal, buttonList, isDefault);
             else {
                 MutableSubSection selSub = subSectionList.getSelectionModel().getSelectedItem();
                 if (selSub != null)
@@ -677,13 +667,13 @@ public class LayoutAndButtonsEditorController {
 
         buttonList.setOnMouseClicked(e -> {
             MutableButton sel = buttonList.getSelectionModel().getSelectedItem();
-            if (sel != null) populateButtonEditForm(rightForm, sel, buttonList);
+            if (sel != null) populateButtonEditForm(rightForm, sel, buttonList, isDefault);
         });
 
-        refreshLayoutForm = () -> {
+        Runnable refreshLayoutForm = () -> {
             MutableButton selBtn = buttonList.getSelectionModel().getSelectedItem();
             if (selBtn != null) {
-                populateButtonEditForm(rightForm, selBtn, buttonList);
+                populateButtonEditForm(rightForm, selBtn, buttonList, isDefault);
             } else {
                 MutableSubSection selSub = subSectionList.getSelectionModel().getSelectedItem();
                 if (selSub != null) {
@@ -696,6 +686,12 @@ public class LayoutAndButtonsEditorController {
                 }
             }
         };
+
+        if (isDefault) {
+            refreshDefaultLayoutForm = refreshLayoutForm;
+        } else {
+            refreshMyOwnLayoutForm = refreshLayoutForm;
+        }
 
         HBox mainBox = new HBox(10, listsBox, rightForm);
         mainBox.setPadding(new Insets(15));
@@ -720,7 +716,7 @@ public class LayoutAndButtonsEditorController {
         grid.getColumnConstraints().addAll(col1, col2);
 
         TextField nameField = new TextField(section.name.get());
-        Runnable validate = updateValidationMessageRunnable(section, nameField);
+        Runnable validate = updateValidationMessageRunnable(section, nameField, list.getItems());
 
         nameField.textProperty().addListener((o, old, nev) -> {
             section.name.set(nev);
@@ -734,7 +730,7 @@ public class LayoutAndButtonsEditorController {
         form.getChildren().add(grid);
     }
 
-    private Runnable updateValidationMessageRunnable(MutableSection section, TextField nameField) {
+    private Runnable updateValidationMessageRunnable(MutableSection section, TextField nameField, javafx.collections.ObservableList<MutableSection> layoutSections) {
         Tooltip sectionErrorTooltip = new Tooltip();
 
         return () -> {
@@ -742,7 +738,7 @@ public class LayoutAndButtonsEditorController {
             String errorMsg = null;
             if (val == null || val.trim().isEmpty()) {
                 errorMsg = "Section name cannot be empty.";
-            } else if (sections.stream().filter(s -> val.equals(s.name.get())).count() > 1) {
+            } else if (layoutSections.stream().filter(s -> val.equals(s.name.get())).count() > 1) {
                 errorMsg = "Section name must be unique.";
             }
             updateValidationUI(nameField, sectionErrorTooltip, errorMsg);
@@ -790,7 +786,7 @@ public class LayoutAndButtonsEditorController {
         form.getChildren().add(grid);
     }
 
-    private void populateButtonEditForm(VBox form, MutableButton btn, ListView<MutableButton> list) {
+    private void populateButtonEditForm(VBox form, MutableButton btn, ListView<MutableButton> list, boolean isDefault) {
         form.getChildren().clear();
         form.getChildren().add(createHeaderLabel("Editing button"));
 
@@ -876,11 +872,11 @@ public class LayoutAndButtonsEditorController {
         typeBox.setValue(btn.elementType.get());
         typeBox.valueProperty().addListener((o, old, nev) -> {
             btn.elementType.set(nev);
-            populateButtonEditForm(form, btn, list); // Re-render conditionally
+            populateButtonEditForm(form, btn, list, isDefault); // Re-render conditionally
         });
 
         ComboBox<String> locationBox = new ComboBox<>();
-        directories.forEach(d -> locationBox.getItems().add(d.name.get()));
+        directories.stream().filter(d -> !isDefault || d.category.get() == ConfigType.DEFAULT).forEach(d -> locationBox.getItems().add(d.name.get()));
         locationBox.setValue(btn.scriptLocationParamName.get());
         locationBox.valueProperty()
                 .addListener((o, old, nev) -> btn.scriptLocationParamName.set(nev != null ? nev : ""));
@@ -1045,11 +1041,13 @@ public class LayoutAndButtonsEditorController {
         final SimpleStringProperty name = new SimpleStringProperty();
         final SimpleStringProperty path = new SimpleStringProperty();
         final SimpleStringProperty description = new SimpleStringProperty();
+        final SimpleObjectProperty<ConfigType> category = new SimpleObjectProperty<>();
 
-        MutableDirectory(DirectoryDTO dto) {
+        MutableDirectory(DirectoryDTO dto, ConfigType category) {
             this.name.set(dto.name());
             this.path.set(dto.path());
             this.description.set(dto.description());
+            this.category.set(category);
         }
 
         DirectoryDTO toDto() {

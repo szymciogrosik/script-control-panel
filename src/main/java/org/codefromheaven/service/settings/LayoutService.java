@@ -5,7 +5,6 @@ import org.codefromheaven.dto.FileType;
 import org.codefromheaven.dto.data.ButtonDTO;
 import org.codefromheaven.dto.data.LayoutAndButtonsDTO;
 import org.codefromheaven.dto.data.DirectoryDTO;
-import org.codefromheaven.dto.data.LayoutOrderDTO;
 import org.codefromheaven.dto.data.SectionDTO;
 import org.codefromheaven.dto.data.SubSectionDTO;
 
@@ -27,12 +26,10 @@ public class LayoutService {
     private static final FileType FILE_TYPE = FileType.LAYOUT_AND_BUTTONS;
     private LayoutAndButtonsDTO cachedLayoutAndButtons;
 
-    private final LayoutOrderService layoutOrderService;
     private LoadFromJsonService loadFromJsonService;
 
     @Autowired
-    public LayoutService(LayoutOrderService layoutOrderService, LoadFromJsonService loadFromJsonService) {
-        this.layoutOrderService = layoutOrderService;
+    public LayoutService(LoadFromJsonService loadFromJsonService) {
         this.loadFromJsonService = loadFromJsonService;
     }
 
@@ -52,13 +49,6 @@ public class LayoutService {
             merged = defaultLayout.get();
         } else {
             merged = mergeDirectoriesAndLayouts(defaultLayout.get(), customLayout.get());
-        }
-
-        // Apply saved display order (sections, subsections, buttons) if it exists
-        Optional<LayoutOrderDTO> order = layoutOrderService.getLayoutOrder();
-        if (order.isPresent()) {
-            List<SectionDTO> orderedSections = layoutOrderService.applyOrder(merged.layout(), order.get());
-            merged = new LayoutAndButtonsDTO(merged.directories(), orderedSections);
         }
 
         return merged;
@@ -153,11 +143,19 @@ public class LayoutService {
         return mergedDirs;
     }
 
-    public void save(LayoutAndButtonsDTO dto) {
+    public void saveMyOwn(LayoutAndButtonsDTO dto) {
+        saveConfig(dto, ConfigType.MY_OWN);
+    }
+
+    public void saveDefault(LayoutAndButtonsDTO dto) {
+        saveConfig(dto, ConfigType.DEFAULT);
+    }
+
+    private void saveConfig(LayoutAndButtonsDTO dto, ConfigType type) {
         ObjectMapper mapper = new ObjectMapper();
         try {
             mapper.writerWithDefaultPrettyPrinter().writeValue(
-                    new File(SettingsServiceBase.getFileDir(FILE_TYPE.name(), ConfigType.MY_OWN)), dto);
+                    new File(SettingsServiceBase.getFileDir(FILE_TYPE.name(), type)), dto);
             // Force re-load on next fetch
             cachedLayoutAndButtons = null;
         } catch (IOException e) {

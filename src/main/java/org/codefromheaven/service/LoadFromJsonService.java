@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 
 import org.codefromheaven.dto.ElementType;
 import org.codefromheaven.dto.data.ButtonDTO;
-import org.codefromheaven.dto.data.LayoutOrderDTO;
 import org.codefromheaven.dto.data.SectionDTO;
 import org.codefromheaven.dto.data.SubSectionDTO;
 
@@ -21,19 +20,6 @@ import java.util.Optional;
 
 @Service
 public class LoadFromJsonService {
-
-    public Optional<LayoutOrderDTO> loadLayoutOrder(String configPath) {
-        File file = new File(configPath);
-        if (!file.exists()) {
-            return Optional.empty();
-        }
-        ObjectMapper mapper = new ObjectMapper();
-        try {
-            return Optional.of(mapper.readValue(file, LayoutOrderDTO.class));
-        } catch (IOException e) {
-            return Optional.empty();
-        }
-    }
 
     public Optional<LayoutAndButtonsDTO> loadLayout(String configPath) {
         ObjectMapper mapper = new ObjectMapper();
