@@ -72,7 +72,7 @@ public class LayoutAndButtonsEditorController {
 
         Stage stage = new Stage();
         stage.getIcons().add(animalService.getCurrentAnimalImage());
-        stage.setTitle("Edit Layout and Buttons");
+        stage.setTitle("Edit layout and buttons");
 
         ToggleButton dirTabBtn = new ToggleButton("Edit variables");
         dirTabBtn.getStyleClass().add("button-default");

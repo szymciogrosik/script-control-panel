@@ -13,7 +13,7 @@ public class DefaultSettings {
     public static final SettingsDTO ALL = new SettingsDTO(
             Arrays.asList(
                     new SettingDTO(Setting.APP_NAME.getName(), "Script Control Panel", SettingType.TEXT,
-                                   "App name", false),
+                                   "Application name", false),
                     new SettingDTO(Setting.APP_STYLE.getName(), Style.CLASSIC.name(), SettingType.SELECT,
                                    "Application style"),
                     new SettingDTO(Setting.IMAGE_NAME.getName(), "", SettingType.SELECT,

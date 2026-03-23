@@ -57,7 +57,7 @@ public class SettingsController {
     public void setupPage() {
         Stage settingsStage = new Stage();
         settingsStage.initModality(APPLICATION_MODAL);
-        settingsStage.setTitle("Additional settings");
+        settingsStage.setTitle("Change application settings");
         settingsStage.getIcons().add(SpringContext.getBean(AnimalService.class).getRandomAnimalImage());
         settingsStage.setResizable(false);
 
@@ -124,7 +124,7 @@ public class SettingsController {
         myOwnLayoutTabBtn.opacityProperty().bind(javafx.beans.binding.Bindings.when(myOwnLayoutTabBtn.selectedProperty()).then(1.0).otherwise(0.6));
 
         HBox tabBar = new HBox(10, defaultLayoutTabBtn, myOwnLayoutTabBtn);
-        tabBar.setPadding(new Insets(20, 20, 0, 20));
+        tabBar.setPadding(new Insets(10, 10, 0, 10));
 
         // --- Description labels (from text resources, same as Layout Editor) ---
         Label defaultDesc = new Label(loadResourceText("/editor/tab_settings_default_desc.txt"));
@@ -137,11 +137,11 @@ public class SettingsController {
 
         VBox defaultContent = new VBox(5, defaultDesc, defaultScroll);
         VBox.setVgrow(defaultScroll, Priority.ALWAYS);
-        defaultContent.setPadding(new Insets(10, 20, 0, 20));
+        defaultContent.setPadding(new Insets(5, 10, 0, 10));
 
         VBox myOwnContent = new VBox(5, myOwnDesc, myOwnScroll);
         VBox.setVgrow(myOwnScroll, Priority.ALWAYS);
-        myOwnContent.setPadding(new Insets(10, 20, 0, 20));
+        myOwnContent.setPadding(new Insets(5, 10, 0, 10));
 
         // --- Content Area ---
         StackPane contentPane = new StackPane(defaultContent);
@@ -167,7 +167,7 @@ public class SettingsController {
         HBox buttonBox = new HBox(saveButton);
         buttonBox.setSpacing(10);
         buttonBox.setFillHeight(true);
-        buttonBox.setPadding(new Insets(10, 20, 20, 20));
+        buttonBox.setPadding(new Insets(10));
 
         VBox root = new VBox(tabBar, contentPane, buttonBox);
         root.getStyleClass().add("background-primary");
@@ -186,8 +186,8 @@ public class SettingsController {
 
     private GridPane createStandardGridPane() {
         GridPane gridPane = new GridPane();
-        gridPane.setPadding(new Insets(20));
-        gridPane.setVgap(10);
+        gridPane.setPadding(new Insets(10));
+        gridPane.setVgap(8);
         gridPane.setHgap(10);
         gridPane.getStyleClass().add("background-primary");
         return gridPane;

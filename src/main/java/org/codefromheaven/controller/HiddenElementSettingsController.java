@@ -39,7 +39,7 @@ public class HiddenElementSettingsController {
     public void setupPage() {
         Stage settingsStage = new Stage();
         settingsStage.initModality(Modality.APPLICATION_MODAL);
-        settingsStage.setTitle("Settings - Change visibility of elements");
+        settingsStage.setTitle("Change elements visibility");
         settingsStage.getIcons().add(SpringContext.getBean(AnimalService.class).getRandomAnimalImage());
         settingsStage.setResizable(false);
 

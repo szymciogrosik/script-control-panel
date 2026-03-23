@@ -11,9 +11,9 @@
 <VBox xmlns="http://javafx.com/javafx/8.0.171" xmlns:fx="http://javafx.com/fxml/1" fx:controller="org.codefromheaven.controller.MainWindowController">
    <MenuBar>
       <Menu text="Settings">
-         <MenuItem text="Change visible elements" fx:id="changeVisibleElements" onAction="#handleChangeVisibleElements"/>
          <MenuItem text="Edit layout and buttons" fx:id="editLayoutAndButtons" onAction="#handleEditLayoutAndButtons"/>
-         <MenuItem text="Change additional settings" fx:id="changeSettings" onAction="#handleChangeSettings"/>
+         <MenuItem text="Change elements visibility" fx:id="changeVisibleElements" onAction="#handleChangeVisibleElements"/>
+         <MenuItem text="Change application settings" fx:id="changeSettings" onAction="#handleChangeSettings"/>
          <MenuItem text="Pin bash script to task bar or start menu" fx:id="pinBashFileToTaskBar" onAction="#handlePinBashFileToTaskBar"/>
          <MenuItem text="Run app with Windows startup" fx:id="runAppWithWindowsStartup" onAction="#handleRunAppWithWindowsStartup"/>
       </Menu>
