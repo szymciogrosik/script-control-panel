@@ -5,6 +5,7 @@ import javafx.geometry.Pos;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
@@ -21,6 +22,9 @@ import org.codefromheaven.service.animal.AnimalService;
 import org.codefromheaven.service.settings.LayoutService;
 import org.codefromheaven.service.style.StyleService;
 
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -43,7 +47,7 @@ public class HiddenElementSettingsController {
         settingsStage.getIcons().add(SpringContext.getBean(AnimalService.class).getRandomAnimalImage());
         settingsStage.setResizable(false);
 
-        VBox settingsRoot = new VBox(10);
+        VBox settingsRoot = new VBox(5);
         settingsRoot.getStyleClass().add("background-primary");
         ScrollPane scrollPane = new ScrollPane();
         scrollPane.getStyleClass().add("scroll-pane-transparent");
@@ -55,6 +59,15 @@ public class HiddenElementSettingsController {
         scrollPane.setContent(contentBox);
         scrollPane.setFitToWidth(true);
         scrollPane.setMaxHeight(MaxHighUtils.getMaxHeight());
+
+        // --- Info description box ---
+        Label descLabel = new Label(loadResourceText("/editor/tab_visibility_desc.txt"));
+        descLabel.setWrapText(true);
+        descLabel.setMaxWidth(Double.MAX_VALUE);
+        descLabel.setPrefWidth(460);
+        descLabel.getStyleClass().add("tab-desc-label");
+        descLabel.setStyle("-fx-padding: 5 10 0 10;");
+        settingsRoot.getChildren().add(descLabel);
 
         settingsRoot.getChildren().add(scrollPane);
 
@@ -78,15 +91,17 @@ public class HiddenElementSettingsController {
         settingsRoot.getChildren().add(buttonContainer);
 
         // Scene height will be adjusted dynamically
-        Scene scene = new Scene(settingsRoot, 400, 100);
+        Scene scene = new Scene(settingsRoot, 480, 100);
         scene.getStylesheets().add(SpringContext.getBean(StyleService.class).getCurrentStyleUrl());
         settingsStage.setScene(scene);
 
-        // Add a listener to adjust the height dynamically as elements are added
-        contentBox.heightProperty().addListener((observable, oldValue, newValue) -> {
-            double newHeight = Math.min(newValue.doubleValue() + 90, MaxHighUtils.getMaxHeight());
-            settingsStage.setHeight(newHeight);
-        });
+        // Resize stage based on actual rendered heights of both the desc label and the content
+        Runnable recalcHeight = () -> {
+            double needed = contentBox.getHeight() + descLabel.getHeight() + 90;
+            settingsStage.setHeight(Math.min(needed, MaxHighUtils.getMaxHeight()));
+        };
+        contentBox.heightProperty().addListener((obs, o, n) -> recalcHeight.run());
+        descLabel.heightProperty().addListener((obs, o, n) -> recalcHeight.run());
 
         settingsStage.showAndWait();
     }
@@ -124,6 +139,17 @@ public class HiddenElementSettingsController {
             return layoutAndButtons.layout();
         }
         return new ArrayList<>();
+    }
+
+    private String loadResourceText(String resourcePath) {
+        try (InputStream is = getClass().getResourceAsStream(resourcePath)) {
+            if (is != null) {
+                return new String(is.readAllBytes(), StandardCharsets.UTF_8).trim();
+            }
+        } catch (IOException ignored) {
+            ignored.printStackTrace();
+        }
+        return "";
     }
 
 }

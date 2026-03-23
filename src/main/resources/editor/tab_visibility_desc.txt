@@ -1,0 +1,2 @@
+Use checkboxes to control which buttons and sections are visible in the main window.
+Hidden elements are saved locally and will not affect the shared project layout files.
