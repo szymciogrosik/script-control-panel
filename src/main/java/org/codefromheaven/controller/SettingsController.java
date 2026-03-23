@@ -86,7 +86,16 @@ public class SettingsController {
         // --- Cross-tab bindings ---
         for (int i = 0; i < defaultSettings.size(); i++) {
             CheckBox editableCb = defaultFields.editableCheckboxes()[i];
-            
+            boolean isPersonalOnly = Setting.IMAGE_NAME.getName().equals(defaultSettings.get(i).getKey());
+
+            if (isPersonalOnly) {
+                // Personal-only: always locked in Default (both checkbox and input)
+                editableCb.setDisable(true);
+                defaultFields.comboBoxes()[i].setDisable(true);
+                // My Own field stays enabled — skip binding
+                continue;
+            }
+
             SettingType type = myOwnSettings.get(i).getType();
             if (SettingType.SELECT.equals(type)) {
                 myOwnFields.comboBoxes()[i].disableProperty().bind(editableCb.selectedProperty().not());
