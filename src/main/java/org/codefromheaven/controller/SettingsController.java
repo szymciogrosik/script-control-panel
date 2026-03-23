@@ -27,6 +27,9 @@ import org.codefromheaven.service.style.StyleService;
 import org.codefromheaven.service.settings.SettingsServiceBase;
 
 import java.io.File;
+import java.io.IOException;
+import java.io.InputStream;
+import java.nio.charset.StandardCharsets;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.Arrays;
@@ -123,19 +126,36 @@ public class SettingsController {
         HBox tabBar = new HBox(10, defaultLayoutTabBtn, myOwnLayoutTabBtn);
         tabBar.setPadding(new Insets(20, 20, 0, 20));
 
+        // --- Description labels (from text resources, same as Layout Editor) ---
+        Label defaultDesc = new Label(loadResourceText("/editor/tab_settings_default_desc.txt"));
+        defaultDesc.setWrapText(true);
+        defaultDesc.getStyleClass().add("tab-desc-label");
+
+        Label myOwnDesc = new Label(loadResourceText("/editor/tab_settings_my_own_desc.txt"));
+        myOwnDesc.setWrapText(true);
+        myOwnDesc.getStyleClass().add("tab-desc-label");
+
+        VBox defaultContent = new VBox(5, defaultDesc, defaultScroll);
+        VBox.setVgrow(defaultScroll, Priority.ALWAYS);
+        defaultContent.setPadding(new Insets(10, 20, 0, 20));
+
+        VBox myOwnContent = new VBox(5, myOwnDesc, myOwnScroll);
+        VBox.setVgrow(myOwnScroll, Priority.ALWAYS);
+        myOwnContent.setPadding(new Insets(10, 20, 0, 20));
+
         // --- Content Area ---
-        StackPane contentPane = new StackPane(defaultScroll);
+        StackPane contentPane = new StackPane(defaultContent);
 
         defaultLayoutTabBtn.setSelected(true);
 
         defaultLayoutTabBtn.setOnAction(e -> {
             if (!defaultLayoutTabBtn.isSelected()) defaultLayoutTabBtn.setSelected(true);
-            contentPane.getChildren().setAll(defaultScroll);
+            contentPane.getChildren().setAll(defaultContent);
         });
 
         myOwnLayoutTabBtn.setOnAction(e -> {
             if (!myOwnLayoutTabBtn.isSelected()) myOwnLayoutTabBtn.setSelected(true);
-            contentPane.getChildren().setAll(myOwnScroll);
+            contentPane.getChildren().setAll(myOwnContent);
         });
 
         // --- Bottom action area ---
@@ -391,6 +411,17 @@ public class SettingsController {
         } else {
             return SettingDTO.getKey();
         }
+    }
+
+    private String loadResourceText(String resourcePath) {
+        try (InputStream is = getClass().getResourceAsStream(resourcePath)) {
+            if (is != null) {
+                return new String(is.readAllBytes(), StandardCharsets.UTF_8).trim();
+            }
+        } catch (IOException ignored) {
+            ignored.printStackTrace();
+        }
+        return "";
     }
 
 }

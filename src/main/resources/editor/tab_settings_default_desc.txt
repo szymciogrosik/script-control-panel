@@ -1,0 +1,3 @@
+Settings shown here are the shared defaults for this project. Changes are saved to a 'default' prefixed file.
+Fields marked as not editable will always be enforced and cannot be overridden in the personal settings.
+Don't forget to commit your changes and manually merge them into your main branch.
