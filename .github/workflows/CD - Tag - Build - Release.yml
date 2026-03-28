@@ -4,10 +4,13 @@ on:
   push:
     branches:
       - '*'
+  release:
+    types: [published, deleted, edited]
   workflow_dispatch:
 
 jobs:
   tag_version:
+    if: github.event_name == 'push' || github.event_name == 'workflow_dispatch'
     runs-on: windows-latest
 
     steps:
@@ -167,6 +170,10 @@ jobs:
 #          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
   update_gh_pages:
+    if: |
+      always() && 
+      (github.event_name == 'release' || 
+       (needs.tag_version.result == 'success' || needs.tag_version.result == 'skipped'))
     needs: tag_version
     runs-on: ubuntu-latest
     steps:
