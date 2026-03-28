@@ -12,7 +12,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.net.URL;
-import java.util.Optional;
 
 @Service
 public class DownloadLatestVersionService {
@@ -54,20 +53,30 @@ public class DownloadLatestVersionService {
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
 
-                int contentLength = connection.getContentLength();
-                try (InputStream in = connection.getInputStream(); FileOutputStream out = new FileOutputStream(savePath)) {
-                    byte[] buffer = new byte[1024];
-                    int bytesRead;
-                    int totalBytesRead = 0;
+                try {
+                    int responseCode = connection.getResponseCode();
+                    if (responseCode != HttpURLConnection.HTTP_OK) {
+                        throw new IOException("HTTP " + responseCode + " - " + connection.getResponseMessage());
+                    }
 
-                    while ((bytesRead = in.read(buffer)) != -1) {
-                        out.write(buffer, 0, bytesRead);
-                        totalBytesRead += bytesRead;
-                        updateProgress(totalBytesRead, contentLength);
+                    int contentLength = connection.getContentLength();
+                    try (InputStream in = connection.getInputStream(); FileOutputStream out = new FileOutputStream(savePath)) {
+                        byte[] buffer = new byte[1024];
+                        int bytesRead;
+                        int totalBytesRead = 0;
+
+                        while ((bytesRead = in.read(buffer)) != -1) {
+                            updateMessage("Downloading update... (" + (totalBytesRead / 1024) + " KB)");
+                            out.write(buffer, 0, bytesRead);
+                            totalBytesRead += bytesRead;
+                            updateProgress(totalBytesRead, contentLength);
+                        }
                     }
                 } catch (Exception e) {
                     e.printStackTrace();
-                    throw new IOException("Failed to download the file.");
+                    updateMessage("Download failed: " + e.getMessage());
+                    updateProgress(0, 100);
+                    throw new IOException("Failed to download the file: " + e.getMessage(), e);
                 }
                 return null;
             }

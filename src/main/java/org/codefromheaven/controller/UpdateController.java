@@ -72,6 +72,12 @@ public class UpdateController {
 
         Task<Void> downloadTask = downloadLatestVersionService.createDownloadTask();
 
+        downloadTask.messageProperty().addListener((obs, oldMessage, newMessage) -> {
+            if (newMessage != null) {
+                Platform.runLater(() -> label.setText(newMessage));
+            }
+        });
+
         downloadTask.setOnSucceeded(event -> {
             try {
                 // Wait few seconds to ensure that downloading was completed
@@ -88,6 +94,16 @@ public class UpdateController {
                 popupStage.close();
                 runReplaceApplicationScriptInNewThread();
                 closeApplication();
+            });
+        });
+
+        downloadTask.setOnFailed(event -> {
+            Platform.runLater(() -> {
+                Throwable exception = downloadTask.getException();
+                String errorMsg = exception != null ? exception.getMessage() : "Unknown error";
+                String taskMsg = downloadTask.getMessage();
+                label.setText(taskMsg != null && !taskMsg.isEmpty() ? taskMsg : "Download failed: " + errorMsg);
+                progressBar.setVisible(false);
             });
         });
 
