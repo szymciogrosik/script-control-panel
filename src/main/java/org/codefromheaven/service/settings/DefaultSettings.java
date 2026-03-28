@@ -2,67 +2,36 @@ package org.codefromheaven.service.settings;
 
 import org.codefromheaven.dto.Setting;
 import org.codefromheaven.dto.Style;
-import org.codefromheaven.dto.settings.KeyValueDTO;
+import org.codefromheaven.dto.settings.SettingDTO;
+import org.codefromheaven.dto.settings.SettingType;
 import org.codefromheaven.dto.settings.SettingsDTO;
 
 import java.util.Arrays;
 
 public class DefaultSettings {
 
-    public static final SettingsDTO ALL = new SettingsDTO(Arrays.asList(
-            new KeyValueDTO(
-                    Setting.TMP_DIRECTORY.getName(),
-                    "tmp",
-                    false,
-                    "Location of temporary files f.e. for updating application"
-            ),
-            new KeyValueDTO(
-                    Setting.CONFIG_DIR.getName(),
-                    "config",
-                    false,
-                    "Location of configuration files f.e. 'config' or empty when in the same location"
-            ),
-            new KeyValueDTO(
-                    Setting.ALLOW_PRE_RELEASES.getName(),
-                    "false",
-                    "Allow for downloading pre-releases (can be unstable)"
-            ),
-            new KeyValueDTO(
-                    Setting.BASH_PATH.getName(),
-                    "C:/Program Files/Git/git-bash.exe",
-                    "Location of Git bash"
-            ),
-            new KeyValueDTO(
-                    Setting.MAX_WINDOW_HEIGHT.getName(),
-                    "",
-                    "Max window height (if empty, height will be adjusted to your screen)"
-            ),
-            new KeyValueDTO(
-                    Setting.IMAGE_NAME.getName(),
-                    "",
-                    "Select image which displays in application"
-            ),
-            new KeyValueDTO(
-                    Setting.APP_STYLE.getName(),
-                    Style.CLASSIC.name(),
-                    "Select application style"
-            ),
-            new KeyValueDTO(
-                    Setting.APP_NAME.getName(),
-                    "Script control panel",
-                    "Override your app name"
-            ),
-            new KeyValueDTO(
-                    Setting.ALLOW_FOR_UPGRADES.getName(),
-                    "true",
-                    "Allow for manual upgrades by user"
-            ),
-            new KeyValueDTO(
-                    Setting.PYTHON_SCRIPTS_PREFIX.getName(),
-                    "py",
-                    "Provide your own python scripts prefix"
+    public static final SettingsDTO ALL = new SettingsDTO(
+            Arrays.asList(
+                    new SettingDTO(Setting.APP_NAME.getName(), "Script Control Panel", SettingType.TEXT,
+                                   "Application name", false),
+                    new SettingDTO(Setting.APP_STYLE.getName(), Style.CLASSIC.name(), SettingType.SELECT,
+                                   "Application style"),
+                    new SettingDTO(Setting.IMAGE_NAME.getName(), "", SettingType.SELECT,
+                                   "Image which displays in application"),
+                    new SettingDTO(Setting.MAX_WINDOW_HEIGHT.getName(), "", SettingType.NUMBER,
+                                   "Max window height (if empty, height will be adjusted to your screen)"),
+                    new SettingDTO(Setting.PYTHON_SCRIPTS_PREFIX.getName(), "py", SettingType.TEXT,
+                                   "Python scripts prefix"),
+                    new SettingDTO(Setting.BASH_PATH.getName(), "C:/Program Files/Git/git-bash.exe", SettingType.PATH,
+                                   "Location of Git bash"),
+                    new SettingDTO(Setting.CONFIG_DIR.getName(), "config", SettingType.PATH,
+                                   "Location of configuration files f.e. 'config' or empty when in the same location", false),
+                    new SettingDTO(Setting.ALLOW_FOR_UPGRADES.getName(), "true", SettingType.SWITCH,
+                                   "Allow for checking new releases", false),
+                    new SettingDTO(Setting.ALLOW_PRE_RELEASES.getName(), "true", SettingType.SWITCH,
+                                   "Allow for checking new pre releases")
             )
-    ));
+    );
 
     private DefaultSettings() {
     }

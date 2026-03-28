@@ -37,16 +37,6 @@ jobs:
           echo "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           echo "Found version: $version"
 
-      - name: Update gh.token.properties with secrets
-        run: |
-          $filePath = "src/main/resources/gh.token.properties"
-          $content = Get-Content -Path $filePath
-          $content = $content -replace "ghReleaseDownloadToken=.*", "ghReleaseDownloadToken=$env:ghReleaseDownloadToken"
-          $content = $content -replace "ghReleaseFetchReleasesToken=.*", "ghReleaseFetchReleasesToken=$env:ghReleaseFetchReleasesToken"
-          Set-Content -Path $filePath -Value $content
-        env:
-          ghReleaseDownloadToken: ${{ secrets.ghReleaseDownloadToken }}
-          ghReleaseFetchReleasesToken: ${{ secrets.ghReleaseFetchReleasesToken }}
 
       - name: Fetch all tags
         run: git fetch --tags
@@ -86,6 +76,10 @@ jobs:
 
       - name: Build with Maven
         run: mvn clean install -DskipTests
+
+      - name: Build Windows Exe
+        run: ./scripts/build_windows_app.ps1
+        shell: pwsh
 
       - name: Create ZIP of Config Files
         run: |
@@ -137,15 +131,15 @@ jobs:
           draft: true
           prerelease: false
 
-      - name: Upload JAR to Release
+      - name: Upload Windows Exe to Release
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./target/script-control-panel.jar
-          asset_name: script-control-panel.jar
-          asset_content_type: application/java-archive
+          asset_path: ./output/ScriptControlPanel-Win.zip
+          asset_name: ScriptControlPanel-Win.zip
+          asset_content_type: application/zip
 
       - name: Upload Default Files Zip to Release
         uses: actions/upload-release-asset@v1
@@ -157,17 +151,87 @@ jobs:
           asset_name: example-config.zip
           asset_content_type: application/zip
 
-      - name: Upload verify-download-run.sh to Release
+      - name: Upload install.sh to Release
         uses: actions/upload-release-asset@v1
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         with:
           upload_url: ${{ steps.create_release.outputs.upload_url }}
-          asset_path: ./verify-download-run.sh
-          asset_name: verify-download-run.sh
+          asset_path: ./install.sh
+          asset_name: install.sh
           asset_content_type: application/x-sh
 
 #      - name: Publish JAR to GitHub Packages
 #        run: mvn deploy -s settings.xml
 #        env:
 #          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+
+  update_gh_pages:
+    needs: tag_version
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout gh-pages
+        uses: actions/checkout@v4
+        with:
+          ref: release/gh-pages
+
+      - name: Generate latest_release.json
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          mkdir -p docs
+          
+          # Fetch all releases
+          LATEST_STABLE=$(gh release list --exclude-drafts --exclude-pre-releases -L 1 --json tagName,publishedAt)
+          LATEST_PRE=$(gh release list --exclude-drafts -L 10 --json tagName,publishedAt,isPrerelease | jq '[.[] | select(.isPrerelease == true)][0]')
+          
+          cat << 'EOF' > generate_json.py
+          import json, sys
+
+          def load_json(idx):
+              try:
+                  return json.loads(sys.argv[idx]) if sys.argv[idx] and sys.argv[idx] != 'null' else None
+              except json.JSONDecodeError:
+                  return None
+
+          stable_data = load_json(1)
+          pre_data = load_json(2)
+
+          def extract_info(release):
+              if not release: return None
+              if isinstance(release, list):
+                  if not release: return None
+                  release = release[0]
+              
+              version = release.get("tagName")
+              if not version: return None
+              published_at = release.get("publishedAt")
+              
+              download_url = f"https://github.com/szymciogrosik/script-control-panel/releases/download/{version}/ScriptControlPanel-Win.zip"
+              
+              return {
+                  "version": version,
+                  "downloadUrl": download_url,
+                  "releaseDate": published_at
+              }
+
+          result = {
+              "release": extract_info(stable_data),
+              "preRelease": extract_info(pre_data)
+          }
+
+          with open("docs/latest_release.json", "w") as f:
+              json.dump(result, f, indent=2)
+          EOF
+          
+          python3 generate_json.py "$LATEST_STABLE" "$LATEST_PRE"
+          
+      - name: Create Pull Request to release/gh-pages
+        uses: peter-evans/create-pull-request@v6
+        with:
+          token: ${{ secrets.GITHUB_TOKEN }}
+          commit-message: "Update latest_release.json"
+          title: "Update latest_release.json"
+          body: "Automated PR to update latest_release.json on GitHub Pages."
+          branch: "update-gh-pages-json"
+          base: "release/gh-pages"

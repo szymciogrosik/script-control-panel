@@ -13,6 +13,7 @@ import java.util.EnumMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ThreadLocalRandom;
 import java.util.stream.Collectors;
 import java.util.Arrays;
 
@@ -39,7 +40,7 @@ public class AnimalProvider {
         try {
             // Load all png files from the directory corresponding to the ImageType
             // classpath*:animals/standard/*.png
-            String locationPattern = "classpath*:" + type.getPath() + "/*.png";
+            String locationPattern = "classpath:" + type.getPath() + "/*.png";
             Resource[] resources = resolver.getResources(locationPattern);
 
             animals = Arrays.stream(resources)
@@ -56,28 +57,51 @@ public class AnimalProvider {
 
     private AnimalProvider() {}
 
-    public static AnimalDTO getNextAnimal() {
-        return getNextAnimal(null);
+    public static AnimalDTO getNextAnimalOrRandomIfNotPresent() {
+        return getNextAnimalOrRandomIfNotPresent(null);
     }
 
-    public static AnimalDTO getNextAnimal(AnimalDTO currentAnimal) {
+    public static AnimalDTO getNextAnimalOrRandomIfNotPresent(AnimalDTO currentAnimal) {
         ImageType currentType = determinateImageType();
         List<String> animals = getDeterminateAnimals(currentType);
 
+        if (animals == null || animals.isEmpty()) {
+            throw new IllegalStateException("No animals available for " + currentType);
+        }
+
+        // Logic: If null or type mismatch, pick random instead of animals.get(0)
         if (currentAnimal == null || currentAnimal.imageType() != currentType) {
-            return new AnimalDTO(animals.get(0), currentType);
+            return getRandomAnimal(animals, currentType);
         }
 
         int oldIndex = animals.indexOf(currentAnimal.name());
-        int nextIndex = oldIndex != -1 && oldIndex != (animals.size() - 1) ? oldIndex + 1 : 0;
+
+        // If existing animal name not in current list, pick random
+        if (oldIndex == -1) {
+            return getRandomAnimal(animals, currentType);
+        }
+
+        // Normal progression
+        int nextIndex = (oldIndex + 1) % animals.size();
         return new AnimalDTO(animals.get(nextIndex), currentType);
+    }
+
+    public static AnimalDTO getRandomAnimal() {
+        ImageType currentType = determinateImageType();
+        List<String> animals = getDeterminateAnimals(currentType);
+        return getRandomAnimal(animals, currentType);
+    }
+
+    private static AnimalDTO getRandomAnimal(List<String> animals, ImageType currentType) {
+        int randomIndex = ThreadLocalRandom.current().nextInt(animals.size());
+        return new AnimalDTO(animals.get(randomIndex), currentType);
     }
 
     public static AnimalDTO findAnimalByNameOrReturnRandomIfNotPresent(String animalName) {
         ImageType currentType = determinateImageType();
         List<String> animals = getDeterminateAnimals(currentType);
         Optional<String> first = animals.stream().filter(a -> a.equals(animalName)).findFirst();
-        return first.map(s -> new AnimalDTO(s, currentType)).orElseGet(AnimalProvider::getNextAnimal);
+        return first.map(s -> new AnimalDTO(s, currentType)).orElseGet(AnimalProvider::getNextAnimalOrRandomIfNotPresent);
     }
 
     public static List<String> getDeterminateAnimals() {
@@ -93,9 +117,6 @@ public class AnimalProvider {
     }
 
     private static ImageType determinateImageType() {
-        if (isAuthorBirthday()) {
-            return ImageType.BIRTHDAY;
-        }
         if (isChristmasTime()) {
             return ImageType.CHRISTMAS;
         }
@@ -107,11 +128,6 @@ public class AnimalProvider {
         boolean afterMiddleOfNovember = (now.getMonthValue() == 11 && now.getDayOfMonth() >= 15) || now.getMonthValue() == 12;
         boolean beforeMiddleOfJanuary = now.getMonthValue() == 1 && now.getDayOfMonth() <= 13;
         return afterMiddleOfNovember || beforeMiddleOfJanuary;
-    }
-
-    private static boolean isAuthorBirthday() {
-        LocalDate now = LocalDate.now();
-        return now.getMonthValue() == 1 && now.getDayOfMonth() == 14;
     }
 
 }

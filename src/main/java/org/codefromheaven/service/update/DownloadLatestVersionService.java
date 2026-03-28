@@ -2,7 +2,6 @@ package org.codefromheaven.service.update;
 
 import javafx.concurrent.Task;
 import org.codefromheaven.helpers.FileUtils;
-import org.codefromheaven.service.gh.GithubService;
 import org.codefromheaven.service.version.AppVersionService;
 
 import java.io.FileOutputStream;
@@ -18,7 +17,7 @@ import java.util.Optional;
 @Service
 public class DownloadLatestVersionService {
 
-    private static final String TMP_FILE_LOCATION = FileUtils.TMP_DIR + "/" + AppVersionService.TMP_NAME;
+    private static final String TMP_FILE_LOCATION = FileUtils.TMP_DIR + "/" + AppVersionService.ZIP_NAME;
     private final AppVersionService appVersionService;
 
     @Autowired
@@ -46,13 +45,14 @@ public class DownloadLatestVersionService {
             protected Void call() throws Exception {
                 updateProgress(0, 100);
 
+                updateMessage("Waiting for server (Jitter delay)...");
+                int jitterDelay = new java.util.Random().nextInt(15000);
+                Thread.sleep(jitterDelay);
+                updateMessage("Starting download...");
+
                 URL url = new URL(downloadUrl);
                 HttpURLConnection connection = (HttpURLConnection) url.openConnection();
                 connection.setRequestMethod("GET");
-                Optional<String> ghDownloadToken = GithubService.getGhDownloadToken();
-                if (ghDownloadToken.isPresent()) {
-                    connection.setRequestProperty("Authorization", "token " + ghDownloadToken.get());
-                }
 
                 int contentLength = connection.getContentLength();
                 try (InputStream in = connection.getInputStream(); FileOutputStream out = new FileOutputStream(savePath)) {

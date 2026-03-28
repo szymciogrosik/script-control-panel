@@ -5,16 +5,16 @@ import java.util.List;
 
 public class SettingsDTO {
 
-    private List<KeyValueDTO> settings = new ArrayList<>();
+    private List<SettingDTO> settings = new ArrayList<>();
 
     public SettingsDTO() {
     }
 
-    public SettingsDTO(List<KeyValueDTO> settings) {
+    public SettingsDTO(List<SettingDTO> settings) {
         this.settings = settings;
     }
 
-    public List<KeyValueDTO> getSettings() {
+    public List<SettingDTO> getSettings() {
         return settings;
     }
 }

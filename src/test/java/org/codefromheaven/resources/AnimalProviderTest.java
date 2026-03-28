@@ -1,7 +1,11 @@
 package org.codefromheaven.resources;
 
 import org.junit.jupiter.api.Test;
+
+import java.lang.reflect.Field;
 import java.util.List;
+import java.util.Map;
+
 import static org.junit.jupiter.api.Assertions.assertFalse;
 import static org.junit.jupiter.api.Assertions.assertTrue;
 
@@ -22,7 +26,7 @@ class AnimalProviderTest {
             // Let's verify via reflection or just check if we can get an animal.
         }
 
-        // A better test is to check if we can get a standard animal (assuming it's not Xmas or Birthday)
+        // A better test is to check if we can get a standard animal (assuming it's not Xmas)
         // Or we can just inspect the list files directly if we were testing the Indexer.
         // But here we test the Provider.
 
@@ -47,9 +51,9 @@ class AnimalProviderTest {
         // We can't change the date, so we can only test the current active type.
         // However, we can assert that the internal map is not empty using reflection.
         try {
-            java.lang.reflect.Field field = AnimalProvider.class.getDeclaredField("ANIMALS_BY_TYPE");
+            Field field = AnimalProvider.class.getDeclaredField("ANIMALS_BY_TYPE");
             field.setAccessible(true);
-            java.util.Map<?, ?> map = (java.util.Map<?, ?>) field.get(null);
+            Map<?, ?> map = (Map<?, ?>) field.get(null);
 
             assertFalse(map.isEmpty(), "Animals map should not be empty");
             assertTrue(map.containsKey(ImageType.STANDARD), "Should contain STANDARD animals");

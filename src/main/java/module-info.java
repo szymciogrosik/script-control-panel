@@ -11,6 +11,7 @@ module servicerunner {
     requires spring.beans;
     requires spring.core;
     requires jakarta.annotation;
+    requires static lombok;
 
     opens org.codefromheaven to javafx.fxml;
     exports org.codefromheaven;
@@ -32,15 +33,13 @@ module servicerunner {
     exports org.codefromheaven.dto.settings;
     opens org.codefromheaven.dto.settings to com.fasterxml.jackson.databind;
     exports org.codefromheaven.dto.data;
-    opens org.codefromheaven.dto.data to javafx.fxml;
+    opens org.codefromheaven.dto.data to javafx.fxml, com.fasterxml.jackson.databind;
     exports org.codefromheaven.dto.release;
     opens org.codefromheaven.dto.release to javafx.fxml;
     exports org.codefromheaven.service.version;
     opens org.codefromheaven.service.version to javafx.fxml, spring.beans;
     exports org.codefromheaven.service.update;
     opens org.codefromheaven.service.update to javafx.fxml, spring.beans;
-    exports org.codefromheaven.service.gh;
-    opens org.codefromheaven.service.gh to javafx.fxml;
     opens org.codefromheaven.service.settings to com.fasterxml.jackson.databind, javafx.fxml, spring.beans;
     exports org.codefromheaven.config;
     opens org.codefromheaven.config to spring.core;

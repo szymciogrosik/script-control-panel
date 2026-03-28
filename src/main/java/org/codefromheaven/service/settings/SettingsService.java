@@ -3,7 +3,8 @@ package org.codefromheaven.service.settings;
 import org.codefromheaven.dto.FileType;
 import org.codefromheaven.dto.Setting;
 import org.codefromheaven.dto.settings.BaseSetting;
-import org.codefromheaven.dto.settings.KeyValueDTO;
+import org.codefromheaven.dto.settings.SettingDTO;
+import org.codefromheaven.dto.settings.SettingType;
 import org.codefromheaven.dto.settings.SettingsDTO;
 import org.codefromheaven.resources.AnimalProvider;
 
@@ -21,7 +22,7 @@ public class SettingsService extends SettingsServiceBase {
     }
 
     public void saveSettings(SettingsDTO settings) {
-        saveSettings(FILE_TYPE, settings);
+        saveMyOwnSettings(FILE_TYPE, settings);
     }
 
     public String getAppName() {
@@ -38,7 +39,7 @@ public class SettingsService extends SettingsServiceBase {
                 AnimalProvider.doesAnimalNameExist(currentAnimalOptional.get())) {
             return currentAnimalOptional.get();
         } else {
-            String animal = AnimalProvider.getNextAnimal().name();
+            String animal = AnimalProvider.getNextAnimalOrRandomIfNotPresent().name();
             replaceOrCreateConfigVariable(Setting.IMAGE_NAME, animal);
             return animal;
         }
@@ -48,19 +49,18 @@ public class SettingsService extends SettingsServiceBase {
         SettingsDTO settings = loadSettingsFile(FILE_TYPE);
         String key = elementToReplace.getName();
 
-        Optional<KeyValueDTO> keyValue =
-                settings.getSettings().stream().filter(elem -> elem.getKey().equals(key)).findFirst();
+        Optional<SettingDTO> keyValue = settings.getSettings().stream().filter(elem -> elem.getKey().equals(key))
+                .findFirst();
         if (keyValue.isPresent()) {
             keyValue.get().setValue(newValue);
         } else {
-            settings.getSettings().add(new KeyValueDTO(key, newValue, ""));
+            Optional<SettingDTO> defaultElem = DefaultSettings.ALL.getSettings().stream()
+                    .filter(e -> e.getKey().equals(key)).findFirst();
+            SettingType type = defaultElem.isPresent() ? defaultElem.get().getType() : SettingType.TEXT;
+            settings.getSettings().add(new SettingDTO(key, newValue, type, ""));
         }
 
-        saveSettings(FILE_TYPE, settings);
-    }
-
-    public Optional<String> loadValue(String setting) {
-        return SettingsServiceBase.loadValue(setting, FILE_TYPE);
+        saveMyOwnSettings(FILE_TYPE, settings);
     }
 
     public Optional<String> loadValue(BaseSetting setting) {

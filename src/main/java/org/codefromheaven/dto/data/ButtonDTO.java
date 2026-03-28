@@ -1,25 +1,42 @@
 package org.codefromheaven.dto.data;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import lombok.EqualsAndHashCode;
+import lombok.Getter;
 import org.codefromheaven.dto.ElementType;
 import org.codefromheaven.dto.settings.VisibilitySettingKey;
+import com.fasterxml.jackson.annotation.JsonCreator;
 
 import java.util.List;
 
+@JsonIgnoreProperties(ignoreUnknown = true)
+@EqualsAndHashCode
 public class ButtonDTO {
 
-    private final String name;
+    @Getter
+    private final String buttonName;
+    @Getter
     private final String scriptLocationParamName;
+    @Getter
     private final List<String> commands;
+    @Getter
     private final ElementType elementType;
+    @Getter
     private final boolean autoCloseConsole;
+    @Getter
     private final boolean popupInputDisplayed;
+    @Getter
     private final String popupInputMessage;
+    @Getter
     private final String description;
+    @Getter
     private final boolean visibleAsDefault;
     private final VisibilitySettingKey visibilitySettingKey;
 
+    @JsonCreator
     public ButtonDTO(
-            String name,
+            String buttonName,
             String scriptLocationParamName,
             List<String> commands,
             ElementType elementType,
@@ -30,7 +47,7 @@ public class ButtonDTO {
             boolean visibleAsDefault,
             String sectionName,
             String subSectionName) {
-        this.name = name;
+        this.buttonName = buttonName;
         this.scriptLocationParamName = scriptLocationParamName;
         this.commands = commands;
         this.elementType = elementType;
@@ -39,46 +56,11 @@ public class ButtonDTO {
         this.popupInputMessage = popupInputMessage;
         this.description = description;
         this.visibleAsDefault = visibleAsDefault;
-        this.visibilitySettingKey = new VisibilitySettingKey(sectionName, subSectionName, name);
+        this.visibilitySettingKey = new VisibilitySettingKey(sectionName, subSectionName, buttonName);
     }
 
-    public String getName() {
-        return name;
-    }
-
-    public String getScriptLocationParamName() {
-        return scriptLocationParamName;
-    }
-
-    public List<String> getCommands() {
-        return commands;
-    }
-
-    public ElementType getElementType() {
-        return elementType;
-    }
-
-    public boolean isAutoCloseConsole() {
-        return autoCloseConsole;
-    }
-
-    public boolean isPopupInputDisplayed() {
-        return popupInputDisplayed;
-    }
-
-    public String getPopupInputMessage() {
-        return popupInputMessage;
-    }
-
-    public String getDescription() {
-        return description;
-    }
-
-    public boolean isVisibleAsDefault() {
-        return visibleAsDefault;
-    }
-
-    public VisibilitySettingKey getKey() {
+    @JsonIgnore
+    public VisibilitySettingKey getVisibilitySettingKey() {
         return visibilitySettingKey;
     }
 

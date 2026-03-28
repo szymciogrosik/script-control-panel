@@ -5,18 +5,16 @@ import javafx.concurrent.Task;
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
 import javafx.scene.Scene;
-import javafx.scene.control.Button;
 import javafx.scene.control.Label;
 import javafx.scene.control.ProgressBar;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.VBox;
 import javafx.stage.Modality;
 import javafx.stage.Stage;
-import org.codefromheaven.dto.Setting;
-import org.codefromheaven.helpers.FileUtils;
 import org.codefromheaven.service.animal.AnimalService;
-import org.codefromheaven.service.command.GitBashService;
+import org.codefromheaven.service.style.StyleService;
 import org.codefromheaven.service.update.DownloadLatestVersionService;
+import org.codefromheaven.service.version.AppVersionService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -25,11 +23,19 @@ public class UpdateController {
 
     private final AnimalService animalService;
     private final DownloadLatestVersionService downloadLatestVersionService;
+    private final StyleService styleService;
+    private final AppVersionService appVersionService;
 
     @Autowired
-    public UpdateController(AnimalService animalService, DownloadLatestVersionService downloadLatestVersionService) {
+    public UpdateController(
+            AnimalService animalService,
+            DownloadLatestVersionService downloadLatestVersionService,
+            StyleService styleService,
+            AppVersionService appVersionService) {
         this.animalService = animalService;
         this.downloadLatestVersionService = downloadLatestVersionService;
+        this.styleService = styleService;
+        this.appVersionService = appVersionService;
     }
 
     public void setupPage() {
@@ -39,30 +45,29 @@ public class UpdateController {
     private void showUpdatePopup() {
         Stage popupStage = new Stage();
         popupStage.initModality(Modality.APPLICATION_MODAL);
-        popupStage.getIcons().add(animalService.getRandomAnimalImage());
         popupStage.setTitle("Downloading update");
+        popupStage.getIcons().add(animalService.getRandomAnimalImage());
         popupStage.setResizable(false);
 
-        Label label = new Label("Downloading update...");
+        Label label = new Label("Downloading update " + appVersionService.getLatestVersion() + "...");
         HBox labelContainer = new HBox(label);
         labelContainer.setAlignment(Pos.CENTER_LEFT);
 
         ProgressBar progressBar = new ProgressBar();
         progressBar.setMaxWidth(Double.MAX_VALUE);
 
-        Button installButton = new Button("Install and restart");
-        installButton.setMaxWidth(Double.MAX_VALUE);
-        installButton.setVisible(false);
-
-        VBox vbox = new VBox(labelContainer, progressBar, installButton);
+        VBox vbox = new VBox(labelContainer, progressBar);
         vbox.setAlignment(Pos.CENTER);
         vbox.setSpacing(20);
         Insets margin = new Insets(0, 20, 0, 20);
         VBox.setMargin(labelContainer, margin);
         VBox.setMargin(progressBar, margin);
-        VBox.setMargin(installButton, margin);
+
+        vbox.getStyleClass().add("background-primary");
+        label.getStyleClass().add("label-on-dark-background");
 
         Scene scene = new Scene(vbox, 300, 150);
+        scene.getStylesheets().add(styleService.getCurrentStyleUrl());
         popupStage.setScene(scene);
 
         Task<Void> downloadTask = downloadLatestVersionService.createDownloadTask();
@@ -74,18 +79,19 @@ public class UpdateController {
             } catch (InterruptedException e) {
                 throw new RuntimeException(e);
             }
-            label.setText("Download completed.");
-            installButton.setVisible(true);
+            Platform.runLater(() -> {
+                label.setText("Download completed.");
+
+                PopupController.showPopup(
+                        "Update is ready. After closing this window, please wait a moment while the application automatically restarts.",
+                        javafx.scene.control.Alert.AlertType.INFORMATION);
+                popupStage.close();
+                runReplaceApplicationScriptInNewThread();
+                closeApplication();
+            });
         });
 
         progressBar.progressProperty().bind(downloadTask.progressProperty());
-
-        installButton.setOnAction(e -> {
-            FileUtils.copyFileFromResourceToTmp("utils", "update_and_restart.sh");
-            runReplaceApplicationBashScriptInNewThread();
-            closeApplication();
-            popupStage.close();
-        });
 
         Thread downloadThread = new Thread(downloadTask);
         downloadThread.setDaemon(true);
@@ -94,9 +100,29 @@ public class UpdateController {
         popupStage.showAndWait();
     }
 
-    public void runReplaceApplicationBashScriptInNewThread() {
+    public void runReplaceApplicationScriptInNewThread() {
         new Thread(() -> {
-            GitBashService.runCommand(Setting.TMP_DIRECTORY.getName(), true, "./update_and_restart.sh");
+            try {
+                String tmpDirPath = System.getProperty("user.dir") + java.io.File.separator + "tmp";
+                java.io.File updateBat = new java.io.File(tmpDirPath, "update.bat");
+                String batContent = "@echo off\r\n" +
+                        "set TMP_DIR=%~dp0\r\n" +
+                        "set APP_DIR=%TMP_DIR%..\r\n" +
+                        "ping 127.0.0.1 -n 4 > nul\r\n" +
+                        "cd /d \"%APP_DIR%\"\r\n" +
+                        "powershell -NoProfile -Command \"Expand-Archive -Force -Path '%TMP_DIR%"
+                        + AppVersionService.ZIP_NAME + "' -DestinationPath '.'\"\r\n" +
+                        "start \"\" \"ScriptControlPanel.exe\"\r\n" +
+                        "rmdir /s /q \"%TMP_DIR%\"\r\n" +
+                        "exit\r\n";
+                java.nio.file.Files.writeString(updateBat.toPath(), batContent);
+
+                ProcessBuilder processBuilder = new ProcessBuilder("cmd", "/c", "update.bat");
+                processBuilder.directory(new java.io.File(tmpDirPath));
+                processBuilder.start();
+            } catch (Exception ex) {
+                ex.printStackTrace();
+            }
         }).start();
     }
 

@@ -5,7 +5,6 @@ import java.util.*;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
-import javafx.geometry.Pos;
 import javafx.scene.Group;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
@@ -19,18 +18,16 @@ import org.codefromheaven.dto.Link;
 import org.codefromheaven.dto.data.ButtonDTO;
 import org.codefromheaven.dto.data.SectionDTO;
 import org.codefromheaven.dto.data.SubSectionDTO;
-import org.codefromheaven.dto.settings.KeyValueDTO;
-import org.codefromheaven.dto.settings.SettingsDTO;
+import org.codefromheaven.dto.data.LayoutAndButtonsDTO;
 import org.codefromheaven.service.settings.VisibilitySettings;
 import org.codefromheaven.helpers.ImageLoader;
 import org.codefromheaven.helpers.LinkUtils;
 import org.codefromheaven.helpers.MaxHighUtils;
-import org.codefromheaven.service.LoadFromJsonService;
 import org.codefromheaven.service.animal.AnimalService;
 import org.codefromheaven.service.command.GitBashService;
 import org.codefromheaven.service.command.PowerShellService;
 import org.codefromheaven.service.network.NetworkService;
-import org.codefromheaven.service.settings.FilesToLoadSettingsService;
+import org.codefromheaven.service.settings.LayoutService;
 import org.codefromheaven.service.settings.SettingsService;
 import org.codefromheaven.context.SpringContext;
 import org.codefromheaven.service.style.StyleService;
@@ -50,7 +47,8 @@ public class MainWindowController implements Initializable {
     private final StyleService styleService;
 
     @Autowired
-    public MainWindowController(AnimalService animalService, SettingsService settingsService, AppVersionService appVersionService, NetworkService networkService, StyleService styleService) {
+    public MainWindowController(AnimalService animalService, SettingsService settingsService,
+            AppVersionService appVersionService, NetworkService networkService, StyleService styleService) {
         this.animalService = animalService;
         this.settingsService = settingsService;
         this.appVersionService = appVersionService;
@@ -68,6 +66,8 @@ public class MainWindowController implements Initializable {
 
     @FXML
     private MenuItem changeVisibleElements;
+    @FXML
+    private MenuItem editLayoutAndButtons;
     @FXML
     private MenuItem changeSettings;
     @FXML
@@ -111,15 +111,16 @@ public class MainWindowController implements Initializable {
         setupScrollPane();
 
         VisibilitySettings visibilitySettings = new VisibilitySettings();
-        SettingsDTO filesToLoad = FilesToLoadSettingsService.load();
+        LayoutAndButtonsDTO layoutAndButtons = SpringContext.getBean(LayoutService.class).load();
 
         boolean anyElementEnabled = false;
-        for (String fileToLoad : filesToLoad.getSettings().stream().map(KeyValueDTO::getKey).toList()) {
-            if (isAnyElementInSectionEnabled(fileToLoad, visibilitySettings)) {
-                addElementsToScene(fileToLoad, visibilitySettings);
+        if (layoutAndButtons != null && layoutAndButtons.layout() != null) {
+            if (isAnyElementInSectionsEnabled(layoutAndButtons.layout(), visibilitySettings)) {
+                addElementsToScene(layoutAndButtons.layout(), visibilitySettings);
                 anyElementEnabled = true;
             }
         }
+
         if (!anyElementEnabled) {
             addInformationAboutBuildingConfiguration(visibilitySettings);
         }
@@ -163,22 +164,23 @@ public class MainWindowController implements Initializable {
         primaryPage.getChildren().add(section);
     }
 
-    private void addElementsToScene(String fileToLoad, VisibilitySettings visibilitySettings) {
-        List<SectionDTO> loadedElements = LoadFromJsonService.load(fileToLoad);
-        addSectionHeader(loadedElements.stream().findFirst().get().sectionName());
-        addElementsToSceneBase(loadedElements, visibilitySettings);
-    }
-
     private void addElementsToScene(List<SectionDTO> loadedElements, VisibilitySettings visibilitySettings) {
-        addSectionHeader(loadedElements.stream().findFirst().get().sectionName());
         addElementsToSceneBase(loadedElements, visibilitySettings);
     }
 
     private void addElementsToSceneBase(
-            List<SectionDTO> sections, VisibilitySettings visibilitySettings
-    ) {
+            List<SectionDTO> sections, VisibilitySettings visibilitySettings) {
         for (SectionDTO section : sections) {
             primaryPage.getStyleClass().add("primary-page");
+
+            // Skip the entire section if none of its buttons are visible
+            if (!isAnyElementInSectionsEnabled(Collections.singletonList(section), visibilitySettings)) {
+                continue;
+            }
+
+            // Add the top-level section header for every visible section
+            addSectionHeader(section.sectionName());
+
             for (SubSectionDTO subSection : section.subSections()) {
                 if (!isAnyElementInSubSectionEnabled(subSection, section.sectionName(), visibilitySettings)) {
                     continue;
@@ -209,15 +211,15 @@ public class MainWindowController implements Initializable {
     }
 
     private Button createButton(ButtonDTO buttonDTO) {
-        Button button = new Button(buttonDTO.getName());
+        Button button = new Button(buttonDTO.getButtonName());
         button.getStyleClass().add("button-default");
         button.setTooltip(createTooltip(buttonDTO.getDescription()));
         switch (buttonDTO.getElementType()) {
             case BASH:
             case POWERSHELL:
             case PYTHON:
-            case CUSTOM_COMMAND_BASH:
-            case CUSTOM_COMMAND_POWERSHELL:
+            case DIRECT_COMMAND_BASH:
+            case DIRECT_COMMAND_POWERSHELL:
                 addButtonListenerForServiceCommands(button, buttonDTO);
                 break;
             case LINK:
@@ -236,17 +238,26 @@ public class MainWindowController implements Initializable {
     private void addButtonListenerForServiceCommands(Button button, ButtonDTO buttonDTO) {
         switch (buttonDTO.getElementType()) {
             case BASH:
-            case CUSTOM_COMMAND_BASH:
+            case DIRECT_COMMAND_BASH:
             case PYTHON:
                 addButtonListenerForBashCommand(button, buttonDTO);
                 break;
             case POWERSHELL:
-            case CUSTOM_COMMAND_POWERSHELL:
+            case DIRECT_COMMAND_POWERSHELL:
                 addButtonListenerForPowerShellCommand(button, buttonDTO);
                 break;
             default:
                 throw new RuntimeException("Not recognised console: " + buttonDTO.getElementType());
         }
+    }
+
+    private String addPrefixToCommand(String command, ElementType elementType) {
+        return switch (elementType) {
+            case BASH -> "./" + command;
+            case POWERSHELL -> ".\\" + command;
+            case PYTHON -> settingsService.getPythonScriptsPrefix() + " " + command;
+            default -> command;
+        };
     }
 
     private void addButtonListenerForBashCommand(Button button, ButtonDTO buttonDTO) {
@@ -255,12 +266,16 @@ public class MainWindowController implements Initializable {
                 Optional<String> result = createTextInputDialog(buttonDTO.getPopupInputMessage());
                 result.ifPresent(name -> {
                     for (String command : buttonDTO.getCommands()) {
-                        GitBashService.runCommand(buttonDTO.getScriptLocationParamName(), buttonDTO.isAutoCloseConsole(), command + " " + name);
+                        String prefixedCommand = addPrefixToCommand(command, buttonDTO.getElementType());
+                        GitBashService.runCommand(buttonDTO.getScriptLocationParamName(),
+                                buttonDTO.isAutoCloseConsole(), prefixedCommand + " " + name);
                     }
                 });
             } else {
                 for (String command : buttonDTO.getCommands()) {
-                    GitBashService.runCommand(buttonDTO.getScriptLocationParamName(), buttonDTO.isAutoCloseConsole(), command);
+                    String prefixedCommand = addPrefixToCommand(command, buttonDTO.getElementType());
+                    GitBashService.runCommand(buttonDTO.getScriptLocationParamName(), buttonDTO.isAutoCloseConsole(),
+                            prefixedCommand);
                 }
             }
         });
@@ -272,12 +287,16 @@ public class MainWindowController implements Initializable {
                 Optional<String> result = createTextInputDialog(buttonDTO.getPopupInputMessage());
                 result.ifPresent(name -> {
                     for (String command : buttonDTO.getCommands()) {
-                        PowerShellService.runCommand(buttonDTO.getScriptLocationParamName(), buttonDTO.isAutoCloseConsole(), command + " " + name);
+                        String prefixedCommand = addPrefixToCommand(command, buttonDTO.getElementType());
+                        PowerShellService.runCommand(buttonDTO.getScriptLocationParamName(),
+                                buttonDTO.isAutoCloseConsole(), prefixedCommand + " " + name);
                     }
                 });
             } else {
                 for (String command : buttonDTO.getCommands()) {
-                    PowerShellService.runCommand(buttonDTO.getScriptLocationParamName(), buttonDTO.isAutoCloseConsole(), command);
+                    String prefixedCommand = addPrefixToCommand(command, buttonDTO.getElementType());
+                    PowerShellService.runCommand(buttonDTO.getScriptLocationParamName(), buttonDTO.isAutoCloseConsole(),
+                            prefixedCommand);
                 }
             }
         });
@@ -291,7 +310,7 @@ public class MainWindowController implements Initializable {
         dialog.setGraphic(null);
         dialog.setContentText(popupInputMessage);
         Stage dialogStage = (Stage) dialog.getDialogPane().getScene().getWindow();
-        dialogStage.getIcons().add(animalService.getRandomAnimalImage());
+        dialogStage.getIcons().add(animalService.getNextAnimalOrRandomIfNotPresent());
         return dialog.showAndWait();
     }
 
@@ -303,10 +322,8 @@ public class MainWindowController implements Initializable {
         return tt;
     }
 
-    private boolean isAnyElementInSectionEnabled(
-            String fileToLoad, VisibilitySettings visibilitySettings
-    ) {
-        List<SectionDTO> sections = LoadFromJsonService.load(fileToLoad);
+    private boolean isAnyElementInSectionsEnabled(
+            List<SectionDTO> sections, VisibilitySettings visibilitySettings) {
         for (SectionDTO section : sections) {
             for (SubSectionDTO subSection : section.subSections()) {
                 boolean anyElementInSubSectionEnabled = isAnyElementInSubSectionEnabled(
@@ -321,8 +338,7 @@ public class MainWindowController implements Initializable {
 
     private boolean isAnyElementInSubSectionEnabled(
             SubSectionDTO subSection, String sectionName,
-            VisibilitySettings visibilitySettings
-    ) {
+            VisibilitySettings visibilitySettings) {
         for (ButtonDTO button : subSection.buttons()) {
             boolean visible = visibilitySettings.isVisible(button);
             if (visible) {
@@ -344,7 +360,8 @@ public class MainWindowController implements Initializable {
 
     @FXML
     private void handleChangeVisibleElements() {
-        HiddenElementSettingsController controller = new HiddenElementSettingsController(this::loadContent, this::resizeMainWindow);
+        HiddenElementSettingsController controller = new HiddenElementSettingsController(this::loadContent,
+                this::resizeMainWindow);
         controller.setupPage();
     }
 
@@ -360,7 +377,15 @@ public class MainWindowController implements Initializable {
 
     @FXML
     private void handleChangeSettings() {
-        SettingsController controller = new SettingsController(this::loadContent, this::resizeMainWindow, this::checkForUpdates, this::reloadStyle);
+        SettingsController controller = new SettingsController(this::loadContent, this::resizeMainWindow,
+                this::checkForUpdates, this::reloadStyle);
+        controller.setupPage();
+    }
+
+    @FXML
+    private void handleEditLayoutAndButtons() {
+        LayoutAndButtonsEditorController controller = new LayoutAndButtonsEditorController(this::loadContent,
+                this::resizeMainWindow);
         controller.setupPage();
     }
 
@@ -398,7 +423,7 @@ public class MainWindowController implements Initializable {
     private void handleCheckForUpdates() {
         checkForUpdates();
         if (appVersionService.isNewVersionAvailable()) {
-            handleDownloadAndInstall();
+            triggerDownloadAndInstallPopup();
         } else {
             if (networkService.isNetworkPresent()) {
                 PopupController.showPopup("Everything up to date!", Alert.AlertType.INFORMATION);
@@ -410,8 +435,24 @@ public class MainWindowController implements Initializable {
 
     @FXML
     private void handleDownloadAndInstall() {
-        UpdateController controller = SpringContext.getBean(UpdateController.class);
-        controller.setupPage();
+        if (!appVersionService.isNewVersionAvailable()) {
+            checkForUpdates();
+        }
+
+        if (appVersionService.isNewVersionAvailable()) {
+            triggerDownloadAndInstallPopup();
+        }
+    }
+
+    private void triggerDownloadAndInstallPopup() {
+        PopupController.showConfirmationPopup(
+                "New version " + appVersionService.getLatestVersion()
+                        + " is available.\nDo you want to download and install it now?",
+                "Download and install",
+                () -> {
+                    UpdateController controller = SpringContext.getBean(UpdateController.class);
+                    controller.setupPage();
+                });
     }
 
     @FunctionalInterface
@@ -435,12 +476,14 @@ public class MainWindowController implements Initializable {
     private void addInformationAboutBuildingConfiguration(VisibilitySettings visibilitySettings) {
         String sectionName = "Looks like there is nothing to show";
         String subSectionName = "Read about configuration";
-        ButtonDTO exampleConfig = new ButtonDTO("Example configuration", "", Collections.singletonList(Link.WIKI.getUrl()),
-                                                ElementType.LINK, true, false, "",
-                                                "Open link in default browser", true, sectionName, subSectionName);
-        ButtonDTO buildYourOwnConfig = new ButtonDTO("Build your own configuration", "", Collections.singletonList(Link.WIKI_CONFIGURATION.getUrl()),
-                                                     ElementType.LINK, true, false, "",
-                                                     "Open link in default browser", true, sectionName, subSectionName);
+        ButtonDTO exampleConfig = new ButtonDTO("Example configuration", "",
+                Collections.singletonList(Link.WIKI.getUrl()),
+                ElementType.LINK, true, false, "",
+                "Open link in default browser", true, sectionName, subSectionName);
+        ButtonDTO buildYourOwnConfig = new ButtonDTO("Build your own configuration", "",
+                Collections.singletonList(Link.WIKI_CONFIGURATION.getUrl()),
+                ElementType.LINK, true, false, "",
+                "Open link in default browser", true, sectionName, subSectionName);
         SubSectionDTO subSection = new SubSectionDTO(subSectionName, Arrays.asList(exampleConfig, buildYourOwnConfig));
         SectionDTO section = new SectionDTO(sectionName, Collections.singletonList(subSection));
         addElementsToScene(Collections.singletonList(section), visibilitySettings);
