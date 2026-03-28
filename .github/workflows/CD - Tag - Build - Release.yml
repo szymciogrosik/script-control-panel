@@ -38,22 +38,22 @@ jobs:
           echo "VERSION=$version" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
           echo "Found version: $version"
 
-
-      - name: Fetch all tags
-        run: git fetch --tags
-
       - name: Prepare tag name
         id: prepare_tag
         run: echo "TAG_NAME=v${{ env.VERSION }}" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
 
-      - name: Check for existing tag
+      - name: Check for existing tag on remote
         id: check_tag
         run: |
-          $tagExists = git tag -l "${{ env.TAG_NAME }}"
-          if ($tagExists) {
+          # Query the remote repository directly to bypass local state/cache issues
+          $tagExists = git ls-remote --tags origin "refs/tags/${{ env.TAG_NAME }}"
+          
+          if (-not [string]::IsNullOrWhiteSpace($tagExists)) {
             echo "TAG_EXISTS=true" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+            echo "Tag ${{ env.TAG_NAME }} exists on remote."
           } else {
             echo "TAG_EXISTS=false" | Out-File -FilePath $env:GITHUB_ENV -Encoding utf8 -Append
+            echo "Tag ${{ env.TAG_NAME }} does not exist on remote."
           }
 
       - name: Create tag if it does not exist
