@@ -2,7 +2,7 @@ name: Update JSON Manifest on Release Events
 
 on:
   release:
-    types: [published, deleted, edited, prereleased, released]
+    types: [published, deleted, edited]
   workflow_dispatch:
 
 jobs:
