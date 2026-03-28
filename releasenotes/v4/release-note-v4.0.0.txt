@@ -11,3 +11,4 @@ Instruction how and what needs to be installed to run application and more usefu
 
 #### Fixes:
 * Changed a way how the application updates are realized. From now application checking the custom GitHub page for latest release information. This fixed the issue with downloading updates from the same office, where GitHub page had hard limit 60 checks per 1h.
+
