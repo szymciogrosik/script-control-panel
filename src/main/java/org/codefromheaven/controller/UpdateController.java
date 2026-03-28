@@ -89,7 +89,7 @@ public class UpdateController {
                 label.setText("Download completed.");
 
                 PopupController.showPopup(
-                        "Update is ready. After closing this window, please wait a moment while the application automatically restarts.",
+                        "Update is ready. After closing this window, please wait around 30s-60s while the application automatically restarts.",
                         javafx.scene.control.Alert.AlertType.INFORMATION);
                 popupStage.close();
                 runReplaceApplicationScriptInNewThread();
