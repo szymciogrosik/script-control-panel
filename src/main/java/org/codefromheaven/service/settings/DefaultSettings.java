@@ -25,7 +25,11 @@ public class DefaultSettings {
                     new SettingDTO(Setting.BASH_PATH.getName(), "C:/Program Files/Git/git-bash.exe", SettingType.PATH,
                                    "Location of Git bash"),
                     new SettingDTO(Setting.CONFIG_DIR.getName(), "config", SettingType.PATH,
-                                   "Location of configuration files f.e. 'config' or empty when in the same location", false)
+                                   "Location of configuration files f.e. 'config' or empty when in the same location", false),
+                    new SettingDTO(Setting.ALLOW_FOR_UPGRADES.getName(), "true", SettingType.SWITCH,
+                                   "Allow for checking new releases", false),
+                    new SettingDTO(Setting.ALLOW_PRE_RELEASES.getName(), "true", SettingType.SWITCH,
+                                   "Allow for checking new pre releases")
             )
     );
 

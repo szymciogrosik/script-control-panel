@@ -40,8 +40,6 @@ module servicerunner {
     opens org.codefromheaven.service.version to javafx.fxml, spring.beans;
     exports org.codefromheaven.service.update;
     opens org.codefromheaven.service.update to javafx.fxml, spring.beans;
-    exports org.codefromheaven.service.gh;
-    opens org.codefromheaven.service.gh to javafx.fxml;
     opens org.codefromheaven.service.settings to com.fasterxml.jackson.databind, javafx.fxml, spring.beans;
     exports org.codefromheaven.config;
     opens org.codefromheaven.config to spring.core;

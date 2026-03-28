@@ -1,12 +1,10 @@
 package org.codefromheaven.service.version;
 
-import com.fasterxml.jackson.core.JsonProcessingException;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.codefromheaven.dto.Link;
 import org.codefromheaven.dto.release.GitHubRelease;
 import org.codefromheaven.resources.FileNamesLoader;
-import org.codefromheaven.service.gh.GithubService;
 import org.codefromheaven.service.network.NetworkService;
 import org.codefromheaven.service.settings.SettingsService;
 
@@ -32,6 +30,8 @@ public class AppVersionService {
     private GitHubRelease gitHubRelease = null;
     private final NetworkService networkService;
     private final SettingsService settingsService;
+    private static String lastETag = null;
+    private static GitHubRelease cachedLatestRelease = null;
 
     @Autowired
     public AppVersionService(NetworkService networkService, SettingsService settingsService) {
@@ -90,13 +90,24 @@ public class AppVersionService {
     public Optional<GitHubRelease> fetchLatestReleaseOrPreRelease() {
         HttpURLConnection connection = null;
         try {
-            URL url = new URL(Link.API_ALL_RELEASES.getUrl());
+            URL url = new URL(Link.API_LATEST_RELEASE_JSON.getUrl());
             connection = (HttpURLConnection) url.openConnection();
             connection.setRequestMethod("GET");
-            connection.setRequestProperty("Accept", "application/vnd.github.v3+json");
-            Optional<String> ghCheckReleasesToken = GithubService.getGhGetReleasesToken();
-            if (ghCheckReleasesToken.isPresent()) {
-                connection.setRequestProperty("Authorization", "token " + ghCheckReleasesToken.get());
+            connection.setRequestProperty("Accept", "application/json");
+
+            if (lastETag != null) {
+                connection.setRequestProperty("If-None-Match", lastETag);
+            }
+
+            int responseCode = connection.getResponseCode();
+            if (responseCode == HttpURLConnection.HTTP_NOT_MODIFIED) {
+                networkService.setNetworkPresent();
+                return Optional.ofNullable(cachedLatestRelease);
+            }
+
+            String newETag = connection.getHeaderField("ETag");
+            if (newETag != null && !newETag.isEmpty()) {
+                lastETag = newETag;
             }
 
             BufferedReader in = new BufferedReader(new InputStreamReader(connection.getInputStream()));
@@ -108,13 +119,38 @@ public class AppVersionService {
             in.close();
 
             ObjectMapper objectMapper = new ObjectMapper();
-            JsonNode releases = objectMapper.readTree(content.toString());
+            JsonNode root = objectMapper.readTree(content.toString());
 
-            GitHubRelease latestRelease = null;
-            Instant latestReleaseDate = Instant.MIN;
+            boolean preReleaseEnabled = settingsService.isAllowedToDownloadPreReleases();
+            JsonNode releaseNode = root.get("release");
+            JsonNode preReleaseNode = root.get("preRelease");
 
-            latestRelease = findLatestGitHubRelease(releases, latestReleaseDate, latestRelease, objectMapper);
+            JsonNode targetNode = releaseNode;
+            if (preReleaseEnabled && preReleaseNode != null && !preReleaseNode.isNull()) {
+                if (releaseNode == null || releaseNode.isNull()) {
+                    targetNode = preReleaseNode;
+                } else {
+                    Instant releaseDate = Instant.parse(releaseNode.get("releaseDate").asText());
+                    Instant preReleaseDate = Instant.parse(preReleaseNode.get("releaseDate").asText());
+                    if (preReleaseDate.isAfter(releaseDate)) {
+                        targetNode = preReleaseNode;
+                    }
+                }
+            }
 
+            if (targetNode == null || targetNode.isNull()) {
+                return Optional.empty();
+            }
+
+            GitHubRelease latestRelease = new GitHubRelease();
+            latestRelease.setTagName(targetNode.get("version").asText());
+            latestRelease.setCreatedAt(targetNode.get("releaseDate").asText());
+            GitHubRelease.GitHubAsset asset = new GitHubRelease.GitHubAsset();
+            asset.setBrowserDownloadUrl(targetNode.get("downloadUrl").asText());
+            asset.setName(ZIP_NAME);
+            latestRelease.setAssets(java.util.Collections.singletonList(asset));
+
+            cachedLatestRelease = latestRelease;
             networkService.setNetworkPresent();
             return Optional.of(latestRelease);
         } catch (IOException e) {
@@ -123,30 +159,8 @@ public class AppVersionService {
                 networkService.showPopupNetworkNotPresent();
             }
             networkService.setNetworkNotPresent();
-            return Optional.empty();
+            return Optional.ofNullable(cachedLatestRelease);
         }
-    }
-
-    private GitHubRelease findLatestGitHubRelease(JsonNode releases, Instant latestReleaseDate, GitHubRelease latestRelease, ObjectMapper objectMapper) throws JsonProcessingException {
-        boolean preReleaseEnabled = settingsService.isAllowedToDownloadPreReleases();
-        for (JsonNode release : releases) {
-            GitHubRelease tmpRelease = objectMapper.treeToValue(release, GitHubRelease.class);
-
-            if (tmpRelease.isDraft()) {
-                continue;
-            }
-
-            if (!preReleaseEnabled && tmpRelease.isPrerelease()) {
-                continue;
-            }
-
-            Instant releaseDate = Instant.parse(tmpRelease.getCreatedAt());
-            if (releaseDate.isAfter(latestReleaseDate)) {
-                latestReleaseDate = releaseDate;
-                latestRelease = tmpRelease;
-            }
-        }
-        return latestRelease;
     }
 
 }
