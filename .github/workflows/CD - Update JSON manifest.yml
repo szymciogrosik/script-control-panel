@@ -41,13 +41,13 @@ jobs:
               if isinstance(release, list):
                   if not release: return None
                   release = release[0]
-              
+          
               version = release.get("tagName")
               if not version: return None
               published_at = release.get("publishedAt")
-              
+          
               download_url = f"https://github.com/szymciogrosik/script-control-panel/releases/download/{version}/ScriptControlPanel-Win.zip"
-              
+          
               return {
                   "version": version,
                   "downloadUrl": download_url,
@@ -64,13 +64,20 @@ jobs:
           EOF
           
           python3 generate_json.py "$LATEST_STABLE" "$LATEST_PRE"
+
+      - name: Commit and push changes
+        run: |
+          git config --global user.name "github-actions[bot]"
+          git config --global user.email "41898282+github-actions[bot]@users.noreply.github.com"
           
-      - name: Create Pull Request to release/gh-pages
-        uses: peter-evans/create-pull-request@v6
-        with:
-          token: ${{ secrets.GITHUB_TOKEN }}
-          commit-message: "Update latest_release.json"
-          title: "Update latest_release.json"
-          body: "Automated PR to update latest_release.json on GitHub Pages due to release events."
-          branch: "update-gh-pages-json"
-          base: "release/gh-pages"
+          git add docs/latest_release.json
+          
+          # Check for changes in the staging area to avoid commit errors
+          if git diff --staged --quiet; then
+            echo "No changes in latest_release.json detected. Skipping commit."
+            exit 0
+          fi
+          
+          # Append [skip ci] to avoid triggering other push workflows
+          git commit -m "ci: update latest_release.json on release event [skip ci]"
+          git push origin HEAD:refs/heads/release/gh-pages
