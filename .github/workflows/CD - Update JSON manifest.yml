@@ -2,8 +2,13 @@ name: Update JSON Manifest on Release Events
 
 on:
   release:
-    types: [published, deleted, edited]
+    types: [published, edited, released, deleted]
   workflow_dispatch:
+
+# Cancel redundant jobs triggered by simultaneous GitHub API payloads for the same release
+concurrency:
+  group: ${{ github.workflow }}-${{ github.event.release.id || github.run_id }}
+  cancel-in-progress: true
 
 jobs:
   update_gh_pages:
