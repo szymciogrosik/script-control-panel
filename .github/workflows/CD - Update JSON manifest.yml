@@ -2,7 +2,7 @@ name: Update JSON Manifest on Release Events
 
 on:
   release:
-    types: [published, edited, released, deleted]
+    types: [published, edited, released, prereleased, deleted]
   workflow_dispatch:
 
 # Cancel redundant jobs triggered by simultaneous GitHub API payloads for the same release
