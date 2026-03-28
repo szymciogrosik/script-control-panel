@@ -11,7 +11,7 @@ public enum Link {
     PIN_BASH_TO_TASKBAR(WIKI.getUrl() + "/Guide-how-to-pin-bash-script-to-the-taskbar-or-Windows-start-for-Windows-11"),
     RUN_BASH_ON_WINDOWS_STARTUP(WIKI.getUrl() + "/Guide-how-to-add-shortcut-to-the-Windows-startup"),
     ISSUES(GH_PROJECT.getUrl() + "/issues"),
-    API_LATEST_RELEASE_JSON("https://szymciogrosik.github.io/script-control-panel/docs/latest_release.json");
+    API_LATEST_RELEASE_JSON("https://szymciogrosik.github.io/script-control-panel/latest_release.json");
 
     private final String url;
     Link(String url) {
