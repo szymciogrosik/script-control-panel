@@ -11,6 +11,7 @@ import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
+import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -130,20 +131,12 @@ public class MainWindowController implements Initializable {
 
         addAuthorNote("Made with love by SJG");
 
-        double requiredWidth = calculateMaxRowWidth() + 50;
-
-        // Protection against going beyond the monitor screen (buffer -100px)
+        double requiredWidth = calculateMaxRowWidth() + 20;
         double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
         double finalWidth = Math.min(requiredWidth, screenWidth - 100);
-
-        // Setting this width ensures that the buttons will stretch in one line as much as possible
         mainScrollPane.setPrefWidth(finalWidth);
     }
 
-    /**
-     * Calculates the actual row width based directly on Java font metrics,
-     * which works reliably even in the initialization phase when the Scene does not exist yet.
-     */
     private double calculateMaxRowWidth() {
         double maxWidth = 0;
         for (Node sectionNode : primaryPage.getChildren()) {
@@ -159,8 +152,8 @@ public class MainWindowController implements Initializable {
                     if (btnNode instanceof Button) {
                         Button btn = (Button) btnNode;
                         Text textNode = new Text(btn.getText());
-                        textNode.setStyle("-fx-font: normal bold 12px 'Roboto', sans-serif;");
-                        rowWidth += textNode.getLayoutBounds().getWidth() + 35;
+                        textNode.setFont(Font.font("Roboto", javafx.scene.text.FontWeight.BOLD, 12));
+                        rowWidth += textNode.getLayoutBounds().getWidth() + 20;
                     }
                 }
                 rowWidth += Math.max(0, flowPane.getChildren().size() - 1) * flowPane.getHgap();
@@ -170,8 +163,8 @@ public class MainWindowController implements Initializable {
                 for (Node innerNode : ((VBox) sectionNode).getChildren()) {
                     if (innerNode instanceof Text) {
                         Text textNode = new Text(((Text) innerNode).getText());
-                        textNode.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
-                        maxWidth = Math.max(maxWidth, textNode.getLayoutBounds().getWidth() + 20);
+                        textNode.setFont(Font.font("Roboto", javafx.scene.text.FontWeight.BOLD, 18));
+                        maxWidth = Math.max(maxWidth, textNode.getLayoutBounds().getWidth());
                     }
                 }
             }
@@ -419,7 +412,6 @@ public class MainWindowController implements Initializable {
         Stage mainStage = (Stage) primaryPage.getScene().getWindow();
         mainStage.sizeToScene();
 
-        // Limitation so that it does not extend vertically beyond the screen
         if (mainStage.getHeight() > MaxHighUtils.getMaxHeight()) {
             mainStage.setHeight(MaxHighUtils.getMaxHeight());
         }
