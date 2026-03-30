@@ -12,6 +12,7 @@ import javafx.scene.layout.VBox;
 import javafx.stage.DirectoryChooser;
 import javafx.stage.FileChooser;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import org.codefromheaven.context.SpringContext;
 import org.codefromheaven.dto.FileType;
 import org.codefromheaven.dto.Setting;
@@ -44,10 +45,13 @@ public class SettingsController {
     private final MainWindowController.ResizeWindow resizeMainWindow;
     private final MainWindowController.CheckForUpdates checkForUpdates;
     private final MainWindowController.StyleReloader styleReloader;
+    private final Window owner;
 
     public SettingsController(
+            Window owner,
             MainWindowController.ContentLoader loader, MainWindowController.ResizeWindow resizeMainWindow,
             MainWindowController.CheckForUpdates checkForUpdates, MainWindowController.StyleReloader styleReloader) {
+        this.owner = owner;
         this.loader = loader;
         this.resizeMainWindow = resizeMainWindow;
         this.checkForUpdates = checkForUpdates;
@@ -56,6 +60,7 @@ public class SettingsController {
 
     public void setupPage() {
         Stage settingsStage = new Stage();
+        settingsStage.initOwner(owner);
         settingsStage.initModality(APPLICATION_MODAL);
         settingsStage.setTitle("Change application settings");
         settingsStage.getIcons().add(SpringContext.getBean(AnimalService.class).getRandomAnimalImage());
@@ -144,9 +149,9 @@ public class SettingsController {
         myOwnContent.setPadding(new Insets(5, 10, 0, 10));
 
         // --- Content Area ---
-        StackPane contentPane = new StackPane(defaultContent);
+        StackPane contentPane = new StackPane(myOwnContent);
 
-        defaultLayoutTabBtn.setSelected(true);
+        myOwnLayoutTabBtn.setSelected(true);
 
         defaultLayoutTabBtn.setOnAction(e -> {
             if (!defaultLayoutTabBtn.isSelected()) defaultLayoutTabBtn.setSelected(true);

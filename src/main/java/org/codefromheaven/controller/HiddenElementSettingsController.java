@@ -17,6 +17,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Modality;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import org.codefromheaven.context.SpringContext;
 import org.codefromheaven.dto.data.SectionDTO;
 import org.codefromheaven.dto.data.LayoutAndButtonsDTO;
@@ -37,15 +38,19 @@ public class HiddenElementSettingsController {
     private final MainWindowController.ContentLoader loader;
     private final MainWindowController.ResizeWindow resizeMainWindow;
     private final VisibilitySettings visibilitySettings = new VisibilitySettings();
+    private final Window owner;
 
     public HiddenElementSettingsController(
+            Window owner,
             MainWindowController.ContentLoader loader, MainWindowController.ResizeWindow resizeMainWindow) {
+        this.owner = owner;
         this.loader = loader;
         this.resizeMainWindow = resizeMainWindow;
     }
 
     public void setupPage() {
         Stage settingsStage = new Stage();
+        settingsStage.initOwner(owner);
         settingsStage.initModality(Modality.APPLICATION_MODAL);
         settingsStage.setTitle("Change elements visibility");
         settingsStage.getIcons().add(SpringContext.getBean(AnimalService.class).getRandomAnimalImage());

@@ -4,6 +4,7 @@ import javafx.scene.control.Alert;
 import javafx.scene.control.ButtonBar;
 import javafx.scene.control.ButtonType;
 import javafx.stage.Stage;
+import javafx.stage.Window;
 import org.codefromheaven.context.SpringContext;
 import org.codefromheaven.service.animal.AnimalService;
 import org.codefromheaven.service.style.StyleService;
@@ -14,9 +15,13 @@ public class PopupController {
     }
 
     public static void showPopup(
+            Window owner,
             String message,
             Alert.AlertType alertType) {
         Alert alert = new Alert(alertType);
+        if (owner != null) {
+            alert.initOwner(owner);
+        }
         alert.setTitle("Information");
 
         setupDialogAppearance(alert, message);
@@ -30,10 +35,14 @@ public class PopupController {
     }
 
     public static void showConfirmationPopup(
+            Window owner,
             String message,
             String confirmButtonText,
             Runnable onConfirm) {
         Alert alert = new Alert(Alert.AlertType.CONFIRMATION);
+        if (owner != null) {
+            alert.initOwner(owner);
+        }
         alert.setTitle("Information required");
 
         setupDialogAppearance(alert, message);
