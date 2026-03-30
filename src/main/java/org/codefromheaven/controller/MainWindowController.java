@@ -12,6 +12,7 @@ import javafx.scene.layout.*;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
 import javafx.util.Duration;
+import org.apache.commons.lang3.StringUtils;
 import org.codefromheaven.App;
 import org.codefromheaven.dto.ElementType;
 import org.codefromheaven.dto.Link;
@@ -213,7 +214,9 @@ public class MainWindowController implements Initializable {
     private Button createButton(ButtonDTO buttonDTO) {
         Button button = new Button(buttonDTO.getButtonName());
         button.getStyleClass().add("button-default");
-        button.setTooltip(createTooltip(buttonDTO.getDescription()));
+        if (StringUtils.isNotBlank(buttonDTO.getDescription())) {
+            button.setTooltip(createTooltip(buttonDTO.getDescription()));
+        }
         switch (buttonDTO.getElementType()) {
             case BASH:
             case POWERSHELL:
