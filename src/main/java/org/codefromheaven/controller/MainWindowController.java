@@ -5,11 +5,14 @@ import java.util.*;
 
 import javafx.fxml.FXML;
 import javafx.fxml.Initializable;
+import javafx.geometry.Pos;
 import javafx.scene.Group;
+import javafx.scene.Node;
 import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.text.Text;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import javafx.util.Duration;
 import org.codefromheaven.App;
@@ -126,6 +129,54 @@ public class MainWindowController implements Initializable {
         }
 
         addAuthorNote("Made with love by SJG");
+
+        double requiredWidth = calculateMaxRowWidth() + 50;
+
+        // Protection against going beyond the monitor screen (buffer -100px)
+        double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
+        double finalWidth = Math.min(requiredWidth, screenWidth - 100);
+
+        // Setting this width ensures that the buttons will stretch in one line as much as possible
+        mainScrollPane.setPrefWidth(finalWidth);
+    }
+
+    /**
+     * Calculates the actual row width based directly on Java font metrics,
+     * which works reliably even in the initialization phase when the Scene does not exist yet.
+     */
+    private double calculateMaxRowWidth() {
+        double maxWidth = 0;
+        for (Node sectionNode : primaryPage.getChildren()) {
+            if (sectionNode.getStyleClass().contains("author-note")) {
+                continue;
+            }
+
+            if (sectionNode instanceof FlowPane) {
+                FlowPane flowPane = (FlowPane) sectionNode;
+                double rowWidth = 0;
+
+                for (Node btnNode : flowPane.getChildren()) {
+                    if (btnNode instanceof Button) {
+                        Button btn = (Button) btnNode;
+                        Text textNode = new Text(btn.getText());
+                        textNode.setStyle("-fx-font: normal bold 12px 'Roboto', sans-serif;");
+                        rowWidth += textNode.getLayoutBounds().getWidth() + 35;
+                    }
+                }
+                rowWidth += Math.max(0, flowPane.getChildren().size() - 1) * flowPane.getHgap();
+                maxWidth = Math.max(maxWidth, rowWidth);
+            }
+            else if (sectionNode instanceof VBox) {
+                for (Node innerNode : ((VBox) sectionNode).getChildren()) {
+                    if (innerNode instanceof Text) {
+                        Text textNode = new Text(((Text) innerNode).getText());
+                        textNode.setStyle("-fx-font-size: 18px; -fx-font-weight: bold;");
+                        maxWidth = Math.max(maxWidth, textNode.getLayoutBounds().getWidth() + 20);
+                    }
+                }
+            }
+        }
+        return Math.max(maxWidth, App.MIN_WIDTH > 0 ? App.MIN_WIDTH : 480.0);
     }
 
     private void refreshHeader() {
@@ -159,6 +210,7 @@ public class MainWindowController implements Initializable {
             animalService.replaceCurrentAnimalToNextAnimal();
             authorImageView.setImage(animalService.getCurrentAnimalImage());
         });
+
         Group root = new Group(authorImageView);
         section.getChildren().add(root);
         primaryPage.getChildren().add(section);
@@ -170,15 +222,16 @@ public class MainWindowController implements Initializable {
 
     private void addElementsToSceneBase(
             List<SectionDTO> sections, VisibilitySettings visibilitySettings) {
+
+        double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
+
         for (SectionDTO section : sections) {
             primaryPage.getStyleClass().add("primary-page");
 
-            // Skip the entire section if none of its buttons are visible
             if (!isAnyElementInSectionsEnabled(Collections.singletonList(section), visibilitySettings)) {
                 continue;
             }
 
-            // Add the top-level section header for every visible section
             addSectionHeader(section.sectionName());
 
             for (SubSectionDTO subSection : section.subSections()) {
@@ -188,14 +241,19 @@ public class MainWindowController implements Initializable {
                 primaryPage.getChildren().add(createHeaderForSection(subSection.subSectionName()));
                 primaryPage.getStyleClass().add("background-primary");
 
-                HBox rows = new HBox();
-                rows.getStyleClass().add("hbox-spacing");
+                FlowPane rows = new FlowPane();
+                rows.setHgap(5);
+                rows.setVgap(5);
+                rows.setAlignment(Pos.CENTER_LEFT);
+                rows.setPrefWrapLength(screenWidth - 100);
 
-                for (ButtonDTO button : subSection.buttons()) {
-                    if (!visibilitySettings.isVisible(button)) {
+                for (ButtonDTO buttonDTO : subSection.buttons()) {
+                    if (!visibilitySettings.isVisible(buttonDTO)) {
                         continue;
                     }
-                    rows.getChildren().add(createButton(button));
+                    Button button = createButton(buttonDTO);
+                    button.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+                    rows.getChildren().add(button);
                 }
                 primaryPage.getChildren().add(rows);
             }
@@ -268,14 +326,14 @@ public class MainWindowController implements Initializable {
                     for (String command : buttonDTO.getCommands()) {
                         String prefixedCommand = addPrefixToCommand(command, buttonDTO.getElementType());
                         GitBashService.runCommand(buttonDTO.getScriptLocationParamName(),
-                                buttonDTO.isAutoCloseConsole(), prefixedCommand + " " + name);
+                                                  buttonDTO.isAutoCloseConsole(), prefixedCommand + " " + name);
                     }
                 });
             } else {
                 for (String command : buttonDTO.getCommands()) {
                     String prefixedCommand = addPrefixToCommand(command, buttonDTO.getElementType());
                     GitBashService.runCommand(buttonDTO.getScriptLocationParamName(), buttonDTO.isAutoCloseConsole(),
-                            prefixedCommand);
+                                              prefixedCommand);
                 }
             }
         });
@@ -289,14 +347,14 @@ public class MainWindowController implements Initializable {
                     for (String command : buttonDTO.getCommands()) {
                         String prefixedCommand = addPrefixToCommand(command, buttonDTO.getElementType());
                         PowerShellService.runCommand(buttonDTO.getScriptLocationParamName(),
-                                buttonDTO.isAutoCloseConsole(), prefixedCommand + " " + name);
+                                                     buttonDTO.isAutoCloseConsole(), prefixedCommand + " " + name);
                     }
                 });
             } else {
                 for (String command : buttonDTO.getCommands()) {
                     String prefixedCommand = addPrefixToCommand(command, buttonDTO.getElementType());
                     PowerShellService.runCommand(buttonDTO.getScriptLocationParamName(), buttonDTO.isAutoCloseConsole(),
-                            prefixedCommand);
+                                                 prefixedCommand);
                 }
             }
         });
@@ -354,14 +412,25 @@ public class MainWindowController implements Initializable {
     }
 
     private void resizeMainWindow() {
+        if (primaryPage.getScene() == null || primaryPage.getScene().getWindow() == null) {
+            return;
+        }
+
         Stage mainStage = (Stage) primaryPage.getScene().getWindow();
         mainStage.sizeToScene();
+
+        // Limitation so that it does not extend vertically beyond the screen
+        if (mainStage.getHeight() > MaxHighUtils.getMaxHeight()) {
+            mainStage.setHeight(MaxHighUtils.getMaxHeight());
+        }
+
+        mainStage.centerOnScreen();
     }
 
     @FXML
     private void handleChangeVisibleElements() {
         HiddenElementSettingsController controller = new HiddenElementSettingsController(this::loadContent,
-                this::resizeMainWindow);
+                                                                                         this::resizeMainWindow);
         controller.setupPage();
     }
 
@@ -378,14 +447,14 @@ public class MainWindowController implements Initializable {
     @FXML
     private void handleChangeSettings() {
         SettingsController controller = new SettingsController(this::loadContent, this::resizeMainWindow,
-                this::checkForUpdates, this::reloadStyle);
+                                                               this::checkForUpdates, this::reloadStyle);
         controller.setupPage();
     }
 
     @FXML
     private void handleEditLayoutAndButtons() {
         LayoutAndButtonsEditorController controller = new LayoutAndButtonsEditorController(this::loadContent,
-                this::resizeMainWindow);
+                                                                                           this::resizeMainWindow);
         controller.setupPage();
     }
 
@@ -477,16 +546,15 @@ public class MainWindowController implements Initializable {
         String sectionName = "Looks like there is nothing to show";
         String subSectionName = "Read about configuration";
         ButtonDTO exampleConfig = new ButtonDTO("Example configuration", "",
-                Collections.singletonList(Link.WIKI.getUrl()),
-                ElementType.LINK, true, false, "",
-                "Open link in default browser", true, sectionName, subSectionName);
+                                                Collections.singletonList(Link.WIKI.getUrl()),
+                                                ElementType.LINK, true, false, "",
+                                                "Open link in default browser", true, sectionName, subSectionName);
         ButtonDTO buildYourOwnConfig = new ButtonDTO("Build your own configuration", "",
-                Collections.singletonList(Link.WIKI_CONFIGURATION.getUrl()),
-                ElementType.LINK, true, false, "",
-                "Open link in default browser", true, sectionName, subSectionName);
+                                                     Collections.singletonList(Link.WIKI_CONFIGURATION.getUrl()),
+                                                     ElementType.LINK, true, false, "",
+                                                     "Open link in default browser", true, sectionName, subSectionName);
         SubSectionDTO subSection = new SubSectionDTO(subSectionName, Arrays.asList(exampleConfig, buildYourOwnConfig));
         SectionDTO section = new SectionDTO(sectionName, Collections.singletonList(subSection));
         addElementsToScene(Collections.singletonList(section), visibilitySettings);
     }
-
 }
