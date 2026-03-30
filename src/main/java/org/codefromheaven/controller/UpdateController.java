@@ -38,12 +38,13 @@ public class UpdateController {
         this.appVersionService = appVersionService;
     }
 
-    public void setupPage() {
-        showUpdatePopup();
+    public void setupPage(javafx.stage.Window owner) {
+        showUpdatePopup(owner);
     }
 
-    private void showUpdatePopup() {
+    private void showUpdatePopup(javafx.stage.Window owner) {
         Stage popupStage = new Stage();
+        popupStage.initOwner(owner);
         popupStage.initModality(Modality.APPLICATION_MODAL);
         popupStage.setTitle("Downloading update");
         popupStage.getIcons().add(animalService.getRandomAnimalImage());
@@ -89,6 +90,7 @@ public class UpdateController {
                 label.setText("Download completed.");
 
                 PopupController.showPopup(
+                        owner,
                         "Update is ready. After closing this window, please wait around 30s-60s while the application automatically restarts.",
                         javafx.scene.control.Alert.AlertType.INFORMATION);
                 popupStage.close();

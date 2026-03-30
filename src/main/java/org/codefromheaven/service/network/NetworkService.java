@@ -27,7 +27,11 @@ public class NetworkService {
     }
 
     public void showPopupNetworkNotPresent() {
-        PopupController.showPopup("Network not found, try check the updates later.",
+        showPopupNetworkNotPresent(null);
+    }
+
+    public void showPopupNetworkNotPresent(javafx.stage.Window owner) {
+        PopupController.showPopup(owner, "Network not found, try check the updates later.",
                                   Alert.AlertType.ERROR);
     }
 

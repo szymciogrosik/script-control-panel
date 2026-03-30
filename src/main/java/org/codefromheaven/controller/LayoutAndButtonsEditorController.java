@@ -11,9 +11,11 @@ import javafx.scene.Scene;
 import javafx.scene.control.*;
 import javafx.scene.input.TransferMode;
 import javafx.scene.layout.*;
+import javafx.stage.Modality;
 import javafx.stage.Stage;
 import javafx.scene.input.ClipboardContent;
 import javafx.scene.input.Dragboard;
+import javafx.stage.Window;
 import org.codefromheaven.context.SpringContext;
 import org.codefromheaven.dto.ConfigType;
 import org.codefromheaven.dto.ElementType;
@@ -54,9 +56,13 @@ public class LayoutAndButtonsEditorController {
     private final ObservableList<MutableDirectory> directories = FXCollections.observableArrayList();
     private final ObservableList<MutableSection> defaultSections = FXCollections.observableArrayList();
     private final ObservableList<MutableSection> myOwnSections = FXCollections.observableArrayList();
+    private final Window owner;
 
-    public LayoutAndButtonsEditorController(MainWindowController.ContentLoader contentLoader,
+    public LayoutAndButtonsEditorController(
+            Window owner,
+            MainWindowController.ContentLoader contentLoader,
             MainWindowController.ResizeWindow resizeWindow) {
+        this.owner = owner;
         this.contentLoader = contentLoader;
         this.resizeWindow = resizeWindow;
         this.animalService = SpringContext.getBean(AnimalService.class);
@@ -71,6 +77,8 @@ public class LayoutAndButtonsEditorController {
         initMutables();
 
         Stage stage = new Stage();
+        stage.initOwner(owner);
+        stage.initModality(Modality.APPLICATION_MODAL);
         stage.getIcons().add(animalService.getCurrentAnimalImage());
         stage.setTitle("Edit layout and buttons");
 
@@ -205,7 +213,7 @@ public class LayoutAndButtonsEditorController {
     }
 
     private void saveAndApply(Stage stage) {
-        if (!validateAll()) {
+        if (!validateAll(stage)) {
             return;
         }
 
@@ -237,7 +245,7 @@ public class LayoutAndButtonsEditorController {
 
 
 
-    private boolean validateAll() {
+    private boolean validateAll(Stage stage) {
         List<String> errors = new ArrayList<>();
 
         // Variables
@@ -287,7 +295,7 @@ public class LayoutAndButtonsEditorController {
         }
 
         if (!errors.isEmpty()) {
-            PopupController.showPopup(String.join("\n", errors), Alert.AlertType.ERROR);
+            PopupController.showPopup(stage, String.join("\n", errors), Alert.AlertType.ERROR);
             return false;
         }
 
@@ -487,7 +495,7 @@ public class LayoutAndButtonsEditorController {
                     }
                 }
                 if (isUsed) {
-                    PopupController.showPopup("Cannot remove variable '" + removedName + "' because it is currently used by one or more buttons.", javafx.scene.control.Alert.AlertType.WARNING);
+                    PopupController.showPopup(stage, "Cannot remove variable '" + removedName + "' because it is currently used by one or more buttons.", javafx.scene.control.Alert.AlertType.WARNING);
                     return;
                 }
                 directories.remove(sel);

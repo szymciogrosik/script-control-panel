@@ -360,7 +360,9 @@ public class MainWindowController implements Initializable {
 
     @FXML
     private void handleChangeVisibleElements() {
-        HiddenElementSettingsController controller = new HiddenElementSettingsController(this::loadContent,
+        HiddenElementSettingsController controller = new HiddenElementSettingsController(
+                primaryPage.getScene().getWindow(),
+                this::loadContent,
                 this::resizeMainWindow);
         controller.setupPage();
     }
@@ -377,14 +379,18 @@ public class MainWindowController implements Initializable {
 
     @FXML
     private void handleChangeSettings() {
-        SettingsController controller = new SettingsController(this::loadContent, this::resizeMainWindow,
+        SettingsController controller = new SettingsController(
+                primaryPage.getScene().getWindow(),
+                this::loadContent, this::resizeMainWindow,
                 this::checkForUpdates, this::reloadStyle);
         controller.setupPage();
     }
 
     @FXML
     private void handleEditLayoutAndButtons() {
-        LayoutAndButtonsEditorController controller = new LayoutAndButtonsEditorController(this::loadContent,
+        LayoutAndButtonsEditorController controller = new LayoutAndButtonsEditorController(
+                primaryPage.getScene().getWindow(),
+                this::loadContent,
                 this::resizeMainWindow);
         controller.setupPage();
     }
@@ -426,9 +432,9 @@ public class MainWindowController implements Initializable {
             triggerDownloadAndInstallPopup();
         } else {
             if (networkService.isNetworkPresent()) {
-                PopupController.showPopup("Everything up to date!", Alert.AlertType.INFORMATION);
+                PopupController.showPopup(primaryPage.getScene().getWindow(), "Everything up to date!", Alert.AlertType.INFORMATION);
             } else {
-                networkService.showPopupNetworkNotPresent();
+                networkService.showPopupNetworkNotPresent(primaryPage.getScene().getWindow());
             }
         }
     }
@@ -446,12 +452,13 @@ public class MainWindowController implements Initializable {
 
     private void triggerDownloadAndInstallPopup() {
         PopupController.showConfirmationPopup(
+                primaryPage.getScene().getWindow(),
                 "New version " + appVersionService.getLatestVersion()
                         + " is available.\nDo you want to download and install it now?",
                 "Download and install",
                 () -> {
                     UpdateController controller = SpringContext.getBean(UpdateController.class);
-                    controller.setupPage();
+                    controller.setupPage(primaryPage.getScene().getWindow());
                 });
     }
 
