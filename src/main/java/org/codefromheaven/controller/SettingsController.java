@@ -149,9 +149,9 @@ public class SettingsController {
         myOwnContent.setPadding(new Insets(5, 10, 0, 10));
 
         // --- Content Area ---
-        StackPane contentPane = new StackPane(defaultContent);
+        StackPane contentPane = new StackPane(myOwnContent);
 
-        defaultLayoutTabBtn.setSelected(true);
+        myOwnLayoutTabBtn.setSelected(true);
 
         defaultLayoutTabBtn.setOnAction(e -> {
             if (!defaultLayoutTabBtn.isSelected()) defaultLayoutTabBtn.setSelected(true);

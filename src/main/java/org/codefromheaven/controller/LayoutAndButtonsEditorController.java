@@ -126,9 +126,9 @@ public class LayoutAndButtonsEditorController {
         VBox myOwnLayoutContent = new VBox(5, myOwnLayoutDesc, myOwnEditor);
         VBox.setVgrow(myOwnEditor, Priority.ALWAYS);
 
-        StackPane contentPane = new StackPane(dirContent);
+        StackPane contentPane = new StackPane(myOwnLayoutContent);
 
-        dirTabBtn.setSelected(true);
+        myOwnLayoutTabBtn.setSelected(true);
 
         dirTabBtn.setOnAction(e -> {
             if (!dirTabBtn.isSelected()) dirTabBtn.setSelected(true); // Prevent deselecting
