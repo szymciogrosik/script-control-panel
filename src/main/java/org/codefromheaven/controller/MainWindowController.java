@@ -12,6 +12,7 @@ import javafx.scene.control.*;
 import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.text.Font;
+import javafx.scene.text.FontWeight;
 import javafx.scene.text.Text;
 import javafx.stage.Screen;
 import javafx.stage.Stage;
@@ -153,7 +154,7 @@ public class MainWindowController implements Initializable {
                     if (btnNode instanceof Button) {
                         Button btn = (Button) btnNode;
                         Text textNode = new Text(btn.getText());
-                        textNode.setFont(Font.font("Roboto", javafx.scene.text.FontWeight.BOLD, 12));
+                        textNode.setFont(Font.font("Roboto", FontWeight.BOLD, 12));
                         rowWidth += calculateWidthWithOverhead(textNode.getLayoutBounds().getWidth());
                     }
                 }
@@ -164,13 +165,13 @@ public class MainWindowController implements Initializable {
                 for (Node innerNode : ((VBox) sectionNode).getChildren()) {
                     if (innerNode instanceof Text) {
                         Text textNode = new Text(((Text) innerNode).getText());
-                        textNode.setFont(Font.font("Roboto", javafx.scene.text.FontWeight.BOLD, 18));
+                        textNode.setFont(Font.font("Roboto", FontWeight.BOLD, 18));
                         maxWidth = Math.max(maxWidth, textNode.getLayoutBounds().getWidth());
                     }
                 }
             }
         }
-        return Math.max(maxWidth, App.MIN_WIDTH > 0 ? App.MIN_WIDTH : 480.0);
+        return Math.max(maxWidth, App.MIN_WIDTH);
     }
 
     private double calculateWidthWithOverhead(double screenWidth) {
