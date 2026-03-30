@@ -132,7 +132,7 @@ public class MainWindowController implements Initializable {
 
         addAuthorNote("Made with love by SJG");
 
-        double requiredWidth = calculateMaxRowWidth() + 20;
+        double requiredWidth = calculateWidthWithOverhead(calculateMaxRowWidth());
         double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
         double finalWidth = Math.min(requiredWidth, screenWidth - 100);
         mainScrollPane.setPrefWidth(finalWidth);
@@ -154,7 +154,7 @@ public class MainWindowController implements Initializable {
                         Button btn = (Button) btnNode;
                         Text textNode = new Text(btn.getText());
                         textNode.setFont(Font.font("Roboto", javafx.scene.text.FontWeight.BOLD, 12));
-                        rowWidth += textNode.getLayoutBounds().getWidth() + 20;
+                        rowWidth += calculateWidthWithOverhead(textNode.getLayoutBounds().getWidth());
                     }
                 }
                 rowWidth += Math.max(0, flowPane.getChildren().size() - 1) * flowPane.getHgap();
@@ -171,6 +171,10 @@ public class MainWindowController implements Initializable {
             }
         }
         return Math.max(maxWidth, App.MIN_WIDTH > 0 ? App.MIN_WIDTH : 480.0);
+    }
+
+    private double calculateWidthWithOverhead(double screenWidth) {
+        return screenWidth + 20;
     }
 
     private void refreshHeader() {
