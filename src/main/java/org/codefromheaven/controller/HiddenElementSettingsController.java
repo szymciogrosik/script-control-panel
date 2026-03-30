@@ -2,16 +2,20 @@ package org.codefromheaven.controller;
 
 import javafx.geometry.Insets;
 import javafx.geometry.Pos;
+import javafx.scene.Node;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
 import javafx.scene.control.Label;
 import javafx.scene.control.ScrollPane;
+import javafx.scene.layout.FlowPane;
 import javafx.scene.layout.HBox;
 import javafx.scene.layout.Priority;
+import javafx.scene.layout.Region;
 import javafx.scene.layout.VBox;
 import javafx.scene.text.Text;
 import javafx.stage.Modality;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 import org.codefromheaven.context.SpringContext;
 import org.codefromheaven.dto.data.SectionDTO;
@@ -60,11 +64,11 @@ public class HiddenElementSettingsController {
         scrollPane.setFitToWidth(true);
         scrollPane.setMaxHeight(MaxHighUtils.getMaxHeight());
 
-        // --- Info description box ---
         Label descLabel = new Label(loadResourceText("/editor/tab_visibility_desc.txt"));
         descLabel.setWrapText(true);
         descLabel.setMaxWidth(Double.MAX_VALUE);
-        descLabel.setPrefWidth(460);
+        descLabel.setMinHeight(Region.USE_PREF_SIZE);
+
         descLabel.getStyleClass().add("tab-desc-label");
         descLabel.setStyle("-fx-padding: 5 10 0 10;");
         settingsRoot.getChildren().add(descLabel);
@@ -90,20 +94,66 @@ public class HiddenElementSettingsController {
 
         settingsRoot.getChildren().add(buttonContainer);
 
-        // Scene height will be adjusted dynamically
-        Scene scene = new Scene(settingsRoot, 480, 100);
+        Scene scene = new Scene(settingsRoot);
         scene.getStylesheets().add(SpringContext.getBean(StyleService.class).getCurrentStyleUrl());
         settingsStage.setScene(scene);
 
-        // Resize stage based on actual rendered heights of both the desc label and the content
+        // First layout pass to calculate widths
+        settingsRoot.applyCss();
+        settingsRoot.layout();
+
+        // Calculate required width manually by inspecting FlowPane children directly
+        double requiredWidth = calculateMaxRowWidth(contentBox) + 50;
+        double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
+        double finalWidth = Math.min(requiredWidth, screenWidth);
+
+        settingsStage.setWidth(finalWidth);
+
+        // Second layout pass after setting exact Stage width.
+        // Forces Label to recalculate its wrapped height based on the new final width.
+        settingsRoot.applyCss();
+        settingsRoot.layout();
+
         Runnable recalcHeight = () -> {
-            double needed = contentBox.getHeight() + descLabel.getHeight() + 90;
+            // Using prefHeight(finalWidth) ensures calculation accounts for wrapped text
+            double needed = contentBox.getHeight() + descLabel.prefHeight(finalWidth) + 90;
             settingsStage.setHeight(Math.min(needed, MaxHighUtils.getMaxHeight()));
         };
+
+        // Initial execution to set correct height before showing
+        recalcHeight.run();
+
         contentBox.heightProperty().addListener((obs, o, n) -> recalcHeight.run());
         descLabel.heightProperty().addListener((obs, o, n) -> recalcHeight.run());
 
         settingsStage.showAndWait();
+    }
+
+    /**
+     * Iterates over rendered nodes to calculate the precise maximum width of a single row.
+     */
+    private double calculateMaxRowWidth(VBox contentBox) {
+        double maxWidth = 0;
+        for (Node sectionNode : contentBox.getChildren()) {
+            if (sectionNode instanceof VBox) {
+                for (Node subNode : ((VBox) sectionNode).getChildren()) {
+                    if (subNode instanceof FlowPane) {
+                        FlowPane flowPane = (FlowPane) subNode;
+                        double rowWidth = 0;
+                        for (Node checkBox : flowPane.getChildren()) {
+                            rowWidth += checkBox.prefWidth(-1);
+                        }
+                        // Add spacing between checkboxes
+                        rowWidth += Math.max(0, flowPane.getChildren().size() - 1) * flowPane.getHgap();
+                        maxWidth = Math.max(maxWidth, rowWidth);
+                    } else if (subNode instanceof Text) {
+                        maxWidth = Math.max(maxWidth, subNode.prefWidth(-1));
+                    }
+                }
+            }
+        }
+        // Fallback value for safety to avoid extremely compressed windows
+        return Math.max(maxWidth, 400.0);
     }
 
     private void loadPageContent(VBox contentBox) {
@@ -114,20 +164,32 @@ public class HiddenElementSettingsController {
             Text sectionHeader = new Text(section.sectionName());
             sectionHeader.getStyleClass().add("text-main-header");
             sectionBox.getChildren().add(sectionHeader);
+
             section.subSections().forEach(subSection -> {
                 Text subSectionHeader = new Text(subSection.subSectionName());
                 subSectionHeader.getStyleClass().add("text-header");
                 sectionBox.getChildren().add(subSectionHeader);
+
+                FlowPane checkBoxesRow = new FlowPane();
+                checkBoxesRow.setHgap(10);
+                checkBoxesRow.setVgap(5);
+
                 subSection.buttons().forEach(button -> {
                     CheckBox checkBox = new CheckBox(button.getButtonName());
                     checkBox.getStyleClass().add("check-box-on-dark-background");
+
+                    checkBox.setMinSize(Region.USE_PREF_SIZE, Region.USE_PREF_SIZE);
+                    checkBox.setWrapText(true);
+
                     boolean isChecked = visibilitySettings.isVisible(button);
                     checkBox.setSelected(isChecked);
                     checkBox.selectedProperty().addListener((obs, oldVal, newVal) -> {
                         visibilitySettings.updateVisibilitySetting(button, newVal);
                     });
-                    sectionBox.getChildren().add(checkBox);
+                    checkBoxesRow.getChildren().add(checkBox);
                 });
+
+                sectionBox.getChildren().add(checkBoxesRow);
             });
             contentBox.getChildren().add(sectionBox);
         });
@@ -151,5 +213,4 @@ public class HiddenElementSettingsController {
         }
         return "";
     }
-
 }
