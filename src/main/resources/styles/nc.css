@@ -1,0 +1,174 @@
+/* --- Custom Hex-Defined Theme --- */
+
+.root {
+    -fx-font-family: 'Roboto', sans-serif;
+    -fx-background-color: #123836;
+}
+
+.tooltip {
+    -fx-font-size: 12px;
+    -fx-font-family: 'Roboto', sans-serif;
+    -fx-text-fill: #123836;
+    -fx-background-color: #ffffff;
+    -fx-padding: 8px 15px;
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+}
+
+.text-header {
+    -fx-fill: #ffffff;
+    -fx-font-size: 13px;
+    -fx-font-weight: bold;
+}
+
+.text-main-header {
+    -fx-fill: #ffffff;
+    -fx-font-size: 18px;
+    -fx-font-weight: bold;
+}
+
+.scroll-pane {
+    -fx-padding: 0;
+    -fx-border-width: 0;
+    -fx-background-color: #123836;
+}
+
+.scroll-pane > .viewport {
+    -fx-background-color: transparent;
+}
+
+.mainStyle > * {
+    -fx-font: normal bold 12px 'Roboto', sans-serif;
+}
+
+.VBox, .HBox {
+    -fx-spacing: 10px;
+    -fx-alignment: center;
+}
+
+.label {
+    -fx-text-fill: #ffffff;
+    -fx-font-size: 14px;
+}
+
+.button-default {
+    -fx-background-color: #ffffff;
+    -fx-text-fill: #123836;
+    -fx-font-size: 12px;
+    -fx-font-weight: bold;
+    -fx-background-radius: 0;
+    -fx-border-radius: 0;
+}
+
+.button-default:hover {
+    -fx-background-color: #ff6359;
+    -fx-text-fill: #ffffff;
+}
+
+.tooltip-custom {
+    -fx-text-fill: #ff6359;
+    -fx-font-weight: bold;
+}
+
+.author-image {
+    -fx-fit-height: 50px;
+    -fx-fit-width: 50px;
+}
+
+.author-note {
+    -fx-alignment: center;
+}
+
+.primary-page {
+    -fx-min-width: 400px;
+}
+
+.background-primary {
+    -fx-background-color: #123836;
+}
+
+.hbox-spacing {
+    -fx-spacing: 5;
+}
+
+/* --- Menu Bar Styling Update --- */
+
+.menu-bar {
+    -fx-background-color: #0d2827;
+}
+
+/* Default state for all menu labels */
+.menu-bar .menu .label,
+.menu-item .label {
+    -fx-text-fill: #ffffff !important;
+}
+
+/* Hover state for top-level menu */
+.menu-bar .menu:hover {
+    -fx-background-color: #ffffff;
+}
+
+.menu-bar .menu:hover .label {
+    -fx-text-fill: #123836 !important;
+}
+
+/* Showing/Toggled state for top-level menu */
+.menu-bar .menu:showing {
+    -fx-background-color: #0d2827; /* Dark background to ensure white text is visible */
+}
+
+.menu-bar .menu:showing .label {
+    -fx-text-fill: #ffffff !important; /* Forces white text when menu is open */
+}
+
+/* Focused/Selecting state for dropdown menu items */
+.menu-item:focused {
+    -fx-background-color: #ff6359;
+}
+
+.menu-item:focused .label {
+    -fx-text-fill: #ffffff !important; /* Explicitly guarantees white text on red background */
+}
+
+.context-menu {
+    -fx-background-color: #0d2827;
+    -fx-background-radius: 0;
+}
+
+.scroll-pane-transparent {
+    -fx-background-color: transparent;
+}
+
+.scroll-pane-transparent > .viewport {
+    -fx-background-color: transparent;
+}
+
+.text-on-dark-background {
+    -fx-fill: #ffffff;
+}
+
+.label-on-dark-background {
+    -fx-text-fill: #ffffff;
+}
+
+.check-box-on-dark-background .box {
+    -fx-border-color: #ffffff;
+    -fx-background-color: transparent;
+    -fx-background-radius: 0;
+}
+
+.check-box-on-dark-background .text {
+    -fx-fill: #ffffff;
+}
+
+.text-field-error {
+    -fx-text-box-border: #ff6359;
+    -fx-focus-color: #ff6359;
+}
+
+.tab-desc-label {
+    -fx-text-fill: #ffffff !important;
+    -fx-font-size: 12px;
+    -fx-font-style: italic;
+    -fx-padding: 8 0 5 0;
+}
