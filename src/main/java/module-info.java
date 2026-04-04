@@ -44,6 +44,8 @@ module servicerunner {
     exports org.codefromheaven.config;
     opens org.codefromheaven.config to spring.core;
     exports org.codefromheaven.context;
+    exports org.codefromheaven.service.network;
     opens org.codefromheaven.service.network to spring.beans;
+    exports org.codefromheaven.service.style;
     opens org.codefromheaven.service.style to spring.beans;
 }

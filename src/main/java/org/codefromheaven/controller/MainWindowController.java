@@ -111,7 +111,7 @@ public class MainWindowController implements Initializable {
             addInformationAboutBuildingConfiguration(visibilitySettings);
         }
 
-        addAuthorNote("Made with love by SJG");
+        addAuthorNote();
 
         double requiredWidth = calculateWidthWithOverhead(calculateMaxRowWidth());
         double screenWidth = Screen.getPrimary().getVisualBounds().getWidth();
@@ -126,13 +126,10 @@ public class MainWindowController implements Initializable {
                 continue;
             }
 
-            if (sectionNode instanceof FlowPane) {
-                FlowPane flowPane = (FlowPane) sectionNode;
+            if (sectionNode instanceof FlowPane flowPane) {
                 double rowWidth = 0;
-
                 for (Node btnNode : flowPane.getChildren()) {
-                    if (btnNode instanceof Button) {
-                        Button btn = (Button) btnNode;
+                    if (btnNode instanceof Button btn) {
                         Text textNode = new Text(btn.getText());
                         textNode.setFont(Font.font("Roboto", FontWeight.BOLD, 12));
                         rowWidth += calculateWidthWithOverhead(textNode.getLayoutBounds().getWidth());
@@ -179,12 +176,12 @@ public class MainWindowController implements Initializable {
         primaryPage.getChildren().add(section);
     }
 
-    private void addAuthorNote(String authorNote) {
+    private void addAuthorNote() {
         VBox section = new VBox();
         section.getStyleClass().add("author-note");
         ImageView authorImageView = new ImageView(animalService.getCurrentAnimalImage());
         authorImageView.getStyleClass().add("author-image");
-        Tooltip.install(authorImageView, createTooltip(authorNote));
+        Tooltip.install(authorImageView, createTooltip("Made with love by SJG"));
         authorImageView.setOnMouseClicked(event -> {
             animalService.replaceCurrentAnimalToNextAnimal();
             authorImageView.setImage(animalService.getCurrentAnimalImage());
@@ -214,7 +211,7 @@ public class MainWindowController implements Initializable {
             addSectionHeader(section.sectionName());
 
             for (SubSectionDTO subSection : section.subSections()) {
-                if (!isAnyElementInSubSectionEnabled(subSection, section.sectionName(), visibilitySettings)) {
+                if (!isAnyElementInSubSectionEnabled(subSection, visibilitySettings)) {
                     continue;
                 }
                 primaryPage.getChildren().add(createHeaderForSection(subSection.subSectionName()));
@@ -366,7 +363,7 @@ public class MainWindowController implements Initializable {
         for (SectionDTO section : sections) {
             for (SubSectionDTO subSection : section.subSections()) {
                 boolean anyElementInSubSectionEnabled = isAnyElementInSubSectionEnabled(
-                        subSection, section.sectionName(), visibilitySettings);
+                        subSection, visibilitySettings);
                 if (anyElementInSubSectionEnabled) {
                     return true;
                 }
@@ -376,7 +373,7 @@ public class MainWindowController implements Initializable {
     }
 
     private boolean isAnyElementInSubSectionEnabled(
-            SubSectionDTO subSection, String sectionName,
+            SubSectionDTO subSection,
             VisibilitySettings visibilitySettings) {
         for (ButtonDTO button : subSection.buttons()) {
             boolean visible = visibilitySettings.isVisible(button);
