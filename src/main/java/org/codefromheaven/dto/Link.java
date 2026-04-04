@@ -1,5 +1,8 @@
 package org.codefromheaven.dto;
 
+import lombok.Getter;
+
+@Getter
 public enum Link {
 
     ABOUT_AUTHOR("https://github.com/szymciogrosik"),
@@ -7,18 +10,13 @@ public enum Link {
     GH_RELEASES(GH_PROJECT.getUrl() + "/releases"),
     WIKI(GH_PROJECT.getUrl() + "/wiki"),
     WIKI_CONFIGURATION(WIKI.getUrl() + "/Configuration"),
-    PIN_JAR_TO_TASKBAR(WIKI.getUrl() + "/Guide-how-to-pin-executable-JAR-to-the-taskbar-or-Windows-start-for-Windows-11"),
-    PIN_BASH_TO_TASKBAR(WIKI.getUrl() + "/Guide-how-to-pin-bash-script-to-the-taskbar-or-Windows-start-for-Windows-11"),
     RUN_BASH_ON_WINDOWS_STARTUP(WIKI.getUrl() + "/Guide-how-to-add-shortcut-to-the-Windows-startup"),
     ISSUES(GH_PROJECT.getUrl() + "/issues"),
     API_LATEST_RELEASE_JSON("https://szymciogrosik.github.io/script-control-panel/latest_release.json");
 
     private final String url;
+
     Link(String url) {
         this.url = url;
-    }
-
-    public String getUrl() {
-        return url;
     }
 }

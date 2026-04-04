@@ -69,31 +69,11 @@ public class MainWindowController implements Initializable {
 
     @FXML
     private Menu menuUpdateButton;
-
     @FXML
     private MenuItem changeVisibleElements;
-    @FXML
-    private MenuItem editLayoutAndButtons;
-    @FXML
-    private MenuItem changeSettings;
-    @FXML
-    private MenuItem pinBashFileToTaskBar;
-    @FXML
-    private MenuItem runAppWithWindowsStartup;
-
-    @FXML
-    private MenuItem news;
-    @FXML
-    private MenuItem reportIssues;
-    @FXML
-    private MenuItem githubProject;
-    @FXML
-    private MenuItem githubDocumentation;
 
     @FXML
     private ImageView updateNotification;
-    @FXML
-    private MenuItem checkForUpdates;
     @FXML
     private MenuItem downloadAndInstall;
 
@@ -462,11 +442,6 @@ public class MainWindowController implements Initializable {
                 this::loadContent,
                                                                                            this::resizeMainWindow);
         controller.setupPage();
-    }
-
-    @FXML
-    private void handlePinBashFileToTaskBar() {
-        LinkUtils.openPageInBrowser(Link.PIN_BASH_TO_TASKBAR.getUrl());
     }
 
     @FXML

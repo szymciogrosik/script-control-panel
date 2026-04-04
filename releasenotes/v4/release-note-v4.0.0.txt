@@ -8,6 +8,8 @@ Instruction how and what needs to be installed to run application and more usefu
 * Added edit layout page, from now layout and buttons can be edited in the application. It's supporting default and my onw profiles.
 * Updated edit additional settings page, now it's supporting default and my onw profiles.
 * Added description labels on all settings page.
+* Added new NC style.
+* Paths in the settings can be selected by "Browse" button.
 
 #### Fixes:
 * Changed a way how the application updates are realized. From now application checking the custom GitHub page for latest release information. This fixed the issue with downloading updates from the same office, where GitHub page had hard limit 60 checks per 1h.
