@@ -1,8 +1,8 @@
 {
   "release": {
-    "version": "v4.0.0-rc",
-    "downloadUrl": "https://github.com/szymciogrosik/script-control-panel/releases/download/v4.0.0-rc/ScriptControlPanel-Win.zip",
-    "releaseDate": "2026-04-04T11:44:52Z"
+    "version": "v4.0.1-rc",
+    "downloadUrl": "https://github.com/szymciogrosik/script-control-panel/releases/download/v4.0.1-rc/ScriptControlPanel-Win.zip",
+    "releaseDate": "2026-04-04T11:51:13Z"
   },
   "preRelease": null
 }
