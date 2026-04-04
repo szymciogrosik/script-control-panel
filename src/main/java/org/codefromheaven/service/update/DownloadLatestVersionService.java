@@ -12,6 +12,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import java.net.URL;
+import java.util.Random;
 
 @Service
 public class DownloadLatestVersionService {
@@ -44,8 +45,8 @@ public class DownloadLatestVersionService {
             protected Void call() throws Exception {
                 updateProgress(0, 100);
 
-                updateMessage("Waiting for server (Jitter delay)...");
-                int jitterDelay = new java.util.Random().nextInt(15000);
+                updateMessage("Waiting for server...");
+                int jitterDelay = new Random().nextInt(15000);
                 Thread.sleep(jitterDelay);
                 updateMessage("Starting download...");
 
