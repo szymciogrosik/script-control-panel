@@ -16,7 +16,7 @@ print_line_separator() {
 }
 
 print_find_more_info() {
-  echo "More information about required installed software you can find under link:"
+  echo "More information about software you can find under link:"
   echo "https://github.com/szymciogrosik/script-control-panel/wiki"
 }
 
@@ -72,7 +72,6 @@ unzip_script_control_panel() {
 
 # Function to download the latest release of ScriptControlPanel
 download_latest_release() {
-  # Copy initial version instead downloading if present
   if [ -f "initial/$SCRIPT_CONTROL_PANEL_ZIP" ]; then
       echo "Found existing initial version. Copying..."
       cp "initial/$SCRIPT_CONTROL_PANEL_ZIP" "$SCRIPT_CONTROL_PANEL_ZIP"
@@ -81,25 +80,33 @@ download_latest_release() {
 
   echo "Checking for latest release..."
 
-  latest_tag=$(curl -s https://api.github.com/repos/szymciogrosik/script-control-panel/releases/latest | grep "tag_name" | cut -d '"' -f 4)
+  latest_url=$(curl -s https://szymciogrosik.github.io/script-control-panel/latest_release.json | sed -n '/"release":/,/}/p' | grep -m 1 '"downloadUrl"' | cut -d '"' -f 4 | tr -d '\r')
 
-  if [[ -n "$latest_tag" ]]; then
-    latest_url="https://github.com/szymciogrosik/script-control-panel/releases/download/$latest_tag/$SCRIPT_CONTROL_PANEL_ZIP"
-
+  if [[ -n "$latest_url" && "$latest_url" == http* ]]; then
     echo "Downloading the latest release of $SCRIPT_CONTROL_PANEL_ZIP from $latest_url"
-    curl -L -o "$SCRIPT_CONTROL_PANEL_ZIP" "$latest_url"
 
+    # -f (--fail) flag prevents curl from silently downloading HTTP error pages (e.g. 404 Not Found)
+    curl -f -L -o "$SCRIPT_CONTROL_PANEL_ZIP" "$latest_url"
+
+    # Check if curl succeeded (file was found and downloaded)
     if [[ $? -eq 0 ]]; then
-      echo "Downloaded $SCRIPT_CONTROL_PANEL_ZIP successfully."
-      return 0
+      # Validate archive integrity before proceeding
+      if unzip -tq "$SCRIPT_CONTROL_PANEL_ZIP" &> /dev/null; then
+        echo "Downloaded and validated $SCRIPT_CONTROL_PANEL_ZIP successfully."
+        return 0
+      else
+        print_error_message "Downloaded file is corrupted or not a valid ZIP archive."
+        rm -f "$SCRIPT_CONTROL_PANEL_ZIP"
+        wait_for_button_pressed
+        return 1
+      fi
     else
-      print_error_message "Failed to download $SCRIPT_CONTROL_PANEL_ZIP."
+      print_error_message "Failed to download. The file may not exist under the provided URL (HTTP error)."
       wait_for_button_pressed
       return 1
     fi
   else
-    print_error_message "Could not find the latest release tag."
-    print_error_message "It looks like too many people trying to download this app, please try again after 1 hour."
+    print_error_message "Could not fetch a valid release URL."
     wait_for_button_pressed
     return 1
   fi
@@ -128,7 +135,6 @@ cleanup_tmp_directories() {
 # Main script execution
 if check_git_bash; then
   # Removed logic that skips download if file exists.
-  # Now forcing download_latest_release to enable update/replace behavior.
   if download_latest_release; then
     cleanup_tmp_directories
     # Try to unzip
