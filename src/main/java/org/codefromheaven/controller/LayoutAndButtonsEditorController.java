@@ -614,7 +614,7 @@ public class LayoutAndButtonsEditorController {
             MutableSection sec = sectionList.getSelectionModel().getSelectedItem();
             if (sub != null && sec != null) {
                 sub.buttons.add(new MutableButton(new ButtonDTO("New Button", "", new ArrayList<>(), ElementType.PYTHON,
-                        true, null, "", true, sec.name.get(), sub.name.get())));
+                        false, null, "", true, sec.name.get(), sub.name.get())));
             }
         });
         delBtnBtn.setOnAction(e -> {
