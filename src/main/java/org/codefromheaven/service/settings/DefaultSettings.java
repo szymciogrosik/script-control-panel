@@ -28,7 +28,7 @@ public class DefaultSettings {
                                    "Location of configuration files f.e. 'config' or empty when in the same location", false),
                     new SettingDTO(Setting.ALLOW_FOR_UPGRADES.getName(), "true", SettingType.SWITCH,
                                    "Allow for checking new releases", false),
-                    new SettingDTO(Setting.ALLOW_PRE_RELEASES.getName(), "true", SettingType.SWITCH,
+                    new SettingDTO(Setting.ALLOW_PRE_RELEASES.getName(), "false", SettingType.SWITCH,
                                    "Allow for checking new pre releases")
             )
     );
