@@ -298,8 +298,10 @@ public class MainWindowController implements Initializable {
 
     private void addButtonListenerForBashCommand(Button button, ButtonDTO buttonDTO) {
         button.setOnMouseClicked(event -> {
-            if (buttonDTO.isPopupInputDisplayed()) {
-                Optional<String> result = createTextInputDialog(buttonDTO.getPopupInputMessage());
+            if (buttonDTO.getSingleInputPopup() != null) {
+                Optional<String> result = createTextInputDialog(
+                        buttonDTO.getSingleInputPopup().getMessage(),
+                        buttonDTO.getSingleInputPopup().getDefaultValue());
                 result.ifPresent(name -> {
                     for (String command : buttonDTO.getCommands()) {
                         String prefixedCommand = addPrefixToCommand(command, buttonDTO.getElementType());
@@ -319,8 +321,10 @@ public class MainWindowController implements Initializable {
 
     private void addButtonListenerForPowerShellCommand(Button button, ButtonDTO buttonDTO) {
         button.setOnMouseClicked(event -> {
-            if (buttonDTO.isPopupInputDisplayed()) {
-                Optional<String> result = createTextInputDialog(buttonDTO.getPopupInputMessage());
+            if (buttonDTO.getSingleInputPopup() != null) {
+                Optional<String> result = createTextInputDialog(
+                        buttonDTO.getSingleInputPopup().getMessage(),
+                        buttonDTO.getSingleInputPopup().getDefaultValue());
                 result.ifPresent(name -> {
                     for (String command : buttonDTO.getCommands()) {
                         String prefixedCommand = addPrefixToCommand(command, buttonDTO.getElementType());
@@ -338,8 +342,8 @@ public class MainWindowController implements Initializable {
         });
     }
 
-    private Optional<String> createTextInputDialog(String popupInputMessage) {
-        TextInputDialog dialog = new TextInputDialog("default_value");
+    private Optional<String> createTextInputDialog(String popupInputMessage, String defaultValue) {
+        TextInputDialog dialog = new TextInputDialog(defaultValue);
 
         dialog.setTitle("Information required");
         dialog.setHeaderText(null);
@@ -526,11 +530,11 @@ public class MainWindowController implements Initializable {
         String subSectionName = "Read about configuration";
         ButtonDTO exampleConfig = new ButtonDTO("Example configuration", "",
                                                 Collections.singletonList(Link.WIKI.getUrl()),
-                                                ElementType.LINK, true, false, "",
+                                                ElementType.LINK, true, null,
                                                 "Open link in default browser", true, sectionName, subSectionName);
         ButtonDTO buildYourOwnConfig = new ButtonDTO("Build your own configuration", "",
                                                      Collections.singletonList(Link.WIKI_CONFIGURATION.getUrl()),
-                                                     ElementType.LINK, true, false, "",
+                                                     ElementType.LINK, true, null,
                                                      "Open link in default browser", true, sectionName, subSectionName);
         SubSectionDTO subSection = new SubSectionDTO(subSectionName, Arrays.asList(exampleConfig, buildYourOwnConfig));
         SectionDTO section = new SectionDTO(sectionName, Collections.singletonList(subSection));

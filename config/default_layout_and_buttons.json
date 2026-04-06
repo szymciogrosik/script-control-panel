@@ -18,8 +18,6 @@
         "commands" : [ "example_bash.sh" ],
         "elementType" : "BASH",
         "autoCloseConsole" : false,
-        "popupInputDisplayed" : false,
-        "popupInputMessage" : "",
         "description" : "Example bash script",
         "visibleAsDefault" : true
       }, {
@@ -28,8 +26,6 @@
         "commands" : [ "example_bash.sh" ],
         "elementType" : "BASH",
         "autoCloseConsole" : false,
-        "popupInputDisplayed" : false,
-        "popupInputMessage" : "",
         "description" : "Example bash script",
         "visibleAsDefault" : false
       }, {
@@ -38,8 +34,10 @@
         "commands" : [ "example_bash_with_param.sh" ],
         "elementType" : "BASH",
         "autoCloseConsole" : false,
-        "popupInputDisplayed" : true,
-        "popupInputMessage" : "Provide a text to display",
+        "singleInputPopup" : {
+          "message" : "Provide a text to display",
+          "defaultValue" : "default_value"
+        },
         "description" : "Example bash script with popup (input is passed as script params)",
         "visibleAsDefault" : true
       }, {
@@ -48,8 +46,6 @@
         "commands" : [ "example_bash.sh" ],
         "elementType" : "BASH",
         "autoCloseConsole" : true,
-        "popupInputDisplayed" : false,
-        "popupInputMessage" : "",
         "description" : "Example bash script which will be autoclosed after invocation",
         "visibleAsDefault" : true
       }, {
@@ -58,8 +54,6 @@
         "commands" : [ "example_bash.sh", "example_bash.sh" ],
         "elementType" : "BASH",
         "autoCloseConsole" : false,
-        "popupInputDisplayed" : false,
-        "popupInputMessage" : "",
         "description" : "Example multiple bash scripts, each in separate window",
         "visibleAsDefault" : true
       } ]
@@ -74,8 +68,6 @@
         "commands" : [ "example_bat.bat" ],
         "elementType" : "POWERSHELL",
         "autoCloseConsole" : false,
-        "popupInputDisplayed" : false,
-        "popupInputMessage" : "",
         "description" : "Example bat script",
         "visibleAsDefault" : true
       }, {
@@ -84,8 +76,10 @@
         "commands" : [ "example_bat_with_param.bat" ],
         "elementType" : "POWERSHELL",
         "autoCloseConsole" : false,
-        "popupInputDisplayed" : true,
-        "popupInputMessage" : "Provide a text to display",
+        "singleInputPopup" : {
+          "message" : "Provide a text to display",
+          "defaultValue" : "default_value"
+        },
         "description" : "Example bat script with popup (input is passed as script params)",
         "visibleAsDefault" : true
       }, {
@@ -94,8 +88,6 @@
         "commands" : [ "example_bat_with_param.bat" ],
         "elementType" : "POWERSHELL",
         "autoCloseConsole" : true,
-        "popupInputDisplayed" : false,
-        "popupInputMessage" : "",
         "description" : "Example bat script which will be autoclosed after invocation",
         "visibleAsDefault" : true
       }, {
@@ -104,8 +96,6 @@
         "commands" : [ "example_bat.bat", "example_bat.bat" ],
         "elementType" : "POWERSHELL",
         "autoCloseConsole" : false,
-        "popupInputDisplayed" : false,
-        "popupInputMessage" : "",
         "description" : "Example multiple bat scripts in multiple windows",
         "visibleAsDefault" : true
       } ]
@@ -117,8 +107,6 @@
         "commands" : [ "example_pwsh.ps1" ],
         "elementType" : "POWERSHELL",
         "autoCloseConsole" : false,
-        "popupInputDisplayed" : false,
-        "popupInputMessage" : "",
         "description" : "Example ps1 script",
         "visibleAsDefault" : true
       }, {
@@ -127,8 +115,10 @@
         "commands" : [ "example_pwsh_with_param.ps1" ],
         "elementType" : "POWERSHELL",
         "autoCloseConsole" : false,
-        "popupInputDisplayed" : true,
-        "popupInputMessage" : "Provide a text to display",
+        "singleInputPopup" : {
+          "message" : "Provide a text to display",
+          "defaultValue" : "default_value"
+        },
         "description" : "Example ps1 script with popup (input is passed as script params)",
         "visibleAsDefault" : true
       }, {
@@ -137,8 +127,6 @@
         "commands" : [ "example_pwsh.ps1" ],
         "elementType" : "POWERSHELL",
         "autoCloseConsole" : true,
-        "popupInputDisplayed" : false,
-        "popupInputMessage" : "",
         "description" : "Example ps1 script which will be autoclosed after invocation",
         "visibleAsDefault" : true
       }, {
@@ -147,8 +135,6 @@
         "commands" : [ "example_pwsh.ps1", "example_pwsh.ps1" ],
         "elementType" : "POWERSHELL",
         "autoCloseConsole" : false,
-        "popupInputDisplayed" : false,
-        "popupInputMessage" : "",
         "description" : "Example multiple ps1 scripts in separate windows",
         "visibleAsDefault" : true
       } ]
@@ -163,8 +149,6 @@
         "commands" : [ "example_python.py" ],
         "elementType" : "PYTHON",
         "autoCloseConsole" : false,
-        "popupInputDisplayed" : false,
-        "popupInputMessage" : "",
         "description" : "Example python script",
         "visibleAsDefault" : true
       }, {
@@ -173,8 +157,6 @@
         "commands" : [ "example_python.py" ],
         "elementType" : "PYTHON",
         "autoCloseConsole" : false,
-        "popupInputDisplayed" : false,
-        "popupInputMessage" : "",
         "description" : "Example python script",
         "visibleAsDefault" : false
       }, {
@@ -183,8 +165,10 @@
         "commands" : [ "example_python_with_param.py" ],
         "elementType" : "PYTHON",
         "autoCloseConsole" : false,
-        "popupInputDisplayed" : true,
-        "popupInputMessage" : "Provide a text to display",
+        "singleInputPopup" : {
+          "message" : "Provide a text to display",
+          "defaultValue" : "default_value"
+        },
         "description" : "Example python script with popup (input is passed as script params)",
         "visibleAsDefault" : true
       }, {
@@ -193,8 +177,6 @@
         "commands" : [ "example_python.py" ],
         "elementType" : "PYTHON",
         "autoCloseConsole" : true,
-        "popupInputDisplayed" : false,
-        "popupInputMessage" : "",
         "description" : "Example python script which will be autoclosed after invocation",
         "visibleAsDefault" : true
       }, {
@@ -203,8 +185,6 @@
         "commands" : [ "example_python.py", "example_python.py" ],
         "elementType" : "PYTHON",
         "autoCloseConsole" : false,
-        "popupInputDisplayed" : false,
-        "popupInputMessage" : "",
         "description" : "Example multiple python scripts, each in separate window",
         "visibleAsDefault" : true
       } ]
@@ -219,8 +199,6 @@
         "commands" : [ "echo \\\"Print this text\\\"" ],
         "elementType" : "DIRECT_COMMAND_BASH",
         "autoCloseConsole" : false,
-        "popupInputDisplayed" : false,
-        "popupInputMessage" : "",
         "description" : "Example bash script",
         "visibleAsDefault" : true
       }, {
@@ -229,8 +207,6 @@
         "commands" : [ "echo \\\"Print this text\\\"" ],
         "elementType" : "DIRECT_COMMAND_POWERSHELL",
         "autoCloseConsole" : false,
-        "popupInputDisplayed" : false,
-        "popupInputMessage" : "",
         "description" : "Example powershell script",
         "visibleAsDefault" : true
       } ]
@@ -245,8 +221,6 @@
         "commands" : [ "https://github.com/szymciogrosik/script-control-panel/releases/latest" ],
         "elementType" : "LINK",
         "autoCloseConsole" : false,
-        "popupInputDisplayed" : false,
-        "popupInputMessage" : "",
         "description" : "Open releases web page in default browser.",
         "visibleAsDefault" : true
       }, {
@@ -255,8 +229,6 @@
         "commands" : [ "https://github.com/szymciogrosik/script-control-panel/releases/latest", "https://github.com/szymciogrosik/script-control-panel/releases/latest" ],
         "elementType" : "LINK",
         "autoCloseConsole" : false,
-        "popupInputDisplayed" : false,
-        "popupInputMessage" : "",
         "description" : "Open releases web page twice in separate windows.",
         "visibleAsDefault" : true
       } ]

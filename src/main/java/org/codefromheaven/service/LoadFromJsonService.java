@@ -7,6 +7,7 @@ import org.codefromheaven.dto.ElementType;
 import org.codefromheaven.dto.data.ButtonDTO;
 import org.codefromheaven.dto.data.SectionDTO;
 import org.codefromheaven.dto.data.SubSectionDTO;
+import org.codefromheaven.dto.data.SingleInputPopupDTO;
 
 import org.codefromheaven.dto.data.DirectoryDTO;
 import org.codefromheaven.dto.data.LayoutAndButtonsDTO;
@@ -63,6 +64,16 @@ public class LoadFromJsonService {
                             String visibleAsDefaultPropertyName = "visibleAsDefault";
                             boolean visibleAsDefault = commandNode.get(visibleAsDefaultPropertyName) == null ||
                                     commandNode.get(visibleAsDefaultPropertyName).asBoolean();
+                            
+                            SingleInputPopupDTO singleInputPopup = null;
+                            if (commandNode.has("singleInputPopup") && !commandNode.get("singleInputPopup").isNull()) {
+                                JsonNode popupNode = commandNode.get("singleInputPopup");
+                                singleInputPopup = new SingleInputPopupDTO(
+                                    popupNode.has("message") ? popupNode.get("message").asText() : "",
+                                    popupNode.has("defaultValue") ? popupNode.get("defaultValue").asText() : ""
+                                );
+                            }
+
                             subSection.buttons().add(new ButtonDTO(
                                     commandNode.get("buttonName").asText(),
                                     commandNode.get("scriptLocationParamName") != null
@@ -73,12 +84,7 @@ public class LoadFromJsonService {
                                     commandNode.get("autoCloseConsole") != null
                                             ? commandNode.get("autoCloseConsole").asBoolean()
                                             : false,
-                                    commandNode.get("popupInputDisplayed") != null
-                                            ? commandNode.get("popupInputDisplayed").asBoolean()
-                                            : false,
-                                    commandNode.get("popupInputMessage") != null
-                                            ? commandNode.get("popupInputMessage").asText()
-                                            : "",
+                                    singleInputPopup,
                                     commandNode.get("description") != null ? commandNode.get("description").asText()
                                             : "",
                                     visibleAsDefault,

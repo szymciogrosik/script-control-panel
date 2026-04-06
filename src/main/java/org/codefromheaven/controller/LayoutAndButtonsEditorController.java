@@ -25,6 +25,7 @@ import org.codefromheaven.dto.data.DirectoryDTO;
 import org.codefromheaven.dto.data.LayoutAndButtonsDTO;
 import org.codefromheaven.dto.data.SectionDTO;
 import org.codefromheaven.dto.data.SubSectionDTO;
+import org.codefromheaven.dto.data.SingleInputPopupDTO;
 import org.codefromheaven.service.LoadFromJsonService;
 import org.codefromheaven.service.animal.AnimalService;
 import org.codefromheaven.service.settings.LayoutService;
@@ -613,7 +614,7 @@ public class LayoutAndButtonsEditorController {
             MutableSection sec = sectionList.getSelectionModel().getSelectedItem();
             if (sub != null && sec != null) {
                 sub.buttons.add(new MutableButton(new ButtonDTO("New Button", "", new ArrayList<>(), ElementType.PYTHON,
-                        true, false, "", "", true, sec.name.get(), sub.name.get())));
+                        true, null, "", true, sec.name.get(), sub.name.get())));
             }
         });
         delBtnBtn.setOnAction(e -> {
@@ -922,10 +923,14 @@ public class LayoutAndButtonsEditorController {
         TextField popupMsgField = new TextField(btn.popupInputMessage.get());
         popupMsgField.textProperty().addListener((o, old, nev) -> btn.popupInputMessage.set(nev));
 
+        TextField popupDefaultField = new TextField(btn.popupInputDefaultValue.get());
+        popupDefaultField.textProperty().addListener((o, old, nev) -> btn.popupInputDefaultValue.set(nev));
+
         popupCheck.selectedProperty().addListener((o, old, nev) -> {
             btn.popupInputDisplayed.set(nev);
             if (!nev) {
                 popupMsgField.setText("");
+                popupDefaultField.setText("");
             }
         });
 
@@ -934,6 +939,12 @@ public class LayoutAndButtonsEditorController {
         popupMsgLabel.managedProperty().bind(popupCheck.selectedProperty());
         popupMsgField.visibleProperty().bind(popupCheck.selectedProperty());
         popupMsgField.managedProperty().bind(popupCheck.selectedProperty());
+
+        Label popupDefaultLabel = createLabel("Input script param default value:");
+        popupDefaultLabel.visibleProperty().bind(popupCheck.selectedProperty());
+        popupDefaultLabel.managedProperty().bind(popupCheck.selectedProperty());
+        popupDefaultField.visibleProperty().bind(popupCheck.selectedProperty());
+        popupDefaultField.managedProperty().bind(popupCheck.selectedProperty());
 
         TextArea descField = new TextArea(btn.description.get());
         descField.setWrapText(true);
@@ -971,6 +982,8 @@ public class LayoutAndButtonsEditorController {
             grid.add(popupCheck, 1, row++);
             grid.add(popupMsgLabel, 0, row);
             grid.add(popupMsgField, 1, row++);
+            grid.add(popupDefaultLabel, 0, row);
+            grid.add(popupDefaultField, 1, row++);
         }
 
         form.getChildren().add(grid);
@@ -1152,6 +1165,7 @@ public class LayoutAndButtonsEditorController {
         final SimpleBooleanProperty autoCloseConsole = new SimpleBooleanProperty();
         final SimpleBooleanProperty popupInputDisplayed = new SimpleBooleanProperty();
         final SimpleStringProperty popupInputMessage = new SimpleStringProperty();
+        final SimpleStringProperty popupInputDefaultValue = new SimpleStringProperty();
         final SimpleStringProperty description = new SimpleStringProperty();
         final SimpleBooleanProperty visibleAsDefault = new SimpleBooleanProperty();
 
@@ -1161,8 +1175,15 @@ public class LayoutAndButtonsEditorController {
             this.commands.set(dto.getCommands() == null ? "" : String.join("\n", dto.getCommands()));
             this.elementType.set(dto.getElementType());
             this.autoCloseConsole.set(dto.isAutoCloseConsole());
-            this.popupInputDisplayed.set(dto.isPopupInputDisplayed());
-            this.popupInputMessage.set(dto.getPopupInputMessage());
+            if (dto.getSingleInputPopup() != null) {
+                this.popupInputDisplayed.set(true);
+                this.popupInputMessage.set(dto.getSingleInputPopup().getMessage());
+                this.popupInputDefaultValue.set(dto.getSingleInputPopup().getDefaultValue());
+            } else {
+                this.popupInputDisplayed.set(false);
+                this.popupInputMessage.set("");
+                this.popupInputDefaultValue.set("");
+            }
             this.description.set(dto.getDescription());
             this.visibleAsDefault.set(dto.isVisibleAsDefault());
         }
@@ -1172,9 +1193,18 @@ public class LayoutAndButtonsEditorController {
                                          .map(String::trim)
                                          .filter(s -> !s.isEmpty())
                                          .collect(Collectors.toList());
+            
+            SingleInputPopupDTO singleInputPopup = null;
+            if (popupInputDisplayed.get()) {
+                singleInputPopup = new SingleInputPopupDTO(
+                        popupInputMessage.get() != null ? popupInputMessage.get() : "",
+                        popupInputDefaultValue.get() != null ? popupInputDefaultValue.get() : ""
+                );
+            }
+
             return new ButtonDTO(name.get(), scriptLocationParamName.get(), cmdList,
-                    elementType.get(), autoCloseConsole.get(), popupInputDisplayed.get(),
-                    popupInputMessage.get(), description.get(), visibleAsDefault.get(), sectionName, subSectionName);
+                    elementType.get(), autoCloseConsole.get(), singleInputPopup,
+                    description.get(), visibleAsDefault.get(), sectionName, subSectionName);
         }
 
         @Override
