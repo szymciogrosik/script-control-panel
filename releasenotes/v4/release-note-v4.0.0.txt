@@ -10,6 +10,8 @@ Instruction how and what needs to be installed to run application and more usefu
 * Added description labels on all settings page.
 * Added new NC style.
 * Paths in the settings can be selected by "Browse" button.
+* Upgraded Java version from 21 to 26.
+* Upgraded JavaFX version from 11 to 26.
 
 #### Fixes:
 * Changed a way how the application updates are realized. From now application checking the custom GitHub page for latest release information. This fixed the issue with downloading updates from the same office, where GitHub page had hard limit 60 checks per 1h.

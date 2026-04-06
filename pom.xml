@@ -3,11 +3,11 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.codefromheaven</groupId>
     <artifactId>script-control-panel</artifactId>
-    <version>4.0.0-rc</version>
+    <version>4.0.1-rc</version>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
-        <maven.compiler.release>17</maven.compiler.release>
-        <javafx.version>22</javafx.version>
+        <maven.compiler.release>26</maven.compiler.release>
+        <javafx.version>26</javafx.version>
         <javafx.maven.plugin.version>0.0.8</javafx.maven.plugin.version>
         <app.version>${project.version}</app.version>
     </properties>
@@ -117,6 +117,9 @@
                     <jlinkImageName>servicerunner</jlinkImageName>
                     <launcher>launcher</launcher>
                     <mainClass>servicerunner/org.codefromheaven.App</mainClass>
+                    <options>
+                        <option>--enable-native-access=javafx.graphics</option>
+                    </options>
                 </configuration>
             </plugin>
             <plugin>

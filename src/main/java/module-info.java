@@ -1,6 +1,6 @@
 module servicerunner {
-    requires javafx.controls;
-    requires javafx.graphics;
+    requires transitive javafx.controls;
+    requires transitive javafx.graphics;
     requires javafx.fxml;
     requires com.fasterxml.jackson.databind;
     requires com.sun.jna.platform;
