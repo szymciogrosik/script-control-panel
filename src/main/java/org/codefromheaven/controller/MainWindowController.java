@@ -527,16 +527,12 @@ public class MainWindowController implements Initializable {
 
     private void addInformationAboutBuildingConfiguration(VisibilitySettings visibilitySettings) {
         String sectionName = "Looks like there is nothing to show";
-        String subSectionName = "Read about configuration";
-        ButtonDTO exampleConfig = new ButtonDTO("Example configuration", "",
-                                                Collections.singletonList(Link.WIKI.getUrl()),
+        String subSectionName = "Open 'Settings' -> 'Edit layout/buttons/order' to create your own layout and buttons in UI!";
+        ButtonDTO exampleConfig = new ButtonDTO("Or read how to build it by editing JSON config", "",
+                                                Collections.singletonList(Link.WIKI_CONFIGURATION.getUrl()),
                                                 ElementType.LINK, true, null,
                                                 "Open link in default browser", true, sectionName, subSectionName);
-        ButtonDTO buildYourOwnConfig = new ButtonDTO("Build your own configuration", "",
-                                                     Collections.singletonList(Link.WIKI_CONFIGURATION.getUrl()),
-                                                     ElementType.LINK, true, null,
-                                                     "Open link in default browser", true, sectionName, subSectionName);
-        SubSectionDTO subSection = new SubSectionDTO(subSectionName, Arrays.asList(exampleConfig, buildYourOwnConfig));
+        SubSectionDTO subSection = new SubSectionDTO(subSectionName, List.of(exampleConfig));
         SectionDTO section = new SectionDTO(sectionName, Collections.singletonList(subSection));
         addElementsToScene(Collections.singletonList(section), visibilitySettings);
     }
