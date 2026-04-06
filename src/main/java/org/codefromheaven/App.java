@@ -1,5 +1,6 @@
 package org.codefromheaven;
 
+import com.sun.jna.WString;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -15,7 +16,7 @@ import org.codefromheaven.service.version.AppVersionService;
 import org.springframework.context.annotation.AnnotationConfigApplicationContext;
 
 import java.io.IOException;
-import java.util.Objects;
+import com.sun.jna.platform.win32.Shell32;
 
 public class App extends Application {
 
@@ -24,6 +25,8 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
+        setupJNAToSupportCustomIconDisplayForPinnedApp();
+
         context = new AnnotationConfigApplicationContext(AppConfig.class);
         SpringContext.setContext(context);
 
@@ -42,6 +45,17 @@ public class App extends Application {
         scene.getStylesheets().add(styleService.getCurrentStyleUrl());
         stage.setScene(scene);
         stage.show();
+    }
+
+    private static void setupJNAToSupportCustomIconDisplayForPinnedApp() {
+        if (System.getProperty("os.name").toLowerCase().contains("win")) {
+            try {
+                WString dynamicAppId = new WString("CodeFromHeaven.ScriptControlPanel." + System.currentTimeMillis());
+                Shell32.INSTANCE.SetCurrentProcessExplicitAppUserModelID(dynamicAppId);
+            } catch (Throwable t) {
+                System.err.println("Failed to set explicit AppUserModelID: " + t.getMessage());
+            }
+        }
     }
 
     @Override
