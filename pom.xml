@@ -3,7 +3,7 @@
     <modelVersion>4.0.0</modelVersion>
     <groupId>org.codefromheaven</groupId>
     <artifactId>script-control-panel</artifactId>
-    <version>4.0.3-rc</version>
+    <version>4.0.4-rc</version>
     <properties>
         <project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
         <maven.compiler.release>26</maven.compiler.release>
