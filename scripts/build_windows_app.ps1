@@ -41,7 +41,7 @@ jpackage `
   --input $jpackageInputDir `
   --main-jar $jarName `
   --dest $outputDir `
-  --name "ScriptControlPanel" `
+  --name "Script Control Panel" `
   --icon "src/main/resources/icon/duck.ico" `
   --verbose
 
