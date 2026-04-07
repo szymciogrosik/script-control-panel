@@ -6,6 +6,7 @@ import javafx.scene.Parent;
 import javafx.scene.Scene;
 import javafx.scene.image.Image;
 import javafx.stage.Stage;
+import org.codefromheaven.helpers.WindowsAppManager;
 import org.codefromheaven.service.animal.AnimalService;
 import org.codefromheaven.service.settings.SettingsService;
 import org.codefromheaven.config.AppConfig;
@@ -23,6 +24,8 @@ public class App extends Application {
 
     @Override
     public void start(Stage stage) throws IOException {
+        WindowsAppManager.initializeUniqueAUMID();
+        
         context = new AnnotationConfigApplicationContext(AppConfig.class);
         SpringContext.setContext(context);
 

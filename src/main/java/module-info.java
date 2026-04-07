@@ -3,7 +3,6 @@ module servicerunner {
     requires transitive javafx.graphics;
     requires javafx.fxml;
     requires com.fasterxml.jackson.databind;
-    requires com.sun.jna.platform;
     requires org.apache.commons.io;
     requires org.apache.commons.lang3;
     requires java.desktop;
@@ -12,7 +11,6 @@ module servicerunner {
     requires spring.core;
     requires jakarta.annotation;
     requires static lombok;
-    requires com.sun.jna;
 
     opens org.codefromheaven to javafx.fxml;
     exports org.codefromheaven;
