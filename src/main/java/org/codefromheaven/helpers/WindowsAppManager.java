@@ -7,7 +7,9 @@ import java.nio.charset.StandardCharsets;
 public class WindowsAppManager {
 
     public static void initializeUniqueAUMID() {
-        if (!System.getProperty("os.name").toLowerCase().contains("win")) return;
+        if (!System.getProperty("os.name").toLowerCase().contains("win")) {
+            return;
+        }
 
         try (Arena arena = Arena.ofConfined()) {
             // Load shell32.dll into the confined arena
