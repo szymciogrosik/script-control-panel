@@ -1,6 +1,7 @@
 /ScriptControlPanel-Win.zip
 /ScriptControlPanel.exe
 /ScriptControlPanel.exe.lnk
+/ScriptControlPanel.exe - Shortcut.lnk
 app/
 runtime/
 config/my_own*

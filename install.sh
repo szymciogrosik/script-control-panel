@@ -116,17 +116,14 @@ download_latest_release() {
 cleanup_tmp_directories() {
   echo "Cleaning up temporary directories..."
 
-  # Check and remove 'tmp'
   if [ -d "tmp" ]; then
     rm -rf tmp
   fi
 
-  # Check and remove 'app'
   if [ -d "app" ]; then
     rm -rf app
   fi
 
-  # Check and remove 'runtime'
   if [ -d "runtime" ]; then
     rm -rf runtime
   fi
@@ -134,10 +131,8 @@ cleanup_tmp_directories() {
 
 # Main script execution
 if check_git_bash; then
-  # Removed logic that skips download if file exists.
   if download_latest_release; then
     cleanup_tmp_directories
-    # Try to unzip
     if unzip_script_control_panel; then
         rm "$SCRIPT_CONTROL_PANEL_ZIP"
         print_line_separator
