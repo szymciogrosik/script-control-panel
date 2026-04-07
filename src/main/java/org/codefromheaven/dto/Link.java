@@ -11,6 +11,7 @@ public enum Link {
     WIKI(GH_PROJECT.getUrl() + "/wiki"),
     WIKI_CONFIGURATION(WIKI.getUrl() + "/Configuration"),
     RUN_BASH_ON_WINDOWS_STARTUP(WIKI.getUrl() + "/Guide-how-to-add-shortcut-to-the-Windows-startup"),
+    PIN_APP_TO_START_MENU_OR_TASKBAR(WIKI.getUrl() + "/Guide-how-to-pin-shortcut-to-the-Windows-start-menu-or-taskbar"),
     ISSUES(GH_PROJECT.getUrl() + "/issues"),
     API_LATEST_RELEASE_JSON("https://szymciogrosik.github.io/script-control-panel/latest_release.json");
 

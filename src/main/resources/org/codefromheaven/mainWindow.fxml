@@ -15,6 +15,7 @@
          <MenuItem text="Show/hide buttons" fx:id="changeVisibleElements" onAction="#handleChangeVisibleElements"/>
          <MenuItem text="Application settings" onAction="#handleChangeSettings"/>
          <MenuItem text="Run app with Windows startup" onAction="#handleRunAppWithWindowsStartup"/>
+         <MenuItem text="Pin app to start menu or taskbar" onAction="#handlePinAppToStartMenuOrTaskbar"/>
       </Menu>
       <Menu text="About">
          <MenuItem text="What's new" onAction="#handleNews"/>

@@ -451,6 +451,11 @@ public class MainWindowController implements Initializable {
     }
 
     @FXML
+    private void handlePinAppToStartMenuOrTaskbar() {
+        LinkUtils.openPageInBrowser(Link.PIN_APP_TO_START_MENU_OR_TASKBAR.getUrl());
+    }
+
+    @FXML
     private void handleNews() {
         LinkUtils.openPageInBrowser(Link.GH_RELEASES.getUrl());
     }
