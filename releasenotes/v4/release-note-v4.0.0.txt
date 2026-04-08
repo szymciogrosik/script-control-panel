@@ -1,20 +1,21 @@
 ## App overview
-Instruction how and what needs to be installed to run application and more useful information, you can find [here](https://github.com/szymciogrosik/script-control-panel/wiki).
+Instructions on how to install and run the application, along with other useful information, can be found [here](https://github.com/szymciogrosik/script-control-panel/wiki).
 
 ## Release notes
 #### Improvements:
-* Changed a way of distributing the Script Control Panel App, from now it is distributed in portable version, together with the required Java environment.
-* From this version Script Control Panel App is targeted only for Windows.
-* Added edit layout page, from now layout and buttons can be edited in the application. It's supporting default and my onw profiles.
-* Updated edit additional settings page, now it's supporting default and my onw profiles.
-* Added description labels on all settings page.
-* Added new NC style.
-* Paths in the settings can be selected by "Browse" button.
-* Upgraded Java version from 21 to 26.
-* Upgraded JavaFX version from 11 to 26.
+#### Improvements:
+* Changed the distribution method. The Script Control Panel App is now distributed as a portable application bundled with the required Java runtime environment.
+* Starting with this version, the application is exclusively targeted for Windows.
+* Added a layout editor. Layouts and buttons can now be modified directly within the application. This supports both default and custom profiles.
+* Updated the additional settings page to support both default and custom profiles.
+* Added description labels across all settings pages.
+* Added a new NC style.
+* File paths in the settings can now be selected using a "Browse" button.
+* Upgraded Java from version 21 to 26.
+* Upgraded JavaFX from version 11 to 26.
 
 #### Fixes:
-* Changed a way how the application updates are realized. From now application checking the custom GitHub page for latest release information. This fixed the issue with downloading updates from the same office, where GitHub page had hard limit 60 checks per 1h.
+* Redesigned the application update mechanism. The app now checks a custom GitHub page for the latest release information. This resolves the GitHub API rate-limiting issue (max 60 requests/hour) previously encountered when multiple users checked for updates from the same office network.
 
 ## Warnings
-This release is not backwards compatible, so settings needs to be adjusted manually from previous versions to the newest structure defined under the [link](https://github.com/szymciogrosik/script-control-panel/wiki/Configuration).
+This release is not backward compatible. Configuration files from previous versions must be manually migrated to the new structure detailed [here](https://github.com/szymciogrosik/script-control-panel/wiki/Configuration).
