@@ -3,14 +3,13 @@ Instructions on how to install and run the application, along with other useful 
 
 ## Release notes
 #### Improvements:
-#### Improvements:
 * Changed the distribution method. The Script Control Panel App is now distributed as a portable application bundled with the required Java runtime environment.
 * Starting with this version, the application is exclusively targeted for Windows.
-* Added a layout editor. Layouts and buttons can now be modified directly within the application. This supports both default and custom profiles.
+* Added a layout editor. Layouts and buttons can now be modified directly within the application. This supports both default and custom profiles. Implemented issue: #12
 * Updated the additional settings page to support both default and custom profiles.
 * Added description labels across all settings pages.
 * Added a new NC style.
-* File paths in the settings can now be selected using a "Browse" button.
+* File paths in the settings can now be selected using a "Browse" button. Implemented issue: #16
 * Upgraded Java from version 21 to 26.
 * Upgraded JavaFX from version 11 to 26.
 
